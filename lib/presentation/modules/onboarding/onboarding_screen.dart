@@ -40,7 +40,7 @@ class OnboardingScreen extends StatelessWidget {
               fontSize: 16,
               fontWeight: FontWeight.w100,
               color: AppColors.white),),
-              SizedBox(height: 25,),
+              SizedBox(height: 10,),
                Align(
                     alignment: Alignment.centerRight,
                     child: Container(
@@ -58,13 +58,13 @@ class OnboardingScreen extends StatelessWidget {
                         maxLines: 2,
                         style: TextStyle(
                           color: AppColors.white,
-                          fontSize: 16,
+                          fontSize: 10,
                           fontWeight: FontWeight.w100,
                         ),
                       ),
                     ),
                   ),   
-                  SizedBox(height: 25,),
+                  SizedBox(height: 10,),
 
                    Align(
                     alignment: Alignment.centerLeft,
@@ -89,7 +89,7 @@ class OnboardingScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 25,),
+                  SizedBox(height: 10,),
 
                    Align(
                     alignment: Alignment.centerRight,
@@ -114,7 +114,7 @@ class OnboardingScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-               SizedBox(height: 40,),
+               SizedBox(height: 25,),
             
                 ElevatedButton(
                   onPressed: () => context.pushNamed(AppRoutesNames.signIn),

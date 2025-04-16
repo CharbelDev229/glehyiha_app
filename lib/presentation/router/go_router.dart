@@ -1,16 +1,17 @@
+import 'package:glehiha/presentation/modules/auth/sign_in/sign_in_controller.dart';
+import 'package:glehiha/presentation/modules/auth/sign_up/sign_up_controller.dart';
 import 'package:glehiha/presentation/modules/chat/chat_screen.dart';
 import 'package:glehiha/presentation/modules/expert/expert_screen.dart';
 import 'package:glehiha/presentation/modules/market/market_screen.dart';
 import 'package:glehiha/presentation/modules/parameters/parameters_screen.dart';
 import 'package:glehiha/presentation/modules/photo/photo_screen.dart';
-import 'package:glehiha/presentation/modules/sign_in/sign_in_screen.dart';
-import '../modules/entrance/splash_screen.dart';
+
 import 'package:go_router/go_router.dart';
-import '../modules/home/home_screen.dart';
+import '../modules/onboarding/onboarding_screen_3.dart';
+import '../modules/onboarding/onboarding_screen_2.dart';
 import '../modules/welcome/welcome_screen.dart';
-import '../modules/sign_in/sign_in_screen.dart';
-import '../modules/sign_up/sign_up_screen.dart';
-import '../modules/parameters/parameters_screen.dart';
+import 'package:glehiha/presentation/modules/auth/sign_in/sign_in_screen.dart';
+import 'package:glehiha/presentation/modules/auth/sign_up/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:glehiha/presentation/modules/onboarding/onboarding_screen.dart';
@@ -78,7 +79,8 @@ class AppRoute {
         return CustomTransitionPage(
         key: state.pageKey,
         transitionDuration: const Duration(milliseconds: 500), 
-        child: const SignInScreen(),
+        child:  SignInScreen(
+          controller: SignInController(),),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
@@ -91,7 +93,9 @@ class AppRoute {
        return CustomTransitionPage(
        key: state.pageKey,
        transitionDuration: const Duration(milliseconds: 500), 
-       child: const SignUpScreen(),
+       child:  SignUpScreen(
+        controller: SignUpController(),
+       ),
        transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
@@ -161,6 +165,49 @@ class AppRoute {
         return FadeTransition(
           opacity: animation,
           child: child, );},);},),
+
+
+     GoRoute(
+       path: '/complement_info_encadreur',
+       name: AppRoutesNames.encadreur,
+       pageBuilder: (BuildContext context, GoRouterState state) {
+       return CustomTransitionPage(
+       key: state.pageKey,
+       transitionDuration: const Duration(milliseconds: 500), 
+       child: const MarketScreen(),
+       transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child, );},);},),
+
+
+       GoRoute(
+       path: '/complement_info_vendeur',
+       name: AppRoutesNames.vendeur,
+       pageBuilder: (BuildContext context, GoRouterState state) {
+       return CustomTransitionPage(
+       key: state.pageKey,
+       transitionDuration: const Duration(milliseconds: 500), 
+       child: const MarketScreen(),
+       transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child, );},);},),
+
+       GoRoute(
+       path: '/verification_code',
+       name: AppRoutesNames.code,
+       pageBuilder: (BuildContext context, GoRouterState state) {
+       return CustomTransitionPage(
+       key: state.pageKey,
+       transitionDuration: const Duration(milliseconds: 500), 
+       child: const MarketScreen(),
+       transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child, );},);},),
+
+
 
  ],
  );

@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'common/di/index.dart';
 import 'presentation/router/go_router.dart';
+import 'common/constants/colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   await Di.init();
-  // Set preferred orientations
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -22,25 +22,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  AnnotatedRegion<SystemUiOverlayStyle>(
-           value: const SystemUiOverlayStyle(
-        // statusBarColor: AppColors.primaryBg,
-        //  systemNavigationBarColor: Colors.transparent,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
-      child: 
-        
-           MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            routerConfig: AppRoute.router,
-            title: 'Glehiha App',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-            ),
-          ),
-        
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: AppRoute.router,
+        title: 'Glehiha App',
+        theme: ThemeData(
+          primarySwatch: AppColors.green,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+      ),
     );
   }
 }

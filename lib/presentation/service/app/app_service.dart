@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../common/constants/instances.dart';

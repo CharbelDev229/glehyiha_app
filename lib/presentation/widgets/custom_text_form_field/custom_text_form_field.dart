@@ -11,8 +11,8 @@ class CustomTextFormField extends StatelessWidget {
   final Widget? suffixIcon;
   final String? Function(String?)? validator;
   final bool isPhoneField;
- 
-  
+  final int? maxLines;
+  final int? minLines;
 
   const CustomTextFormField({
     Key? key,
@@ -20,6 +20,8 @@ class CustomTextFormField extends StatelessWidget {
     required this.labelText,
     this.icon,
     this.keyboardType,
+    this.maxLines,
+    this.minLines,
     this.obscureText = false,
     this.suffixIcon,
     this.validator,
@@ -32,13 +34,14 @@ class CustomTextFormField extends StatelessWidget {
       return IntlPhoneField(
         controller: controller,
         cursorColor: AppColors.black,
-        dropdownDecoration: const BoxDecoration(
-          border: Border(),
-        ),
+        dropdownDecoration: const BoxDecoration(border: Border()),
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: const TextStyle(color: AppColors.black),
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 12,
+          ),
           border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12)),
             borderSide: BorderSide(color: AppColors.black),
@@ -62,6 +65,8 @@ class CustomTextFormField extends StatelessWidget {
 
     return TextFormField(
       controller: controller,
+      minLines: minLines,
+      maxLines: maxLines,
       keyboardType: keyboardType,
       obscureText: obscureText,
       cursorColor: AppColors.black,
@@ -77,9 +82,9 @@ class CustomTextFormField extends StatelessWidget {
         focusedBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
           borderSide: BorderSide(color: AppColors.black, width: 2),
+          
         ),
       ),
-     
     );
   }
 }

@@ -19,7 +19,7 @@ class ParametersScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: 60),
+            SizedBox(height: 50),
             RichText(
               text: TextSpan(
                 children: [

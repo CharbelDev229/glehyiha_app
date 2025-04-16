@@ -19,7 +19,7 @@ class ImageRowWidget extends StatelessWidget {
         child: Image.asset(
               imagePath1,
               fit: BoxFit.cover,
-              height: 300,
+              height: 270,
             ),
           ),
       

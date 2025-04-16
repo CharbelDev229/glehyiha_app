@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+
 import 'package:go_router/go_router.dart';
 
 class AppRoutesNames {
@@ -14,6 +15,9 @@ class AppRoutesNames {
   static const chat = 'chat';
   static const splash = 'splash';
   static const onboarding = 'onboarding';
+  static const encadreur = 'complement_info_encadreur';
+  static const vendeur = 'complement_info_vendeur';
+  static const code = 'verification_code';
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();

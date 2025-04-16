@@ -1,50 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:glehiha/common/constants/assets/assets.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:glehiha/presentation/router/routes.dart';
-import 'package:go_router/go_router.dart';
-import 'package:glehiha/common/constants/assets/logo_assets.dart';
+import 'package:glehiha/presentation/widgets/background_decoration/background_decoration.dart';
 
-class WelcomeScreen extends StatelessWidget {
+import 'package:glehiha/common/constants/assets/logo_assets.dart';
+import 'package:go_router/go_router.dart';
+
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  @override
+  void initState() {
+    Future.delayed(Duration(seconds: 10), () {
+      // Code à exécuter après 2 secondes
+
+       context.pushNamed(AppRoutesNames.home);
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.primaryGreen,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-         alignment: Alignment.center,
-                children: [
-                  Image.asset(
-                  Assets.elipse,
-                  width: 350,
-                  height: 350,
-                ),
-                Image.asset(
-                 LogoAssets.logo,
-                  width: 52,
-                  height: 22,),]),
-            
-            ElevatedButton(
-              onPressed: () => context.pushNamed(AppRoutesNames.home),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+    return BackgroundDecoration(
+      child: Scaffold(
+        backgroundColor: AppColors.transparent,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                LogoAssets.frame1,
+                height: 96,
+                width: 203,
+                fit: BoxFit.contain,
               ),
-              child: const Text('Démarrer',
-              style: TextStyle(
-                color: AppColors.green,
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),),
-            ),
-      ]  ),),
-        
-      
+
+              Transform.translate(
+                offset: Offset(0, -20),
+                child: Image.asset(
+                  LogoAssets.frame2,
+                  height: 22,
+                  width: 168,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
