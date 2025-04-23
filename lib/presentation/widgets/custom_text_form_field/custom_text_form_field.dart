@@ -8,6 +8,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
   final Widget? suffixIcon;
+  final Widget? prefixIcon; // ✅ Ajouté
   final String? Function(String?)? validator;
   final bool isPhoneField;
   final int? maxLines;
@@ -23,13 +24,13 @@ class CustomTextFormField extends StatelessWidget {
     this.minLines,
     this.obscureText = false,
     this.suffixIcon,
+    this.prefixIcon, // ✅ Ajouté
     this.validator,
     this.isPhoneField = false,
   });
 
   @override
   Widget build(BuildContext context) {
-
     return TextFormField(
       controller: controller,
       minLines: obscureText ? 1 : minLines,
@@ -47,7 +48,7 @@ class CustomTextFormField extends StatelessWidget {
       labelText: labelText,
       labelStyle: const TextStyle(color: AppColors.black),
       contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-      prefixIcon: icon != null ? Icon(icon, color: AppColors.black) : null,
+      prefixIcon: prefixIcon ?? (icon != null ? Icon(icon, color: AppColors.black) : null), // ✅ Modifié
       suffixIcon: suffixIcon,
       border: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(12)),

@@ -29,9 +29,14 @@ class SignInController {
   RxBool isLoading = false.obs;
   RxString errorMessage = ''.obs;
 
+  RxBool autoValidate = false.obs;
+
   // Variables de localisation
   RxString latitude = ''.obs;
   RxString longitude = ''.obs;
+
+  TextEditingController phoneNumberController = TextEditingController();
+  RxString selectedCountryCode = '+229'.obs;
 
   Future<void> getCurrentLocation() async {
     try {
