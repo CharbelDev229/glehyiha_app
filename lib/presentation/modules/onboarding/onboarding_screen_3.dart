@@ -1,72 +1,70 @@
-import'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:glehiha/common/constants/assets/assets.dart';
 
-class HomeScreen  extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:AppColors.primaryGreen,
-      body: Column(
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(70),
+      backgroundColor: AppColors.primaryGreen,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(70),
+              ),
+              child: Image.asset(
+                Assets.images,
+                width: double.infinity,
+                height: 400,
+                fit: BoxFit.cover,
+              ),
             ),
-            child: Image.asset(
-              Assets.images,
-              width: double.infinity,
-              height: 400,
-              fit: BoxFit.cover,
-             
-                  ),
-            ),
-          
-          Expanded(
-            child: Padding(
+            Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const SizedBox(height: 20),
                   Text(
-                      'Obtenez des conseils agricoles personnalisés,',
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 28, 
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.white,
-                      ),
+                    'Obtenez des conseils agricoles personnalisés,',
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.white,
                     ),
-                   Text(
-                      'Optimisez votre production agricole avec notre assistant intelligent',
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.white,
-                      ),
-                    ),
-                  
+                  ),
                   const SizedBox(height: 10),
+                  Text(
+                    'Optimisez votre production agricole avec notre assistant intelligent',
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.centerRight,
                     child: Container(
                       width: 250,
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 94, 104, 77),
+                        color: const Color.fromARGB(255, 94, 104, 77),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Identifiez les maladies des plantes en un clic ',
                         maxLines: 2,
                         style: TextStyle(
@@ -82,15 +80,15 @@ class HomeScreen  extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Container(
                       width: 250,
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 94, 104, 77),
+                        color: const Color.fromARGB(255, 94, 104, 77),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Posez vos question à notre chatbot intelligent ',
                         maxLines: 2,
                         style: TextStyle(
@@ -101,7 +99,7 @@ class HomeScreen  extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: () => context.pushNamed(AppRoutesNames.splash),
                     style: ElevatedButton.styleFrom(
@@ -128,11 +126,12 @@ class HomeScreen  extends StatelessWidget {
                           height: 30,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                           color:AppColors.primaryGreen,
+                            color: AppColors.primaryGreen,
                           ),
                           child: const Icon(
                             Icons.arrow_forward_ios,
                             color: AppColors.white,
+                            size: 16,
                           ),
                         ),
                       ],
@@ -141,9 +140,9 @@ class HomeScreen  extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-} 
+}

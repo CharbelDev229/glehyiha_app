@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/get_utils/get_utils.dart';
 import 'package:glehiha/presentation/router/routes.dart';
 
 class TextFieldValidators {
@@ -16,13 +18,14 @@ class TextFieldValidators {
     return null;
   }
 
-   // Validation for a required field
+  // Validation for a required field
   static String? validConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Ce champs est requis';
     }
     return null;
   }
+
   static String? validCheckbox(String? value) {
     if (value == null || value.isEmpty) {
       return 'Ce champs est requis';
@@ -32,28 +35,49 @@ class TextFieldValidators {
 
   // Validation for a valid email
   static String? validEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Ce champs est requis';
+    if (value == null || value.trim().isEmpty) {
+      // Champ vide accepté
+      return null;
     }
-    // Regular expression to validate an email
+
+    // Expression régulière pour valider un email
     String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
     RegExp regex = RegExp(pattern);
-    if (!regex.hasMatch(value)) {
+
+    if (!regex.hasMatch(value.trim())) {
       return 'Veuillez entrer un email valide';
     }
+
+    return null; // Email valide
+  }
+
+  static String? strongPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Ce champ est requis';
+    }
+
+    if (value.length < 5) {
+      return 'Le code doit contenir au moin 5 caractères';
+    }
+
     return null;
   }
 
-  // Validation for a strong password
-  static String? strongPassword(String? value) {
+  static String? validatePhoneNumber({
+    String? value,
+    required BuildContext context,
+  }) {
     if (value == null || value.isEmpty) {
-      return 'Ce champs est requis';
+      return 'Ce chmaps est requis ';
     }
-    // Check if the password contains at least 5 letters and 1 digit
-    String pattern = r'^(?=(.*[A-Za-z]){5,})(?=.*\d).*$';
-    RegExp regex = RegExp(pattern);
-    if (!regex.hasMatch(value)) {
-      return 'Votre code doit conteneir au moins 8 caractères dont une lettre majuscule, un chiffre et un caractère specifique';
+    // // Regular expression to validate a phone number (e.g., +1234567890 or 123-456-7890)
+    // String pattern = r'^(?:\+?\d{1,3}[-.\s]?)?(?:\(?\d{1,4}\)?[-.\s]?)?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$';
+    // RegExp regex = RegExp(pattern);
+    // if (!regex.hasMatch(value)) {
+    //   return AppLocalizations.of(context)!.please_enter_a_valid_phone_number;
+    // }
+    if (!GetUtils.isPhoneNumber(value)) {
+      return 'Veuillez entrer un numéro de téléphone valide';
     }
     return null;
   }
