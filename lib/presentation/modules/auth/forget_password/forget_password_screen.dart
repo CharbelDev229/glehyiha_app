@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
+
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:glehiha/presentation/widgets/custom_button.dart';
 
@@ -53,7 +53,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               children: [
                 const SizedBox(height: 150),
                 Container(
-                  width: constraints.maxWidth,
+                  width: 392,
+                  height: 280,
                   constraints: BoxConstraints(
                     minHeight: constraints.maxHeight - 150,
                   ),
@@ -100,39 +101,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                           ),
                         ),
                         const SizedBox(height: 25),
-                        IntlPhoneField(
-                          controller: controller.numController,
-                          decoration: InputDecoration(
-                            labelText: 'Numéro',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 20,
-                            ),
-                          ),
-                          initialCountryCode: 'BJ',
-                          showDropdownIcon: false,
-                          disableLengthCheck: true,
-                          flagsButtonPadding: EdgeInsets.zero,
-                          showCountryFlag: true,
-                          invalidNumberMessage: 'Numéro invalide',
-                          style: TextStyle(fontSize: 14),
-                          dropdownTextStyle: TextStyle(fontSize: 14),
-                          initialValue: "+229",
-                          keyboardType: TextInputType.phone,
-                          onChanged: (phone) {
-                            controller.phoneNumber.value = phone.number;
-                          },
-                          validator: (value) {
-                            if (value == null || value.number.isEmpty) {
-                              return 'Ce champ est requis';
-                            }
-                            
-                            return null;
-                          },
-                        ),
+                      
                         const SizedBox(height: 30),
                         Obx(
                           () => CustomButton(

@@ -35,7 +35,7 @@ dependencies:
 
   flutter_svg: ^2.0.17
   get: ^4.6.6
-  intl_phone_field: ^3.2.0
+  #intl_phone_field: ^3.1.0
   dio: ^5.8.0+1
   shared_preferences: ^2.5.3
   intl: ^0.20.2
