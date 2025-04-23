@@ -1,20 +1,29 @@
-import 'package:glehiha/presentation/modules/auth/sign_in/sign_in_controller.dart';
-import 'package:glehiha/presentation/modules/auth/sign_up/sign_up_controller.dart';
-import 'package:glehiha/presentation/modules/chat/chat_screen.dart';
-import 'package:glehiha/presentation/modules/expert/expert_screen.dart';
-import 'package:glehiha/presentation/modules/market/market_screen.dart';
-import 'package:glehiha/presentation/modules/parameters/parameters_screen.dart';
-import 'package:glehiha/presentation/modules/photo/photo_screen.dart';
 
 import 'package:go_router/go_router.dart';
+import '../modules/auth/complement_encadreur/complement_encadreur_controller.dart';
+import '../modules/auth/complement_encadreur/complement_encadreur_screen.dart';
+import '../modules/auth/complement_vendeur/complement_vendeur_controller.dart';
+import '../modules/auth/complement_vendeur/complement_vendeur_screen.dart';
+import '../modules/auth/forget_password/forget_password_controller.dart';
+import '../modules/auth/forget_password/forget_password_screen.dart';
+import '../modules/auth/login/login_controller.dart';
+import '../modules/auth/login/login_screen.dart';
+import '../modules/auth/sign_in/sign_in_controller.dart';
+import '../modules/auth/sign_in/sign_in_screen.dart';
+import '../modules/auth/verificaton_code/verification_code_controller.dart';
+import '../modules/auth/verificaton_code/verification_code_screen.dart';
+import '../modules/chat/chat_screen.dart';
+import '../modules/expert/expert_screen.dart';
+import '../modules/market/market_screen.dart';
+import '../modules/onboarding/onboarding_screen.dart';
 import '../modules/onboarding/onboarding_screen_3.dart';
 import '../modules/onboarding/onboarding_screen_2.dart';
+import '../modules/parameters/parameters_screen.dart';
+import '../modules/photo/photo_screen.dart';
 import '../modules/welcome/welcome_screen.dart';
-import 'package:glehiha/presentation/modules/auth/sign_in/sign_in_screen.dart';
-import 'package:glehiha/presentation/modules/auth/sign_up/sign_up_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:glehiha/presentation/router/routes.dart';
-import 'package:glehiha/presentation/modules/onboarding/onboarding_screen.dart';
+
+import 'routes.dart';
 
 class AppRoute {
    static final GoRouter router = GoRouter(
@@ -78,7 +87,7 @@ class AppRoute {
         pageBuilder: (BuildContext context, GoRouterState state) {
         return CustomTransitionPage(
         key: state.pageKey,
-        transitionDuration: const Duration(milliseconds: 500), 
+        transitionDuration: const Duration(milliseconds: 500),
         child:  SignInScreen(
           controller: SignInController(),),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -87,14 +96,14 @@ class AppRoute {
           child: child,);},);},),
 
       GoRoute(
-       path: '/sign_up',
-       name: AppRoutesNames.signUp,
+       path: '/login',
+       name: AppRoutesNames.login,
        pageBuilder: (BuildContext context, GoRouterState state) {
        return CustomTransitionPage(
        key: state.pageKey,
        transitionDuration: const Duration(milliseconds: 500), 
-       child:  SignUpScreen(
-        controller: SignUpController(),
+       child:  LoginScreen(
+        controller: LoginController(),
        ),
        transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
@@ -168,13 +177,13 @@ class AppRoute {
 
 
      GoRoute(
-       path: '/complement_info_encadreur',
+       path: '/complement_encadreur',
        name: AppRoutesNames.encadreur,
        pageBuilder: (BuildContext context, GoRouterState state) {
        return CustomTransitionPage(
        key: state.pageKey,
        transitionDuration: const Duration(milliseconds: 500), 
-       child: const MarketScreen(),
+       child: ComplementEncadreurScreen(controller: ComplemenEncadreurController()),
        transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
@@ -182,13 +191,13 @@ class AppRoute {
 
 
        GoRoute(
-       path: '/complement_info_vendeur',
+       path: '/complement_vendeur',
        name: AppRoutesNames.vendeur,
        pageBuilder: (BuildContext context, GoRouterState state) {
        return CustomTransitionPage(
        key: state.pageKey,
        transitionDuration: const Duration(milliseconds: 500), 
-       child: const MarketScreen(),
+       child:  ComplementVendeurScreen(controller: ComplementVendeurController()),
        transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
@@ -201,11 +210,24 @@ class AppRoute {
        return CustomTransitionPage(
        key: state.pageKey,
        transitionDuration: const Duration(milliseconds: 500), 
-       child: const MarketScreen(),
+       child: VerificationCodeScreen(controller: VerificationCodeController()),
        transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
           child: child, );},);},),
+
+      GoRoute(
+        path: '/forget_password',
+        name: AppRoutesNames.forgetpassword,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            transitionDuration: const Duration(milliseconds: 500),
+            child: ForgetPasswordScreen(controller: ForgetPasswordController()),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child, );},);},),
 
 
 

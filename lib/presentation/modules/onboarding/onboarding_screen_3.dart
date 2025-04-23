@@ -48,7 +48,7 @@ class HomeScreen  extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w100,
+                        fontWeight: FontWeight.w400,
                         color: AppColors.white,
                       ),
                     ),
@@ -57,7 +57,7 @@ class HomeScreen  extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: Container(
-                      width: 300,
+                      width: 250,
                       padding: EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
@@ -72,7 +72,7 @@ class HomeScreen  extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.white,
                           fontSize: 16,
-                          fontWeight: FontWeight.w100,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
@@ -81,7 +81,7 @@ class HomeScreen  extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Container(
-                      width: 300,
+                      width: 250,
                       padding: EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
@@ -96,7 +96,7 @@ class HomeScreen  extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.white,
                           fontSize: 16,
-                          fontWeight: FontWeight.w100,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),

@@ -39,7 +39,8 @@ dependencies:
   dio: ^5.8.0+1
   shared_preferences: ^2.5.3
   intl: ^0.20.2
-  dartz: ^0.10.1
+  dartz: ^0.10.1  
+  geolocator: ^11.0.0
   
 
   # The following adds the Cupertino Icons font to your application.

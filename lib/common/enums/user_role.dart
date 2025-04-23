@@ -1,5 +1,11 @@
 enum UserRole {
   agriculteur,
   encadreur,
-  vendeur
+  vendeur,
+  expert,
+  admin;
+
+  String toJson() {
+    return name.toLowerCase();
+  }
 }

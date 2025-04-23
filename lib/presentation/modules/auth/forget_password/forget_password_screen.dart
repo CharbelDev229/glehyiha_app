@@ -1,0 +1,175 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:glehiha/common/constants/colors.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:glehiha/presentation/router/routes.dart';
+import 'package:glehiha/presentation/widgets/custom_button.dart';
+
+import 'package:glehiha/presentation/modules/auth/forget_password/forget_password_controller.dart';
+
+class ForgetPasswordScreen extends StatefulWidget {
+  const ForgetPasswordScreen({super.key, required this.controller});
+  final ForgetPasswordController controller;
+
+  @override
+  State<ForgetPasswordScreen> createState() => _ForgetPasswordScreenState();
+}
+
+class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
+  late ForgetPasswordController controller;
+  bool _autoValidate = false;
+
+ 
+ 
+  @override
+  void initState() {
+   controller = widget.controller;
+    super.initState();
+    
+  }
+  void _onSubmit() {
+    final isFormValid = controller.formKey.currentState!.validate();
+
+    if (isFormValid) {
+      context.pushNamed(
+        AppRoutesNames.code,
+      ); // ou context.pushNamed(...) si tu utilises go_router
+    } else {
+      setState(() {
+        _autoValidate = true;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.primaryGreen,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 150),
+                Container(
+                  width: constraints.maxWidth,
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight - 150,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                    vertical: 40.0,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(45),
+                      topRight: Radius.circular(45),
+                    ),
+                  ),
+                  child: Form(
+                    key: controller.formKey,
+                    autovalidateMode:
+                        _autoValidate
+                            ? AutovalidateMode.always
+                            : AutovalidateMode.disabled,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          width: 90,
+                          child: Divider(thickness: 2, color: AppColors.black),
+                        ),
+                        const SizedBox(height: 25),
+                        const Text(
+                          "Complétez vos informations",
+                          style: TextStyle(
+                            color: AppColors.black,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        const Text(
+                          "Veuillez entrer vos informations",
+                          style: TextStyle(
+                            color: AppColors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        IntlPhoneField(
+                          controller: controller.numController,
+                          decoration: InputDecoration(
+                            labelText: 'Numéro',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 16,
+                              horizontal: 20,
+                            ),
+                          ),
+                          initialCountryCode: 'BJ',
+                          showDropdownIcon: false,
+                          disableLengthCheck: true,
+                          flagsButtonPadding: EdgeInsets.zero,
+                          showCountryFlag: true,
+                          invalidNumberMessage: 'Numéro invalide',
+                          style: TextStyle(fontSize: 14),
+                          dropdownTextStyle: TextStyle(fontSize: 14),
+                          initialValue: "+229",
+                          keyboardType: TextInputType.phone,
+                          onChanged: (phone) {
+                            controller.phoneNumber.value = phone.number;
+                          },
+                          validator: (value) {
+                            if (value == null || value.number.isEmpty) {
+                              return 'Ce champ est requis';
+                            }
+                            
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        Obx(
+                          () => CustomButton(
+                            isLoading: controller.isLoading.value,
+                            backgroundColor: Color.fromARGB(255, 43, 131, 68),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            onPressed:
+                                controller.isLoading.value
+                                    ? null
+                                    : () {
+                                      _onSubmit();
+                                    },
+
+                            child:
+                                controller.isLoading.value
+                                    ? CircularProgressIndicator()
+                                    : const Text(
+                                      "Valider",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

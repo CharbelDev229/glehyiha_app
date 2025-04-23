@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:glehiha/presentation/widgets/background_decoration/background_decoration.dart';
-
 import 'package:glehiha/common/constants/assets/logo_assets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,7 +15,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 10), () {
+    Future.delayed(Duration(seconds: 3), () {
       // Code à exécuter après 2 secondes
 
        context.pushNamed(AppRoutesNames.home);
@@ -41,7 +40,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             children: [
               Image.asset(
                 LogoAssets.frame1,
-                height: 96,
+      height: 96,
                 width: 203,
                 fit: BoxFit.contain,
               ),
@@ -52,7 +51,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   LogoAssets.frame2,
                   height: 22,
                   width: 168,
-                  fit: BoxFit.contain,
+fit: BoxFit.contain,
                 ),
               ),
             ],

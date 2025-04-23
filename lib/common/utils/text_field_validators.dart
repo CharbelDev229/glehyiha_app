@@ -8,6 +8,14 @@ class TextFieldValidators {
     }
     return null;
   }
+
+  static String? validSexe(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Veuillez sélectionner votre sexe';
+    }
+    return null;
+  }
+
    // Validation for a required field
   static String? validConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
@@ -45,7 +53,7 @@ class TextFieldValidators {
     String pattern = r'^(?=(.*[A-Za-z]){5,})(?=.*\d).*$';
     RegExp regex = RegExp(pattern);
     if (!regex.hasMatch(value)) {
-      return 'Ce champs est requis';
+      return 'Votre code doit conteneir au moins 8 caractères dont une lettre majuscule, un chiffre et un caractère specifique';
     }
     return null;
   }

@@ -38,13 +38,13 @@ class OnboardingScreen extends StatelessWidget {
              softWrap: true,
              style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w100,
+              fontWeight: FontWeight.w400,
               color: AppColors.white),),
               SizedBox(height: 10,),
                Align(
                     alignment: Alignment.centerRight,
                     child: Container(
-                      width: 300,
+                      width: 280,
                       padding: EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
@@ -59,7 +59,7 @@ class OnboardingScreen extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.white,
                           fontSize: 10,
-                          fontWeight: FontWeight.w100,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
@@ -69,7 +69,7 @@ class OnboardingScreen extends StatelessWidget {
                    Align(
                     alignment: Alignment.centerLeft,
                     child: Container(
-                      width: 300,
+                      width: 280,
                       padding: EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
@@ -80,11 +80,11 @@ class OnboardingScreen extends StatelessWidget {
                       ),
                       child: Text(
                         'Trouvez les meilleurs fournisseurs dintrants agricoles',
-                        maxLines: 2,
+                        maxLines: 3,
                         style: TextStyle(
                           color: AppColors.white,
                           fontSize: 16,
-                          fontWeight: FontWeight.w100,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
@@ -94,7 +94,7 @@ class OnboardingScreen extends StatelessWidget {
                    Align(
                     alignment: Alignment.centerRight,
                     child: Container(
-                      width: 300,
+                      width: 280,
                       padding: EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
@@ -109,7 +109,7 @@ class OnboardingScreen extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.white,
                           fontSize: 16,
-                          fontWeight: FontWeight.w100,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),

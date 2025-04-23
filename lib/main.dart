@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         routerConfig: AppRoute.router,
-        title: 'Glehiha App',
+        title: 'Glehyiha App',
         theme: ThemeData(
           primarySwatch: AppColors.green,
           visualDensity: VisualDensity.adaptivePlatformDensity,

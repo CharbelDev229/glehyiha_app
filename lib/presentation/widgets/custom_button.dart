@@ -49,19 +49,19 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // width: width,
-      // height: height,
+       width: 317,
+       height: 51,
       // constraints: const BoxConstraints(maxWidth: 430),
       decoration: BoxDecoration(
         // shape: shape == CircleBorder() ? BoxShape.circle : BoxShape.rectangle,
-        // color: isLoading
+         color: backgroundColor,
         //     ? AppColors.secondaryColor
         //     : backgroundColor ?? Theme.of(context).primaryColor,
         // borderRadius: shape == null ? borderRadius : null,
         //   boxShadow: shadow,
           border: border,
           gradient: gradient,
-        borderRadius: borderRadius
+        borderRadius: BorderRadius.circular(10),
         // border: hasBorder ? Border.all(color: borderColor, width: borderWidth) : null
       ),
       child: ElevatedButton(

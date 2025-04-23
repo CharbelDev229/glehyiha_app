@@ -22,7 +22,7 @@ class SplashScreen extends StatelessWidget {
                 child: Image.asset(
                   Assets.femme,
                   width: double.infinity,
-                  height: 380,
+                  height: 360,
                   fit: BoxFit.cover,
                
                 ),
@@ -59,7 +59,7 @@ class SplashScreen extends StatelessWidget {
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.w100,
+                          fontWeight: FontWeight.w400,
                           color: AppColors.white,
                         ),
                       ),
@@ -74,10 +74,11 @@ class SplashScreen extends StatelessWidget {
                       height: 100,
                     ),
                   ),
+                  SizedBox(height: 7,),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Container(
-                      width: 300,
+                      width: 280,
                       padding:  EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,

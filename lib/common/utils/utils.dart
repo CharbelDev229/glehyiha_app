@@ -1,7 +1,6 @@
 
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';

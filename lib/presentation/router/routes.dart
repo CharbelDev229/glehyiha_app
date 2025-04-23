@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 class AppRoutesNames {
   static const welcome = 'welcome';
-  static const signUp = 'sign_up';
+  static const login = 'login';
   static const signIn = 'sign_in';
   static const expert = 'expert';
   static const parameters = 'parameters';
@@ -15,9 +15,12 @@ class AppRoutesNames {
   static const chat = 'chat';
   static const splash = 'splash';
   static const onboarding = 'onboarding';
-  static const encadreur = 'complement_info_encadreur';
-  static const vendeur = 'complement_info_vendeur';
+  static const encadreur = 'complement_encadreur';
+  static const vendeur = 'complement_vendeur';
   static const code = 'verification_code';
+  static const forgetpassword = 'forget_password';
+  
+  
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
