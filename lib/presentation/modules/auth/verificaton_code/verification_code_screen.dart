@@ -80,7 +80,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                           child: Divider(thickness: 2, color: AppColors.black),
                         ),
                         const SizedBox(height: 25),
-                        const Text(
+                        Text(
                           "Complétez vos informations",
                           style: TextStyle(
                             color: AppColors.black,

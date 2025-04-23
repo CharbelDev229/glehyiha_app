@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:glehiha/common/constants/colors.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -30,19 +29,6 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isPhoneField) {
-      return IntlPhoneField(
-        controller: controller,
-        cursorColor: AppColors.black,
-        dropdownDecoration: const BoxDecoration(border: Border()),
-        decoration: _buildInputDecoration(),
-        initialCountryCode: 'BJ',
-        onChanged: (phone) {
-          print(phone.runtimeType);
-      
-        },
-      );
-    }
 
     return TextFormField(
       controller: controller,

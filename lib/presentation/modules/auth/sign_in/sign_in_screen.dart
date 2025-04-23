@@ -1,16 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:glehiha/common/constants/colors.dart';
-import 'package:glehiha/presentation/router/routes.dart';
-import 'package:glehiha/presentation/widgets/custom_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get/get.dart';
-import 'package:glehiha/presentation/modules/auth/sign_in/sign_in_controller.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:glehiha/common/enums/user_role.dart';
-import 'package:glehiha/common/utils/text_field_validators.dart';
-import 'package:glehiha/presentation/widgets/custom_text_form_field/custom_text_form_field.dart';
 
+
+import '../../../../common/constants/colors.dart';
+import '../../../../common/enums/user_role.dart';
+import '../../../../common/utils/text_field_validators.dart';
+import '../../../router/routes.dart';
+import '../../../widgets/custom_button.dart';
+import '../../../widgets/custom_text_form_field/custom_text_form_field.dart';
+import 'sign_in_controller.dart';
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key, required this.controller});
   final SignInController controller;
@@ -152,40 +152,40 @@ class _SignInScreenState extends State<SignInScreen> {
                             const SizedBox(height: 20),
 
                             // Phone Field
-                            IntlPhoneField(
-                              controller: controller.numController,
-                              decoration: InputDecoration(
-                                labelText: 'Numéro',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                contentPadding: EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 20,
-                                ),
-                              ),
-                              initialCountryCode: 'BJ',
-                              showDropdownIcon: false,
-                              disableLengthCheck: true,
-                              flagsButtonPadding: EdgeInsets.zero,
-                              showCountryFlag: true,
-                              invalidNumberMessage: 'Numéro invalide',
-                              style: TextStyle(fontSize: 14),
-                              dropdownTextStyle: TextStyle(fontSize: 14),
-                              initialValue: "+229",
-                              keyboardType: TextInputType.phone,
-                              onChanged: (phone) {
-                                controller.phoneNumber.value = phone.number;
-                              },
-                              validator: (value) {
-                                if (value == null || value.number.isEmpty) {
-                                  return 'Ce champ est requis';
-                                }
+                            // IntlPhoneField(
+                            //   controller: controller.numController,
+                            //   decoration: InputDecoration(
+                            //     labelText: 'Numéro',
+                            //     border: OutlineInputBorder(
+                            //       borderRadius: BorderRadius.circular(4),
+                            //     ),
+                            //     contentPadding: EdgeInsets.symmetric(
+                            //       vertical: 16,
+                            //       horizontal: 20,
+                            //     ),
+                            //   ),
+                            //   initialCountryCode: 'BJ',
+                            //   showDropdownIcon: false,
+                            //   disableLengthCheck: true,
+                            //   flagsButtonPadding: EdgeInsets.zero,
+                            //   showCountryFlag: true,
+                            //   invalidNumberMessage: 'Numéro invalide',
+                            //   style: TextStyle(fontSize: 14),
+                            //   dropdownTextStyle: TextStyle(fontSize: 14),
+                            //   initialValue: "+229",
+                            //   keyboardType: TextInputType.phone,
+                            //   onChanged: (phone) {
+                            //     controller.phoneNumber.value = phone.number;
+                            //   },
+                            //   validator: (value) {
+                            //     if (value == null || value.number.isEmpty) {
+                            //       return 'Ce champ est requis';
+                            //     }
                                 
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
+                            //     return null;
+                            //   },
+                            // ),
+                            // const SizedBox(height: 20),
 
                             // Role Dropdown
                             Container(
@@ -246,8 +246,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             const SizedBox(height: 20),
 
                             // Email Field
-                            Obx(() {
-                              return CustomTextFormField(
+                             CustomTextFormField(
                                 controller: controller.emailController,
                                 validator: TextFieldValidators.validEmail,
                                 maxLines: 1,
@@ -257,13 +256,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                   Icons.email,
                                   color: AppColors.black,
                                 ),
-                              );
-                            }),
+                              ),
+                            
                             const SizedBox(height: 20),
 
                             // Password Field
-                            Obx(() {
-                              return CustomTextFormField(
+                            CustomTextFormField(
                                 controller: controller.passwordController,
                                 validator: TextFieldValidators.strongPassword,
                                 labelText: "Mot de passe",
@@ -286,13 +284,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                     );
                                   }),
                                 ),
-                              );
-                            }),
+                              ),
+                            
                             const SizedBox(height: 20),
 
                             // Confirm Password Field
-                            Obx(() {
-                              return CustomTextFormField(
+                            CustomTextFormField(
                                 controller: controller.confirmPasswordController,
                                 validator: TextFieldValidators.strongPassword,
                                 labelText: "Confirmez mot de passe",
@@ -315,22 +312,22 @@ class _SignInScreenState extends State<SignInScreen> {
                                     );
                                   }),
                                 ),
-                              );
-                            }),
+                              ),
+                      
                             const SizedBox(height: 25),
 
                             // Terms Checkbox
                             Row(
                               children: [
-                                Obx(() {
-                                  return Checkbox(
+                                Obx(() 
+                                  => Checkbox(
                                     value: controller.isChecked.value,
                                     onChanged: (newValue) {
                                       controller.isChecked.value = newValue!;
                                     },
                                     activeColor: AppColors.primaryGreen,
-                                  );
-                                }),
+                                  ),
+                                ),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -365,8 +362,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             const SizedBox(height: 20),
 
                             // Submit Button
-                            Obx(() {
-                              return CustomButton(
+                            Obx(() =>
+                               CustomButton(
                                 isLoading: controller.isLoading.value,
                                 backgroundColor: Color.fromARGB(
                                   255,
@@ -395,8 +392,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                             color: Colors.white,
                                           ),
                                         ),
-                              );
-                            }),
+                              ),
+                            ),
 
                             const SizedBox(height: 20),
 

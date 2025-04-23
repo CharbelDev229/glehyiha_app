@@ -54,7 +54,8 @@ class _ComplementEncadreurScreenState extends State<ComplementEncadreurScreen> {
               children: [
                 const SizedBox(height: 150),
                 Container(
-                  width: constraints.maxWidth,
+                  width: 392,
+                  height: 280,
                   constraints: BoxConstraints(
                     minHeight: constraints.maxHeight - 150,
                   ),
