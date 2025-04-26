@@ -1,146 +1,140 @@
 import 'package:flutter/material.dart';
+import 'package:glehiha/common/constants/assets/assets.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:go_router/go_router.dart';
-import 'package:glehiha/common/constants/assets/assets.dart';
+import 'package:glehiha/presentation/widgets/gradient_background/gradient_background.dart';
+import 'package:glehiha/presentation/widgets/side_by_side_images/side_by_side_images.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+import '../../../common/utils/utils.dart';
+import '../../widgets/button/custom_button_with_icon.dart.dart';
+
+class OnboardingScreen3 extends StatelessWidget {
+  const OnboardingScreen3({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.primaryGreen,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(70),
-              ),
-              child: Image.asset(
-                Assets.images,
-                width: double.infinity,
-                height: 400,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    'Obtenez des conseils agricoles personnalisés,',
+    return GradientBackgroundScreen(
+      child: Scaffold(
+        backgroundColor: AppColors.transparent,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ImageRowWidget(imagePath1: Assets.shop, imagePath2: Assets.aa),
+                const SizedBox(height: 20),
+                Flexible(
+                  child: const Text(
+                    "Trouver tout ce dont vous avez besoin pour votre exploitation",
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 28,
+                    softWrap: true,
+                    style: TextStyle(
+                      fontSize: 32,
                       fontWeight: FontWeight.w600,
                       color: AppColors.white,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Optimisez votre production agricole avec notre assistant intelligent',
+                ),
+
+                Flexible(
+                  child: const Text(
+                    "Engrais, semences, pesticides... Achetez en toute sécurité ou vendez vos produits",
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    softWrap: true,
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
                       color: AppColors.white,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      width: 250,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 94, 104, 77),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        'Identifiez les maladies des plantes en un clic ',
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: AppColors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
+                ),
+                const SizedBox(height: 25),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: Utils.deviceW(context) * 0.6,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 94, 104, 77),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Vendez vos récoltes et produits agricoles',
+                      maxLines: 2,
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      width: 250,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 94, 104, 77),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        'Posez vos question à notre chatbot intelligent ',
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: AppColors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
+                ),
+                const SizedBox(height: 25),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    width: Utils.deviceW(context) * 0.6,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 94, 104, 77),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'Trouvez les meilleurs fournisseurs d’intrants agricoles',
+                      maxLines: 3,
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  ElevatedButton(
-                    onPressed: () => context.pushNamed(AppRoutesNames.splash),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 15,
+                ),
+                const SizedBox(height: 25),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: Utils.deviceW(context) * 0.6,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 94, 104, 77),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'Commandez en quelques clics',
+                      maxLines: 2,
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Suivant',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primaryGreen,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.primaryGreen,
-                          ),
-                          child: const Icon(
-                            Icons.arrow_forward_ios,
-                            color: AppColors.white,
-                            size: 16,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 25),
+                Center(
+                  child: CustomButtonWithIcon(
+                    text: 'Commencer',
+                    onPressed: () => context.pushNamed(AppRoutesNames.signUp),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

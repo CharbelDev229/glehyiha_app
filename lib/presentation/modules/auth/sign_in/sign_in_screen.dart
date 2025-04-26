@@ -1,17 +1,18 @@
-import 'package:flutter/gestures.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:glehiha/common/utils/utils.dart';
+import 'package:glehiha/common/constants/colors.dart';
+import 'package:glehiha/presentation/router/routes.dart';
+import 'package:glehiha/presentation/widgets/background_decoration/background_deco.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:get/get.dart';
+import 'package:glehiha/presentation/modules/auth/sign_in/sign_in_controller.dart';
 
-import '../../../../common/constants/colors.dart';
-import '../../../../common/enums/user_role.dart';
-import '../../../../common/utils/text_field_validators.dart';
-import '../../../router/routes.dart';
-import '../../../widgets/custom_button.dart';
-import '../../../widgets/custom_text_form_field/custom_text_form_field.dart';
-import 'sign_in_controller.dart';
-import 'package:country_code_picker/country_code_picker.dart';
+import 'package:glehiha/common/utils/text_field_validators.dart';
+import 'package:glehiha/presentation/widgets/custom_text_form_field/custom_text_form_field.dart';
+
+import '../../../../common/utils/utils.dart';
+import '../../../widgets/button/custom_button.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key, required this.controller});
@@ -23,6 +24,7 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   late SignInController controller;
+  bool _autoValidate = false;
 
   @override
   void initState() {
@@ -30,28 +32,34 @@ class _SignInScreenState extends State<SignInScreen> {
     super.initState();
   }
 
-  void _onSubmit() {
+  void _onsubmit() {
     final isFormValid = controller.formKey.currentState!.validate();
-    final isCheckboxChecked = controller.isChecked.value;
+    setState(() {
+      _autoValidate = true;
+    });
 
-    if (isFormValid && isCheckboxChecked) {
+    if (isFormValid) {
+      // Redirection si tout est OK
       context.pushNamed(AppRoutesNames.code);
     } else {
-      controller.autoValidate.value = true;
+      setState(() {
+        _autoValidate = true; // Pour déclencher l'affichage des erreurs
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+  return SafeArea(
+    child: BackgroundDeco(
       child: Scaffold(
-        backgroundColor: AppColors.primaryGreen,
+        backgroundColor: AppColors.transparent,
         body: LayoutBuilder(
           builder: (context, constraints) {
             return Obx(
               () => Column(
                 children: [
-                  SizedBox(height: Utils.deviceH(context) * 0.15),
+                  SizedBox(height: Utils.deviceH(context) * 0.33),
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -70,55 +78,47 @@ class _SignInScreenState extends State<SignInScreen> {
                           horizontal: 10.0,
                           vertical: 10.0,
                         ),
-                        child: Form(
-                          key: controller.formKey,
-                          autovalidateMode:
-                              controller.autoValidate.value
-                                  ? AutovalidateMode.always
-                                  : AutovalidateMode.disabled,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const SizedBox(
-                                width: 90,
-                                child: Divider(
-                                  thickness: 2,
-                                  color: AppColors.black,
-                                ),
+                      child: Form(
+                        key: controller.formKey,
+                        autovalidateMode:
+                            _autoValidate
+                                ? AutovalidateMode.always
+                                : AutovalidateMode.disabled,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 90,
+                              child: Divider(
+                                thickness: 2,
+                                color: AppColors.black,
                               ),
-                              const SizedBox(height: 25),
-                              const Text(
-                                "Inscription",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            ),
+                            const SizedBox(height: 25),
+                             Text(
+                              "Connexion",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.black,
+                                fontSize: 32,
+                                fontWeight: FontWeight.w600,
                               ),
-                              const SizedBox(height: 5),
-                              const Text(
-                                "Veuillez entrer vos informations",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                            ),
+                            const SizedBox(height: 5),
+                            const Text(
+                              "Veuillez entrer vos identifiants",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
                               ),
-                              const SizedBox(height: 25),
+                            ),
+                            const SizedBox(height: 25),
 
-                              CustomTextFormField(
-                                controller: controller.nomController,
-                                validator: TextFieldValidators.required,
-                                labelText: "Nom",
-                                suffixIcon: const Icon(
-                                  Icons.person,
-                                  color: AppColors.black,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              CustomTextFormField(
+                            // Phone Field
+                     
+                           CustomTextFormField(
                                 controller: controller.phoneNumberController,
                                 keyboardType: TextInputType.phone,
                                 labelText: 'Numéro de téléphone',
@@ -153,255 +153,129 @@ class _SignInScreenState extends State<SignInScreen> {
                                 ),
                               ),
 
-                              const SizedBox(height: 20),
-                              CustomTextFormField(
-                                controller: controller.prenomController,
-                                validator: TextFieldValidators.required,
-                                labelText: "Prénom",
-                                suffixIcon: const Icon(
-                                  Icons.person,
-                                  color: AppColors.black,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-
-                              DropdownButtonFormField<UserRole>(
-                                dropdownColor: AppColors.white,
-                                value: controller.selectedRole.value,
-                                decoration: InputDecoration(
-                                  labelText: "Sélectionnez un rôle",
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: const BorderSide(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: const BorderSide(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 16,
-                                  ),
-                                ),
-                                isExpanded: true,
-                                onChanged: (newValue) {
-                                  if (newValue != null) {
-                                    controller.selectedRole.value = newValue;
-                                  }
-                                },
-                                items:
-                                    UserRole.values.map((role) {
-                                      return DropdownMenuItem<UserRole>(
-                                        value: role,
-                                        child: Text(
-                                          role.name,
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                      );
-                                    }).toList(),
-                              ),
-
-                              const SizedBox(height: 20),
-
-                              // CustomTextFormField(
-                              //   controller: controller.addressController,
-                              //   validator: TextFieldValidators.required,
-                              //   labelText: "Adresse",
-                              //   suffixIcon: const Icon(
-                              //     Icons.location_on,
-                              //     color: AppColors.black,
-                              //   ),
-                              // ),
-                              // const SizedBox(height: 20),
-                              CustomTextFormField(
-                                controller: controller.emailController,
-                                validator: TextFieldValidators.validEmail,
-                                labelText: "Email",
-                                keyboardType: TextInputType.emailAddress,
-                                suffixIcon: const Icon(
-                                  Icons.email,
-                                  color: AppColors.black,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-
-                              Obx(
-                                () => CustomTextFormField(
-                                  controller: controller.passwordController,
-                                  validator: TextFieldValidators.strongPassword,
-                                  labelText: "Mot de passe",
-                                  obscureText:
-                                      !controller.isPasswordVisible.value,
-                                  suffixIcon: IconButton(
-                                    onPressed:
-                                        () =>
-                                            controller.isPasswordVisible
-                                                .toggle(),
-                                    icon: Icon(
+                                const SizedBox(height: 20),
+                            // Password Field
+                            CustomTextFormField(
+                                controller: controller.passwordController,
+                                validator: TextFieldValidators.strongPassword,
+                                labelText: "Mot de passe",
+                                obscureText:
+                                    !controller.isPasswordVisible.value,
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    controller.isPasswordVisible.value =
+                                        !controller.isPasswordVisible.value;
+                                  },
+                                  icon: Obx(() {
+                                    return Icon(
+                                      color:
+                                          controller.isPasswordVisible.value
+                                              ? Colors.black
+                                              : const Color(0XFF7C7C7C),
                                       controller.isPasswordVisible.value
                                           ? Icons.visibility
                                           : Icons.visibility_off,
-                                      color: AppColors.black,
-                                    ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            
+                            const SizedBox(height: 8),
+
+                            // Forgot Password
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () {
+                                  context.pushNamed(
+                                    AppRoutesNames.forgetpassword,
+                                  );
+                                },
+                                child: const Text(
+                                  "Mot de passe oublié?",
+                                  style: TextStyle(
+                                    color: AppColors.primaryGreen,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                            ),
+                            const SizedBox(height: 5),
 
-                              Obx(
-                                () => CustomTextFormField(
-                                  controller:
-                                      controller.confirmPasswordController,
-                                  validator: (value) {
-                                    if (value !=
-                                        controller.passwordController.text) {
-                                      return "Les mots de passe ne correspondent pas";
-                                    }
-                                    return null;
-                                  },
-                                  labelText: "Confirmez mot de passe",
-                                  obscureText:
-                                      !controller
-                                          .isConfirmPasswordVisible
-                                          .value,
-                                  suffixIcon: IconButton(
-                                    onPressed:
-                                        () =>
-                                            controller.isConfirmPasswordVisible
-                                                .toggle(),
-                                    icon: Icon(
-                                      controller.isConfirmPasswordVisible.value
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: AppColors.black,
-                                    ),
-                                  ),
+                            // Submit Button
+                            Obx(() =>
+                               CustomButton(
+                                isLoading: controller.loginInLoading.value,
+                                backgroundColor: Color.fromARGB(
+                                  255,
+                                  43,
+                                  131,
+                                  68,
                                 ),
-                              ),
-                              const SizedBox(height: 25),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                onPressed:
+                                    controller.loginInLoading.value
+                                        ? null
+                                        : () {
+                                          _onsubmit();
+                                        },
 
-                              Row(
-                                children: [
-                                  Obx(
-                                    () => Checkbox(
-                                      value: controller.isChecked.value,
-                                      onChanged: (newValue) {
-                                        controller.isChecked.value = newValue!;
-                                      },
-                                      activeColor: AppColors.primaryGreen,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          "Je suis d’accord avec les termes et conditions d’utilisation",
+                                child:
+                                    controller.loginInLoading.value
+                                        ? CircularProgressIndicator()
+                                        : const Text(
+                                          "Valider",
                                           style: TextStyle(
-                                            color: AppColors.textPrimary,
-                                            fontSize: 16,
+                                            fontSize: 20,
+                                            color: Colors.white,
                                           ),
                                         ),
-                                        if (controller.autoValidate.value &&
-                                            !controller.isChecked.value)
-                                          const Padding(
-                                            padding: EdgeInsets.only(top: 4.0),
-                                            child: Text(
-                                              'Vous devez accepter les conditions',
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
                               ),
-                              const SizedBox(height: 20),
+                            ),
 
-                              Obx(
-                                () => CustomButton(
-                                  isLoading: controller.isLoading.value,
-                                  backgroundColor: const Color.fromARGB(
-                                    255,
-                                    43,
-                                    131,
-                                    68,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 15,
-                                  ),
-                                  onPressed:
-                                      controller.isLoading.value
-                                          ? null
-                                          : _onSubmit,
-                                  child:
-                                      controller.isLoading.value
-                                          ? const CircularProgressIndicator()
-                                          : const Text(
-                                            "Valider",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                            const SizedBox(height: 20),
+
+                            // Bouton "Inscrivez-vous"
+                            Obx(
+                              () => CustomButton(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                onPressed:
+                                    controller.loginInLoading.value
+                                        ? null
+                                        : (){context.pushNamed(AppRoutesNames.signUp);},
+                                child:
+                                    controller.loginInLoading.value
+                                        ? CircularProgressIndicator()
+                                        : const Text(
+                                          "Inscrivez-vous",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.green,
+                                          ),
+                                        ),
                               ),
+                            ),
 
-                              const SizedBox(height: 20),
-
-                              RichText(
-                                text: TextSpan(
-                                  style: const TextStyle(fontSize: 16),
-                                  children: <TextSpan>[
-                                    const TextSpan(
-                                      text: "Vous avez déjà un compte? ",
-                                      style: TextStyle(
-                                        color: AppColors.black,
-                                        fontWeight: FontWeight.w300,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: "Connectez-vous",
-                                      style: const TextStyle(
-                                        color: AppColors.primaryGreen,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w300,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      recognizer:
-                                          TapGestureRecognizer()
-                                            ..onTap = () {
-                                              context.pushNamed(
-                                                AppRoutesNames.login,
-                                              );
-                                            },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                            const SizedBox(height: 30),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
-            );
+                ),
+              ],
+             ) );
           },
         ),
       ),
-    );
+  ));
   }
 }

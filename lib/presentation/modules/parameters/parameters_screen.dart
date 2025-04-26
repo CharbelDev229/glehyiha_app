@@ -14,12 +14,15 @@ class ParametersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primaryGreen,
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+        body: SingleChildScrollView(
+        child: Column(
+      children: [
+         Padding(
+              padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: 30),
+            SizedBox(height: 25),
             RichText(
               text: TextSpan(
                 children: [
@@ -45,7 +48,7 @@ class ParametersScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 5),
             GestureDetector(
               onTap: (){
                 GoRouter.of(context).pushNamed(AppRoutesNames.chat);
@@ -200,6 +203,6 @@ class ParametersScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+         ]) ));
   }
 }

@@ -18,7 +18,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Future.delayed(Duration(seconds: 3), () {
       // Code à exécuter après 2 secondes
 
-       context.pushNamed(AppRoutesNames.home);
+       context.pushNamed(AppRoutesNames.onboarding1);
     });
 
     super.initState();

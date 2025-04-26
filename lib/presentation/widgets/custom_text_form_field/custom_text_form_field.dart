@@ -26,7 +26,7 @@ class CustomTextFormField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon, // ✅ Ajouté
     this.validator,
-    this.isPhoneField = false,
+    this.isPhoneField = false, 
   });
 
   @override

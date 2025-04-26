@@ -52,7 +52,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         items: [
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/images/chat/chat.png',
+              'assets/images/chat.png',
               width: 35,
               height: 20,
             ),
@@ -60,7 +60,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/images/contact/contact.png',
+              'assets/images/contact.png',
               width: 35,
               height: 20,
             ),
@@ -68,7 +68,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/images/camera/camera.png',
+              'assets/images/camera.png',
               width: 35,
               height: 20,
             ),
@@ -76,7 +76,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/images/store/store.png',
+              'assets/images/store.png',
               width: 35,
               height: 20,
             ),

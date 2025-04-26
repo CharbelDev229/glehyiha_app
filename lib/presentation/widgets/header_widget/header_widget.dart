@@ -16,7 +16,7 @@ class HeaderWidget extends StatelessWidget {
             height: 22,
           ),
           Image.asset(
-            "assets/images/account/account.png",
+            "assets/images/account.png",
             width: 66,
             height: 58,
           ),

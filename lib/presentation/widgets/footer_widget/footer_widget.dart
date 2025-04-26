@@ -34,7 +34,7 @@ class _FooterWidgetState extends State<FooterWidget> {
       child: Row(
         children: [
           Image.asset(
-            "assets/images/camera1/camera1.png",
+            "assets/images/camera1.png",
             width: 37,
             height: 43,
           ),

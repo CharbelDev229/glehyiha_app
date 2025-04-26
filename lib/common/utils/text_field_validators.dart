@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/get_utils/get_utils.dart';
-import 'package:glehiha/presentation/router/routes.dart';
+
 
 class TextFieldValidators {
   // Validation for a required field
@@ -10,7 +10,17 @@ class TextFieldValidators {
     }
     return null;
   }
+ static String? requiredForRule(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Ce champs est requis pour le role que vous avez choisi';
+    }String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+    RegExp regex = RegExp(pattern);
 
+    if (!regex.hasMatch(value.trim())) {
+      return 'Veuillez entrer un email valide';
+    }
+    return null;
+  }
   static String? validSexe(String? value) {
     if (value == null || value.isEmpty) {
       return 'Veuillez sélectionner votre sexe';
@@ -35,6 +45,10 @@ class TextFieldValidators {
 
   // Validation for a valid email
   static String? validEmail(String? value) {
+
+
+
+    
     if (value == null || value.trim().isEmpty) {
       // Champ vide accepté
       return null;
@@ -58,6 +72,17 @@ class TextFieldValidators {
 
     if (value.length < 5) {
       return 'Le code doit contenir au moin 5 caractères';
+    }
+
+    return null;
+  }
+  static String? code(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Ce champ est requis';
+    }
+
+    if (value.length < 6) {
+      return 'Le code doit contenir au moin 6 chiffres';
     }
 
     return null;

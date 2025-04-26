@@ -64,4 +64,3 @@ class DataControls {
         'order': order,
       };
 }
-

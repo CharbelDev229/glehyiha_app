@@ -1,5 +1,15 @@
+import 'package:get/get.dart';
+
+import '../../presentation/service/app/app_service.dart';
+
 class DiServices {
   static dependencies() async {
-    /// App
+   Get.lazyPut(
+      () => AppService(
+       
+      ),
+    );
+
+   
   }
 }

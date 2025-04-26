@@ -1,11 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:glehiha/presentation/router/routes.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' as g;
-import 'package:go_router/go_router.dart';
-import '../../presentation/router/go_router.dart';
 import '../../presentation/service/app/app_service.dart';
 import '../constants/instances.dart';
 import 'package:http/http.dart' as http;

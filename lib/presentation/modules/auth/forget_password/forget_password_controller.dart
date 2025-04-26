@@ -8,10 +8,12 @@ class ForgetPasswordController extends GetxController {
 final formKey = GlobalKey<FormState>();
 
  
-  TextEditingController numController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
 
 
    RxString phoneNumber = ''.obs;
+    RxString selectedCountryCode = '+229'.obs;
+     RxBool autoValidate = false.obs;
  
   RxBool isLoading = false.obs;
 

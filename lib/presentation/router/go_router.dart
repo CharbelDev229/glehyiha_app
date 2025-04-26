@@ -1,22 +1,19 @@
 
-import 'package:go_router/go_router.dart';
-import '../modules/auth/complement_encadreur/complement_encadreur_controller.dart';
-import '../modules/auth/complement_encadreur/complement_encadreur_screen.dart';
-import '../modules/auth/complement_vendeur/complement_vendeur_controller.dart';
-import '../modules/auth/complement_vendeur/complement_vendeur_screen.dart';
-import '../modules/auth/forget_password/forget_password_controller.dart';
+import 'package:get/get.dart';
+import 'package:glehiha/domain/usescases/auth/sign_up.dart';
+import 'package:go_router/go_router.dart';import '../modules/auth/forget_password/forget_password_controller.dart';
 import '../modules/auth/forget_password/forget_password_screen.dart';
-import '../modules/auth/login/login_controller.dart';
-import '../modules/auth/login/login_screen.dart';
 import '../modules/auth/sign_in/sign_in_controller.dart';
 import '../modules/auth/sign_in/sign_in_screen.dart';
-import '../modules/auth/verificaton_code/verification_code_controller.dart';
-import '../modules/auth/verificaton_code/verification_code_screen.dart';
+import '../modules/auth/sign_up/sign_up_controller.dart';
+import '../modules/auth/sign_up/sign_up_screen.dart';
+import '../modules/auth/verification_code/verification_code_controller.dart';
+import '../modules/auth/verification_code/verification_code_screen.dart';
 import '../modules/chat/chat_screen.dart';
 import '../modules/expert/expert_screen.dart';
 import '../modules/market/market_screen.dart';
-import '../modules/onboarding/onboarding_screen.dart';
 import '../modules/onboarding/onboarding_screen_3.dart';
+import '../modules/onboarding/onboarding_screen_1.dart';
 import '../modules/onboarding/onboarding_screen_2.dart';
 import '../modules/parameters/parameters_screen.dart';
 import '../modules/photo/photo_screen.dart';
@@ -43,68 +40,67 @@ class AppRoute {
           child: child,); }, );},),
 
       GoRoute(
-        path: '/home',
-        name: AppRoutesNames.home,
+        path: '/onboarding1',
+        name: AppRoutesNames.onboarding1,
         pageBuilder: (BuildContext context, GoRouterState state) {
         return CustomTransitionPage(
         key: state.pageKey,
         transitionDuration: const Duration(milliseconds: 500), 
-        child: const HomeScreen(),
+        child:  OnboardingScreen1(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
           child: child, ); }, );},),
 
       GoRoute(
-       path: '/splash',
-       name: AppRoutesNames.splash,
+       path: '/onboarding2',
+       name: AppRoutesNames.onboarding2,
        pageBuilder: (BuildContext context, GoRouterState state) {
        return CustomTransitionPage(
        key: state.pageKey,
        transitionDuration: const Duration(milliseconds: 500), 
-       child: const SplashScreen(),
+       child: OnboardingScreen2(),
        transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
           child: child,); },); },),
 
        GoRoute(
-        path: '/onboarding',
-        name: 'onboarding',
+        path: '/onboarding3',
+        name: AppRoutesNames.onboarding3,
        pageBuilder: (BuildContext context, GoRouterState state) {
         return CustomTransitionPage(
         key: state.pageKey,
-       transitionDuration: const Duration(milliseconds: 500), 
-      child: const OnboardingScreen(),
+       transitionDuration: const Duration(milliseconds: 100), 
+      child: OnboardingScreen3(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
          child: child,);}, );},),
 
       GoRoute(
-        path: '/sign_in',
-        name: AppRoutesNames.signIn,
+        path: '/sign_up',
+        name: AppRoutesNames.signUp,
         pageBuilder: (BuildContext context, GoRouterState state) {
         return CustomTransitionPage(
         key: state.pageKey,
         transitionDuration: const Duration(milliseconds: 500),
-        child:  SignInScreen(
-          controller: SignInController(),),
+        child:  SignUpScreen(
+          controller: SignUpController(signUpUseCase: Get.find<SignUpUseCase>(),),),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
           child: child,);},);},),
 
       GoRoute(
-       path: '/login',
-       name: AppRoutesNames.login,
+       path: '/sign_in',
+       name: AppRoutesNames.signIn,
        pageBuilder: (BuildContext context, GoRouterState state) {
        return CustomTransitionPage(
        key: state.pageKey,
        transitionDuration: const Duration(milliseconds: 500), 
-       child:  LoginScreen(
-        controller: LoginController(),
-       ),
+       child:  SignInScreen(
+        controller: SignInController(loginUseCase: Get.find(), ),),
        transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
@@ -176,33 +172,7 @@ class AppRoute {
           child: child, );},);},),
 
 
-     GoRoute(
-       path: '/complement_encadreur',
-       name: AppRoutesNames.encadreur,
-       pageBuilder: (BuildContext context, GoRouterState state) {
-       return CustomTransitionPage(
-       key: state.pageKey,
-       transitionDuration: const Duration(milliseconds: 500), 
-       child: ComplementEncadreurScreen(controller: ComplemenEncadreurController()),
-       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child, );},);},),
-
-
-       GoRoute(
-       path: '/complement_vendeur',
-       name: AppRoutesNames.vendeur,
-       pageBuilder: (BuildContext context, GoRouterState state) {
-       return CustomTransitionPage(
-       key: state.pageKey,
-       transitionDuration: const Duration(milliseconds: 500), 
-       child:  ComplementVendeurScreen(controller: ComplementVendeurController()),
-       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child, );},);},),
-
+  
        GoRoute(
        path: '/verification_code',
        name: AppRoutesNames.code,
