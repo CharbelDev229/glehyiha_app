@@ -70,7 +70,7 @@ class TextFieldValidators {
       return 'Ce champ est requis';
     }
 
-    if (value.length < 5) {
+    if (value.length < 6) {
       return 'Le code doit contenir au moin 5 caractères';
     }
 

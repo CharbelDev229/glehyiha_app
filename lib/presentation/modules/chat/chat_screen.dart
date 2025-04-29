@@ -3,7 +3,7 @@ import 'package:glehiha/presentation/widgets/bottom_navigation_bar/navigation_co
 import 'package:glehiha/presentation/widgets/footer_widget/footer_widget.dart';
 import 'dart:async';
 import 'package:glehiha/presentation/widgets/header_widget/header_widget.dart';
-import 'package:glehiha/presentation/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
+import 'package:glehiha/presentation/widgets/bottom_navigation_bar/custom_bottom_navigation_bar.dart';
 import 'package:get/get.dart';
 import 'package:glehiha/common/constants/colors.dart';
 
@@ -136,7 +136,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(),
+      bottomNavigationBar: CustomBottomBar(),
+
     );
   }
 }

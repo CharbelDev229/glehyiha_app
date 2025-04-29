@@ -127,9 +127,8 @@ class SignUpController {
 
         success = true;
         if (context.mounted) {
- context.pushNamed(
-                                                  AppRoutesNames.code,
-                                                );
+ context.pushNamed(AppRoutesNames.code);
+                                                 
         }
       },
     );

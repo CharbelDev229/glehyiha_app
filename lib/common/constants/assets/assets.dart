@@ -11,4 +11,5 @@ class Assets {
   static const String image = 'assets/images/image.png';
   static const String store = 'assets/images/store.png';
   static const String frame3 = 'assets/images/frame3.png';
+  
 }

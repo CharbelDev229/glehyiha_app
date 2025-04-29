@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:glehiha/presentation/widgets/header_widget/header_widget.dart';
-import 'package:glehiha/presentation/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
-import 'package:glehiha/presentation/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
+
 import 'package:glehiha/common/constants/colors.dart';
+
+import '../../widgets/bottom_navigation_bar/custom_bottom_navigation_bar.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -12,42 +13,37 @@ class MarketScreen extends StatefulWidget {
 }
 
 class _MarketScreenState extends State<MarketScreen> {
-  int _currentIndex = 0;
+  
   String _selectedCategory = 'Tous';
   final TextEditingController _searchController = TextEditingController();
   final List<Map<String, String>> allProducts = [
-    {
-      'name': 'Tomate',
-      'image': 'assets/images/tomate.png',
-      'category': 'Tous'
-    },
+    {'name': 'Tomate', 'image': 'assets/images/tomate.png', 'category': 'Tous'},
     {
       'name': 'Engrais Bio',
       'image': 'assets/images/engrais.png',
-      'category': 'Engrais'
+      'category': 'Engrais',
     },
     {
       'name': 'Pesticide X',
       'image': 'assets/images/pesticide.png',
-      'category': 'Pesticides'
+      'category': 'Pesticides',
     },
-    {
-      'name': 'Oignon',
-      'image': 'assets/images/oignon.png',
-      'category': 'Tous'
-    },
+    {'name': 'Oignon', 'image': 'assets/images/oignon.png', 'category': 'Tous'},
   ];
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> filteredProducts = allProducts
-        .where((product) =>
-            (_selectedCategory == 'Tous' ||
-                product['category'] == _selectedCategory) &&
-            product['name']!
-                .toLowerCase()
-                .contains(_searchController.text.toLowerCase()))
-        .toList();
+    List<Map<String, String>> filteredProducts =
+        allProducts
+            .where(
+              (product) =>
+                  (_selectedCategory == 'Tous' ||
+                      product['category'] == _selectedCategory) &&
+                  product['name']!.toLowerCase().contains(
+                    _searchController.text.toLowerCase(),
+                  ),
+            )
+            .toList();
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -60,7 +56,7 @@ class _MarketScreenState extends State<MarketScreen> {
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color:  AppColors.primaryGreen,
+              color: AppColors.primaryGreen,
               child: Text(
                 'Marketplace',
                 style: TextStyle(color: Colors.white, fontSize: 16),
@@ -77,61 +73,68 @@ class _MarketScreenState extends State<MarketScreen> {
               decoration: InputDecoration(
                 hintText: 'Rechercher un produit...',
                 prefixIcon: Icon(Icons.search),
-                  filled: true,
+                filled: true,
                 fillColor: AppColors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: AppColors.black),
                 ),
-               enabledBorder: OutlineInputBorder( 
-               borderRadius: BorderRadius.circular(12),
-               borderSide: BorderSide(color: AppColors.black),),
-               focusedBorder: OutlineInputBorder( 
-               borderRadius: BorderRadius.circular(12),
-               borderSide: BorderSide(color: AppColors.black, width: 1), ),),
-             
-               style: TextStyle(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.black),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.black, width: 1),
+                ),
+              ),
+
+              style: TextStyle(
                 color: AppColors.black,
                 fontSize: 14,
                 fontFamily: 'Poppins',
-                fontWeight: FontWeight.w400, ), ),
-            
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+
             SizedBox(height: 10),
 
             // Boutons de catégorie
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: ['Tous', 'Engrais', 'Pesticides'].map((category) {
-                final isSelected = _selectedCategory == category;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedCategory = category;
-                    });
-                  },
-                  child: Container(
-                    width: 30,
-                    height: 20,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.yellow
-                          : AppColors.grey,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.grey),
-                    ),
-                    child: Text(
-                      category,
-                      style: TextStyle(
-                        color: isSelected ? AppColors.white : AppColors.black,
-                        fontWeight: FontWeight.w500,
+              children:
+                  ['Tous', 'Engrais', 'Pesticides'].map((category) {
+                    final isSelected = _selectedCategory == category;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedCategory = category;
+                        });
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 20,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppColors.yellow : AppColors.grey,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AppColors.grey),
+                        ),
+                        child: Text(
+                          category,
+                          style: TextStyle(
+                            color:
+                                isSelected ? AppColors.white : AppColors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                );
-              }).toList(),
+                    );
+                  }).toList(),
             ),
 
             SizedBox(height: 10),
@@ -153,7 +156,9 @@ class _MarketScreenState extends State<MarketScreen> {
                     onTap: () {
                       // Tu peux afficher un snackbar ou ouvrir une fiche produit ici
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${product['name']} sélectionné')),
+                        SnackBar(
+                          content: Text('${product['name']} sélectionné'),
+                        ),
                       );
                     },
                     child: AnimatedContainer(
@@ -183,10 +188,11 @@ class _MarketScreenState extends State<MarketScreen> {
                             child: Text(
                               product['name']!,
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -197,7 +203,7 @@ class _MarketScreenState extends State<MarketScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(), );
-    
+      bottomNavigationBar: CustomBottomBar(),
+    );
   }
 }

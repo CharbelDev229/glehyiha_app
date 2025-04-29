@@ -98,16 +98,26 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                 ),
                               ),
                               const SizedBox(height: 25),
-                              const Text(
-                                "Un code à 5 chiffres vous a été envoyé pour la vérification",
+                                const Text(
+                                "Code otp",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: AppColors.black,
                                   fontSize: 32,
-                                  fontWeight: FontWeight.w500,
+                               fontWeight: FontWeight.w600,
                                 ),
                               ),
                              
+                              const Text(
+                                "Un code à 6 chiffres vous a été envoyé pour la vérification",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                             SizedBox(height: 30,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: List.generate(6, (index) {
@@ -137,7 +147,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                            } else if (value.isEmpty && index > 0) {
                                            FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
                                              }},),);})),
-                                      const SizedBox(height: 20),
+                                      const SizedBox(height: 30),
                               Obx(
                                 () => CustomButton(
                                   isLoading: controller.isLoading.value,
