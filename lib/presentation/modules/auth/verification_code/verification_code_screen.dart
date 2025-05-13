@@ -10,6 +10,7 @@ import 'package:glehiha/presentation/widgets/background_decoration/background_de
 import 'package:go_router/go_router.dart';
 
 
+import '../../../../common/utils/text_field_validators.dart';
 import '../../../../common/utils/utils.dart';
 import '../../../widgets/button/custom_button.dart';
 
@@ -128,6 +129,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                     controller: _controllers[index],
                                     focusNode: _focusNodes[index],
                                     keyboardType: TextInputType.number,
+                                   
                                     textAlign: TextAlign.center,
                                     maxLength: 1,
                                     style: const TextStyle(

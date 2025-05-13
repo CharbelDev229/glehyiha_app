@@ -51,7 +51,7 @@ class ParametersScreen extends StatelessWidget {
             SizedBox(height: 5),
             GestureDetector(
               onTap: (){
-                GoRouter.of(context).pushNamed(AppRoutesNames.chat);
+                context.pushNamed(AppRoutesNames.chat);
               },
           child:   Image.asset(Assets.chat, width: 80, height: 80),),
             SizedBox(height: 8),
@@ -77,7 +77,7 @@ class ParametersScreen extends StatelessWidget {
                     recognizer:
                         TapGestureRecognizer()
                           ..onTap = () {
-                            GoRouter.of(context).pushNamed(AppRoutesNames.chat);
+                            context.pushNamed(AppRoutesNames.chat);
                           },
                   ),
                 ),
@@ -87,7 +87,7 @@ class ParametersScreen extends StatelessWidget {
             SizedBox(height: 8),
             GestureDetector(
               onTap: (){
-                GoRouter.of(context).pushNamed(AppRoutesNames.photo);
+                context.pushNamed(AppRoutesNames.photo);
               },
           child: Image.asset(
              Assets.camera,
@@ -118,7 +118,7 @@ class ParametersScreen extends StatelessWidget {
                     recognizer:
                         TapGestureRecognizer()
                           ..onTap = () {
-                            GoRouter.of(context).pushNamed(AppRoutesNames.photo);
+                            context.pushNamed(AppRoutesNames.photo);
                           },
                   ),
                 ),
@@ -128,7 +128,7 @@ class ParametersScreen extends StatelessWidget {
             SizedBox(height: 8),
             GestureDetector(
               onTap: (){
-                GoRouter.of(context).pushNamed(AppRoutesNames.expert);
+              context.pushNamed(AppRoutesNames.expert);
               },
            child:  Image.asset(
               Assets.contact,
@@ -158,7 +158,7 @@ class ParametersScreen extends StatelessWidget {
                     recognizer:
                         TapGestureRecognizer()
                           ..onTap = () {
-                            GoRouter.of(context).pushNamed(AppRoutesNames.expert);
+                            context.pushNamed(AppRoutesNames.expert);
                           },
                   ),
                 ),
@@ -168,7 +168,7 @@ class ParametersScreen extends StatelessWidget {
             SizedBox(height: 8),
             GestureDetector(
               onTap: (){
-                GoRouter.of(context).pushNamed(AppRoutesNames.market);
+                context.pushNamed(AppRoutesNames.market);
               },
          child:    Image.asset(Assets.store, width: 80, height: 80),),
             SizedBox(height: 8),
@@ -194,7 +194,7 @@ class ParametersScreen extends StatelessWidget {
                     recognizer:
                         TapGestureRecognizer()
                           ..onTap = () {
-                            GoRouter.of(context).pushNamed(AppRoutesNames.market);
+                            context.pushNamed(AppRoutesNames.market);
                           },
                   ),
                 ),

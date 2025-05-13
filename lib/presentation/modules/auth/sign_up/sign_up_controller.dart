@@ -10,9 +10,11 @@ import '../../../../common/utils/utils.dart';
 import '../../../../domain/usescases/auth/sign_up.dart';
 import '../../../router/routes.dart';
 
+
 enum SignUpState { nomPrenom, emailPassword, phoneNumberlocalisation }
 
 class SignUpController {
+  
   Rx<SignUpState> signUpState = SignUpState.nomPrenom.obs;
   PageController pageController = PageController(
     initialPage: 0,
@@ -126,6 +128,7 @@ class SignUpController {
         Utils.snackSuccess(context: context, message: 'Inscription réussie!');
 
         success = true;
+      
         if (context.mounted) {
  context.pushNamed(AppRoutesNames.code);
                                                  

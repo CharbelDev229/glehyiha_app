@@ -410,7 +410,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                       .currentState
                                                       ?.validate() ??
                                                   false) {
-                                               
+                                                context.pushNamed(
+                                                  AppRoutesNames.code,
+                                                );
                                               } else {
                                                 // logger.w(
                                                 //   controller

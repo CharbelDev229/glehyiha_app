@@ -2,23 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:glehiha/presentation/widgets/header_widget/header_widget.dart';
 
-import '../../widgets/bottom_navigation_bar/custom_bottom_navigation_bar.dart';
+import '../../widgets/bottom_navigation_bar/bottom_navigation_bottom_bar.dart';
 
-class PhotoScreen extends StatefulWidget {
+class PhotoScreen extends StatelessWidget {
   const PhotoScreen({super.key});
 
-  @override
-  _PhotoScreenState createState() => _PhotoScreenState();
-}
+  
 
-class _PhotoScreenState extends State<PhotoScreen> {
-  int _currentIndex = 0;
-
-  _setCurrentIndex(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +25,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
 
     ] )),
     
-        bottomNavigationBar: CustomBottomBar(),
+         bottomNavigationBar: CustomBottomBar(),
     );
     
   }

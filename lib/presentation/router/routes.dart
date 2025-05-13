@@ -22,6 +22,7 @@ class AppRoutesNames {
   static const vendeur = 'additional_info_vendeur';
   static const code = 'verification_code';
   static const forgetpassword = 'forget_password';
+  static const addProduct = 'add_product';
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();

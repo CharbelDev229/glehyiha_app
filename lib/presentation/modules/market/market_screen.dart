@@ -1,206 +1,160 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:glehiha/presentation/modules/market/market_controller.dart';
+import 'package:glehiha/presentation/modules/market/product_list_item.dart';
 import 'package:glehiha/presentation/widgets/header_widget/header_widget.dart';
-
 import 'package:glehiha/common/constants/colors.dart';
+import '../../../common/enums/user_role.dart';
+import '../../widgets/bottom_navigation_bar/bottom_navigation_bottom_bar.dart';
+import '../../../common/enums/product_category.dart';
 
-import '../../widgets/bottom_navigation_bar/custom_bottom_navigation_bar.dart';
-
-class MarketScreen extends StatefulWidget {
+class MarketScreen extends StatelessWidget {
   const MarketScreen({super.key});
 
   @override
-  _MarketScreenState createState() => _MarketScreenState();
-}
-
-class _MarketScreenState extends State<MarketScreen> {
-  
-  String _selectedCategory = 'Tous';
-  final TextEditingController _searchController = TextEditingController();
-  final List<Map<String, String>> allProducts = [
-    {'name': 'Tomate', 'image': 'assets/images/tomate.png', 'category': 'Tous'},
-    {
-      'name': 'Engrais Bio',
-      'image': 'assets/images/engrais.png',
-      'category': 'Engrais',
-    },
-    {
-      'name': 'Pesticide X',
-      'image': 'assets/images/pesticide.png',
-      'category': 'Pesticides',
-    },
-    {'name': 'Oignon', 'image': 'assets/images/oignon.png', 'category': 'Tous'},
-  ];
-
-  @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> filteredProducts =
-        allProducts
-            .where(
-              (product) =>
-                  (_selectedCategory == 'Tous' ||
-                      product['category'] == _selectedCategory) &&
-                  product['name']!.toLowerCase().contains(
-                    _searchController.text.toLowerCase(),
-                  ),
-            )
-            .toList();
-
+    final MarketController controller = Get.put(MarketController());
+    
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            HeaderWidget(),
-            SizedBox(height: 15),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: AppColors.primaryGreen,
-              child: Text(
-                'Marketplace',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            SizedBox(height: 10),
-
-            // Barre de recherche
-            TextField(
-              controller: _searchController,
-              onChanged: (_) => setState(() {}),
-              cursorColor: AppColors.black,
-              decoration: InputDecoration(
-                hintText: 'Rechercher un produit...',
-                prefixIcon: Icon(Icons.search),
-                filled: true,
-                fillColor: AppColors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: AppColors.black),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: AppColors.black),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: AppColors.black, width: 1),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              const HeaderWidget(),
+              const SizedBox(height: 15),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                color: AppColors.primaryGreen,
+                child: const Text(
+                  'Marketplace',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  textAlign: TextAlign.center,
                 ),
               ),
-
-              style: TextStyle(
-                color: AppColors.black,
-                fontSize: 14,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w400,
+              const SizedBox(height: 10),
+  
+              // Barre de recherche
+              TextField(
+                controller: controller.searchController,
+                onChanged: (value) => controller.updateSearch(value),
+                cursorColor: AppColors.black,
+                decoration: InputDecoration(
+                  hintText: 'Rechercher un produit...',
+                  prefixIcon: const Icon(Icons.search),
+                  filled: true,
+                  fillColor: AppColors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.black),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.black, width: 1),
+                  ),
+                ),
+                style: const TextStyle(
+                  color: AppColors.black,
+                  fontSize: 14,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            ),
+  
+              const SizedBox(height: 20),
+            
+              // Bouton Ajouter un produit pour les vendeurs
+             // Obx(() {
+                // Vérifier si l'utilisateur est un vendeur
+              //  return controller.selectedRole.value == UserRole.vendeur
+                  // ElevatedButton(
+                    //  onPressed: () {
+                      //  controller.addNewProduct();
+                    //  },
+                     // style: ElevatedButton.styleFrom(
+                       // backgroundColor: AppColors.primaryGreen,
+                    //  ),
+                     // child: const Text('Ajouter un produit'),
+                 //   ),
+                  //: const SizedBox.shrink(); // Masquer si ce n'est pas un vendeur
+              Obx(() => Visibility(
+  visible: controller.selectedRole.value == UserRole.vendeur,
+  child: ElevatedButton(
+    onPressed: () {
+      controller.addNewProduct();
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.primaryGreen,
+    ),
+    child: const Text('Ajouter un produit'),
+  ),
+)),
 
-            SizedBox(height: 10),
-
-            // Boutons de catégorie
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children:
-                  ['Tous', 'Engrais', 'Pesticides'].map((category) {
-                    final isSelected = _selectedCategory == category;
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedCategory = category;
-                        });
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 20,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppColors.yellow : AppColors.grey,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.grey),
-                        ),
-                        child: Text(
-                          category,
-                          style: TextStyle(
-                            color:
-                                isSelected ? AppColors.white : AppColors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+              const SizedBox(height: 20),
+            
+              // Boutons de catégorie avec GetX
+              Obx(() => Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: ProductCategory.values.map((category) {
+                  final isSelected = controller.selectedCategory.value == category;
+                  return ElevatedButton(
+                    onPressed: () => controller.changeCategory(category),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isSelected ? AppColors.yellow : AppColors.grey,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: const BorderSide(color: AppColors.grey),
                       ),
-                    );
-                  }).toList(),
-            ),
-
-            SizedBox(height: 10),
-
-            // Liste de produits
-            Expanded(
-              child: GridView.builder(
-                padding: EdgeInsets.all(8),
-                itemCount: filteredProducts.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  childAspectRatio: 0.8,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemBuilder: (_, index) {
-                  final product = filteredProducts[index];
-                  return GestureDetector(
-                    onTap: () {
-                      // Tu peux afficher un snackbar ou ouvrir une fiche produit ici
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${product['name']} sélectionné'),
-                        ),
-                      );
-                    },
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 5,
-                            offset: Offset(2, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Image.asset(
-                              product['image']!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              product['name']!,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ],
+                    ),
+                    child: Text(
+                      category.displayName,
+                      style: TextStyle(
+                        color: isSelected ? AppColors.white : AppColors.black,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   );
-                },
+                }).toList(),
+              )),
+  
+              const SizedBox(height: 20),
+  
+              // Liste de produits reactive avec GetX
+              Expanded(
+                child: Obx(() {
+                  final filteredProducts = controller.filteredProducts;
+                  
+                  if (filteredProducts.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Aucun produit trouvé',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    );
+                  }
+                  
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: filteredProducts.length,
+                    itemBuilder: (context, index) {
+                      final product = filteredProducts[index];
+                      return ProductListItem(
+                        product: product,
+                        onTap: () => controller.selectProduct(product),
+                      );
+                    },
+                  );
+                }),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: CustomBottomBar(),

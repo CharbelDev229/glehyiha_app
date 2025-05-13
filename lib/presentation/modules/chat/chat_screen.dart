@@ -3,9 +3,12 @@ import 'package:glehiha/presentation/widgets/bottom_navigation_bar/navigation_co
 import 'package:glehiha/presentation/widgets/footer_widget/footer_widget.dart';
 import 'dart:async';
 import 'package:glehiha/presentation/widgets/header_widget/header_widget.dart';
-import 'package:glehiha/presentation/widgets/bottom_navigation_bar/custom_bottom_navigation_bar.dart';
 import 'package:get/get.dart';
 import 'package:glehiha/common/constants/colors.dart';
+import '../../widgets/bottom_navigation_bar/bottom_navigation_bottom_bar.dart';
+
+
+
 
 class ChatScreen extends StatefulWidget {
   ChatScreen({super.key});
@@ -15,7 +18,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
-  int _currentIndex = 0;
+
   List<String> messages = [];
   late List<AnimationController> _controllers;
   late List<Animation<Offset>> _animations;
@@ -94,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               color:
                   index % 2 == 0
                       ? AppColors.black
-                      :  AppColors.primaryGreen,
+                      : AppColors.primaryGreen,
                        // Couleur différente selon gauche/droite
               borderRadius: BorderRadius.circular(20),
             ),
@@ -137,7 +140,6 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         ),
       ),
       bottomNavigationBar: CustomBottomBar(),
-
     );
   }
-}
+} 
