@@ -1,6 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:glehiha/presentation/modules/onboarding/onboarding_screen_3.dart';
-
 import 'package:go_router/go_router.dart';
 
 class AppRoutesNames {
@@ -9,12 +7,9 @@ class AppRoutesNames {
   static const signUp = 'sign_up';
   static const expert = 'expert';
   static const parameters = 'parameters';
- 
   static const photo = 'photo';
   static const market = 'market';
-
   static const chat = 'chat';
- 
   static const onboarding1 = 'onboarding_1';
   static const onboarding2 = 'onboarding_2';
   static const onboarding3 = 'onboarding_3';
@@ -23,9 +18,10 @@ class AppRoutesNames {
   static const code = 'verification_code';
   static const forgetpassword = 'forget_password';
   static const addProduct = 'add_product';
-    static const expertPage = 'expert_page';
-  
-
+  static const expertPage = 'expert_page';
+  static const productDetail = 'product_detail';
+  static const cart = 'cart';
+  static const orderDetail = 'order_detail';
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();

@@ -14,7 +14,7 @@ class ProductListItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        // Suppression de la hauteur fixe pour permettre au contenu de déterminer la taille
+      
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(12),
@@ -37,7 +37,7 @@ class ProductListItem extends StatelessWidget {
                 topRight: Radius.circular(12),
               ),
               child: AspectRatio(
-                aspectRatio: 16 / 9, // Ratio d'aspect standard pour l'image
+                aspectRatio: 16 / 9, 
                 child: Image.asset(
                   product.image,
                   width: double.infinity,
@@ -132,7 +132,7 @@ class ProductListItem extends StatelessWidget {
                           fontSize: 12,
                           color: Colors.black87,
                         ),
-                        // Plus de limite de lignes pour afficher toute la description
+                       
                       ),
                   ],
                 ),

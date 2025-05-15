@@ -5,15 +5,14 @@ import 'common/di/index.dart';
 import 'presentation/router/go_router.dart';
 import 'common/constants/colors.dart';
 import 'presentation/service/product/product_service.dart'; // <== 🔥 IMPORT À AJOUTER
-import 'common/enums/user_role.dart'; // <== 🔥 IMPORT DU ROLE
-
+import 'common/enums/user_role.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Di.init();
-   final productService = Get.find<ProductService>();
-productService.setUserRole(UserRole.agriculteur); // 🔄 Change ici selon le test
+  final productService = Get.find<ProductService>();
+  productService.setUserRole(UserRole.vendeur); // 🔄 Change ici selon le test
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

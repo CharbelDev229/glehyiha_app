@@ -41,7 +41,6 @@ class MarketScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
 
-              // Barre de recherche et bouton "Ajouter un produit" côte à côte
               Row(
                 children: [
                   // Barre de recherche
@@ -80,79 +79,86 @@ class MarketScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // Bouton "Ajouter un produit" uniquement pour les vendeurs
                   const SizedBox(width: 10),
-                  Obx(() => Visibility(
-                    visible: controller.selectedRole.value == UserRole.vendeur,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Utiliser GoRouter pour la navigation
-                        context.pushNamed(AppRoutesNames.addProduct);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryGreen,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.add_a_photo_outlined, color: Colors.white),
-                          SizedBox(width: 4),
-                          Text(
-                            'Ajouter',
-                            style: TextStyle(color: Colors.white),
+                  Obx(
+                    () => Visibility(
+                      visible:
+                          controller.selectedRole.value == UserRole.vendeur,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Utiliser GoRouter pour la navigation
+                          context.pushNamed(AppRoutesNames.addProduct);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryGreen,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 12,
                           ),
-                        ],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.add_a_photo_sharp,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Ajouter',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
 
               const SizedBox(height: 20),
 
-              // Boutons de catégorie avec GetX
               Obx(
                 () => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: ProductCategory.values.map((category) {
-                    final isSelected =
-                        controller.selectedCategory.value == category;
-                    return ElevatedButton(
-                      onPressed: () => controller.changeCategory(category),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            isSelected ? AppColors.yellow : AppColors.grey,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: const BorderSide(color: AppColors.grey),
-                        ),
-                      ),
-                      child: Text(
-                        category.displayName,
-                        style: TextStyle(
-                          color: isSelected ? AppColors.white : AppColors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                  children:
+                      ProductCategory.values.map((category) {
+                        final isSelected =
+                            controller.selectedCategory.value == category;
+                        return ElevatedButton(
+                          onPressed: () => controller.changeCategory(category),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                isSelected ? AppColors.yellow : AppColors.grey,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: const BorderSide(color: AppColors.grey),
+                            ),
+                          ),
+                          child: Text(
+                            category.displayName,
+                            style: TextStyle(
+                              color:
+                                  isSelected
+                                      ? AppColors.white
+                                      : AppColors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                 ),
               ),
 
               const SizedBox(height: 20),
 
-              // Liste de produits reactive avec GetX
               Expanded(
                 child: Obx(() {
                   final filteredProducts = controller.filteredProducts;
@@ -173,7 +179,12 @@ class MarketScreen extends StatelessWidget {
                       final product = filteredProducts[index];
                       return ProductListItem(
                         product: product,
-                        onTap: () => controller.selectProduct(product),
+                        onTap: () {
+                          context.pushNamed(
+                            AppRoutesNames.productDetail,
+                            extra: product,
+                          );
+                        },
                       );
                     },
                   );

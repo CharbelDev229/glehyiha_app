@@ -1,9 +1,14 @@
 
 import 'package:get/get.dart';
+import 'package:glehiha/data/models/product_detail/product_model.dart';
 import 'package:glehiha/domain/usescases/auth/sign_up.dart';
 import 'package:glehiha/presentation/modules/add_product/add_product.dart';
+import 'package:glehiha/presentation/modules/cart/cart_screen.dart';
 import 'package:glehiha/presentation/modules/expert_page/expert_page_screen.dart';
-import 'package:go_router/go_router.dart';import '../modules/auth/forget_password/forget_password_controller.dart';
+import 'package:glehiha/presentation/modules/order_detail/order_detail_screen.dart';
+import 'package:glehiha/presentation/modules/product_detail/product_detail_screen.dart';
+import 'package:go_router/go_router.dart';
+import '../modules/auth/forget_password/forget_password_controller.dart';
 import '../modules/auth/forget_password/forget_password_screen.dart';
 import '../modules/auth/sign_in/sign_in_controller.dart';
 import '../modules/auth/sign_in/sign_in_screen.dart';
@@ -227,6 +232,49 @@ class AppRoute {
         return FadeTransition(
           opacity: animation,
           child: child, ); }, );},),
+
+
+        GoRoute(
+        path: '/product_detail',
+        name: AppRoutesNames.productDetail,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final product = state.extra as ProductModel;
+        return CustomTransitionPage(
+        key: state.pageKey,
+        transitionDuration: const Duration(milliseconds: 500), 
+        child:  ProductDetailScreen(product: product),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child, ); }, );},),
+
+       GoRoute(
+        path: '/cart',
+        name: AppRoutesNames.cart,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+        return CustomTransitionPage(
+        key: state.pageKey,
+        transitionDuration: const Duration(milliseconds: 500), 
+        child:  CartScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child, ); }, );},),
+
+       
+        //  GoRoute(
+        // path: '/order_detail',
+        // name: AppRoutesNames.orderDetail,
+        // pageBuilder: (BuildContext context, GoRouterState state) {
+        // return CustomTransitionPage(
+        // key: state.pageKey,
+        // transitionDuration: const Duration(milliseconds: 500), 
+        // child:  OrderDetailScreen(),
+        // transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // return FadeTransition(
+        //   opacity: animation,
+        //   child: child, ); }, );},),
+
 
 
 

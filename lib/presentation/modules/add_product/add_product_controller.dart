@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:glehiha/common/enums/product_category.dart';
-import 'package:glehiha/common/enums/user_role.dart';
 import 'package:glehiha/common/constants/instances.dart';
 import 'package:glehiha/common/services/location_service.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../common/dtos/auth/register_dto.dart';
-import '../../../../common/utils/utils.dart';
-import '../../../../domain/usescases/auth/sign_up.dart';
 
-enum SignUpState { nomPrenom, emailPassword, phoneNumberlocalisation }
+
 
 class AddProductController {
-  Rx<SignUpState> signUpState = SignUpState.nomPrenom.obs;
+  
   PageController pageController = PageController(
     initialPage: 0,
     viewportFraction: 1.0,
@@ -31,15 +27,7 @@ class AddProductController {
   TextEditingController marqueController = TextEditingController();
   TextEditingController uniteController = TextEditingController();
   
-  GlobalKey<FormState> nomPrenomFormKey = GlobalKey<FormState>(
-    debugLabel: 'nom_prenom',
-  );
-  GlobalKey<FormState> emailPasswordFormKey = GlobalKey<FormState>(
-    debugLabel: 'email_password',
-  );
-  GlobalKey<FormState> phoneLocalisationFormKey = GlobalKey<FormState>(
-    debugLabel: 'phone_localisation',
-  );
+  
 
   // Variables observables
 final Rx<ProductCategory> selectedProduct = ProductCategory.engrais.obs;

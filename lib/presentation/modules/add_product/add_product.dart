@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:glehiha/common/enums/product_category.dart';
-import 'package:glehiha/common/enums/user_role.dart';
 import 'package:glehiha/common/utils/text_field_validators.dart';
 
 import 'package:glehiha/presentation/modules/add_product/add_product_controller.dart';
@@ -15,7 +14,6 @@ import '../../../common/utils/utils.dart';
 import '../../router/routes.dart';
 import '../../widgets/button/custom_button.dart';
 import '../../widgets/custom_text_form_field/custom_text_form_field.dart';
-import '../../widgets/custom_text_form_field/custom_text_form_field_1.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -25,7 +23,7 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AddProductState extends State<AddProduct> {
-  final controller = AddProductController(); // Utilisation directe du contrôleur global
+  final controller = AddProductController(); 
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +57,8 @@ class _AddProductState extends State<AddProduct> {
                       CustomTextFormField(
                         controller: controller.nomController,
                         validator: TextFieldValidators.required,
-                        labelText: "Nom",
-                      //  suffixIcon: const Icon(Icons.person, color: AppColors.black),
-                      ),
+                        labelText: "Nom",),
+                      
                       const SizedBox(height: 20),
                      TextFormField(
                          controller: controller.descriptionController,
@@ -83,17 +80,15 @@ class _AddProductState extends State<AddProduct> {
                       CustomTextFormField(
                         controller: controller.marqueController,
                         validator: TextFieldValidators.required,
-                        labelText: "Marque",
-                        //suffixIcon: const Icon(Icons.person, color: AppColors.black),
-                      ),
+                        labelText: "Marque",),
+                      
                       const SizedBox(height: 20),
 
                       CustomTextFormField(
                         controller: controller.marqueController,
                         validator: TextFieldValidators.required,
-                        labelText: "Prix",
-                        //suffixIcon: const Icon(Icons.person, color: AppColors.black),
-                      ),
+                        labelText: "Prix",),
+                      
                       const SizedBox(height: 20),
 
                    DropdownButtonFormField<ProductCategory>(
@@ -170,27 +165,20 @@ class _AddProductState extends State<AddProduct> {
                       controller.pickedImage.value != null
                        ? controller.pickedImage.value!.name
                       : "Choisir une photo du produit",
-            style: const TextStyle(fontSize: 14),
-          ),
-        ),
-      ],
-    ),
-  ),
-)),
-const SizedBox(height: 20),
+            style: const TextStyle(fontSize: 14),))]))),),
+                  
+                  const SizedBox(height: 20),
                      CustomTextFormField(
                         controller: controller.marqueController,
                         validator: TextFieldValidators.required,
-                        labelText: "Date de faabrication",
-                      //  suffixIcon: const Icon(Icons.person, color: AppColors.black),
-                      ),
+                        labelText: "Date de faabrication"),
+                      
                       const SizedBox(height: 20),
                      CustomTextFormField(
                         controller: controller.marqueController,
                         validator: TextFieldValidators.required,
-                        labelText: "Date de péremption",
-                       // suffixIcon: const Icon(Icons.person, color: AppColors.black),
-                      ),
+                        labelText: "Date de péremption",),
+                      
                       const SizedBox(height: 20),
 
                          Obx(

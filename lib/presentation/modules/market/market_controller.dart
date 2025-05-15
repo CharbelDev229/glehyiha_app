@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:glehiha/presentation/router/routes.dart';
+import 'package:go_router/go_router.dart';
 import '../../../common/enums/product_category.dart';
 import '../../../common/enums/user_role.dart';
 import '../../../data/models/product/products.dart';
@@ -14,7 +16,7 @@ class MarketController extends GetxController {
   final Rx<ProductCategory> selectedCategory = ProductCategory.all.obs;
   final RxString searchTerm = ''.obs;
   final TextEditingController searchController = TextEditingController();
-  
+
   // Rôle de l'utilisateur
   Rx<UserRole> selectedRole = UserRole.vendeur.obs;
 
@@ -22,7 +24,7 @@ class MarketController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    
+
     // Écouter les changements de rôle
     ever(_productService.userRole, (role) {
       selectedRole.value = role;
@@ -35,9 +37,9 @@ class MarketController extends GetxController {
 
   // Obtenir les produits filtrés
   List<Product> get filteredProducts => _productService.getFilteredProducts(
-        selectedCategory.value,
-        searchTerm.value,
-      );
+    selectedCategory.value,
+    searchTerm.value,
+  );
 
   // Méthodes de manipulation d'état
   void changeCategory(ProductCategory category) {
@@ -48,14 +50,22 @@ class MarketController extends GetxController {
     searchTerm.value = value;
   }
 
-  void selectProduct(Product product) {
-    Get.snackbar(
-      'Produit sélectionné',
-      'Vous avez sélectionné ${product.name}',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 2),
-    );
-  }
+ void selectProduct(BuildContext context, Product product) {
+  Get.snackbar(
+    'Produit sélectionné',
+    'Vous avez sélectionné ${product.name}',
+    snackPosition: SnackPosition.BOTTOM,
+    duration: const Duration(seconds: 2),
+  );
+
+  context.pushNamed(
+    AppRoutesNames.productDetail,
+    extra: product,
+    
+    
+  );
+}
+
 
   // Méthode pour ajouter un nouveau produit
   void addNewProduct() {
