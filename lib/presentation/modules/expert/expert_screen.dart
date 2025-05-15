@@ -1,151 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:glehiha/presentation/widgets/header_widget/header_widget.dart';
+import 'package:glehiha/presentation/widgets/bottom_navigation_bar/navigation_controller.dart';
+import 'package:get/get.dart';
 import 'package:glehiha/common/constants/colors.dart';
-import '../../../common/constants/assets/assets.dart';
-import '../../../common/utils/utils.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:glehiha/presentation/widgets/expert/expert_card_widget.dart';
+
 import '../../widgets/bottom_navigation_bar/bottom_navigation_bottom_bar.dart';
 
 class ExpertScreen extends StatelessWidget {
-  const ExpertScreen({super.key});
+  const ExpertScreen({Key? key}) : super(key: key);
+
+ 
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const HeaderWidget(),
-            const SizedBox(height: 25),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const HeaderWidget(),
+              const SizedBox(height: 25),
+              const Text(
+                'Trouver des experts agricoles',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.asset(Assets.expert, width: 109, height: 109),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-
-                          children: [
-                            SizedBox(height: 20),
-                            Text(
-                              'Dr Maria Rodriguez',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              'Spécialiste des maladies des cultures',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+              const SizedBox(height: 15),
+              // OpenStreetMap implementation
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: FlutterMap(
+                  options: MapOptions(
+                    initialCenter: LatLng(0, 0),
+                    initialZoom: 13.0,
                   ),
-                  const SizedBox(height: 16),
-
-                  Row(
-                    children: [
-                      Image.asset(Assets.location, width: 30, height: 30),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Dogo, Plateau, Bénin',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  const Text(
-                    'Expert en conseils et solutions agricoles pour les agriculteurs locaux. Disponible pour les consultations, des visites sur le terrain et un accompagnement continu de vos exploitations agricoles.',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                     ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 11,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.green,
-                          //  borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(Assets.phone, width: 24, height: 24),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Appeler',
-                              style: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 11,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.green,
-                          //borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(Assets.message, width: 24, height: 24),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Message',
-                              style: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 15),
+              const Text(
+                'Expert disponible',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              // Expert List using the new widget
+              const ExpertCardWidget(
+                name: 'Dr Maria Rodriguez',
+                specialty: 'Spécialiste des maladies des cultures',
+                distance: '3.2 km',
+                rating: 4.5,
+              ),
+              const SizedBox(height: 10),
+              const ExpertCardWidget(
+                name: 'John Smith',
+                specialty: 'Expert en santé des sols',
+                distance: '4.5 km',
+                rating: 4.0,
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: CustomBottomBar(),

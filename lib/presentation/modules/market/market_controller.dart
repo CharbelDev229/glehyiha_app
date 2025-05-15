@@ -16,7 +16,7 @@ class MarketController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   
   // Rôle de l'utilisateur
-  Rx<UserRole> selectedRole = UserRole.agriculteur.obs;
+  Rx<UserRole> selectedRole = UserRole.vendeur.obs;
 
   // Initialisation
   @override

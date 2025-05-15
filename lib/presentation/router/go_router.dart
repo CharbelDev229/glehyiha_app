@@ -2,6 +2,7 @@
 import 'package:get/get.dart';
 import 'package:glehiha/domain/usescases/auth/sign_up.dart';
 import 'package:glehiha/presentation/modules/add_product/add_product.dart';
+import 'package:glehiha/presentation/modules/expert_page/expert_page_screen.dart';
 import 'package:go_router/go_router.dart';import '../modules/auth/forget_password/forget_password_controller.dart';
 import '../modules/auth/forget_password/forget_password_screen.dart';
 import '../modules/auth/sign_in/sign_in_controller.dart';
@@ -213,6 +214,20 @@ class AppRoute {
         return FadeTransition(
           opacity: animation,
           child: child, ); }, );},),
+
+           GoRoute(
+        path: '/expert_page',
+        name: AppRoutesNames.expertPage,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+        return CustomTransitionPage(
+        key: state.pageKey,
+        transitionDuration: const Duration(milliseconds: 500), 
+        child:  ExpertPageScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child, ); }, );},),
+
 
 
 
