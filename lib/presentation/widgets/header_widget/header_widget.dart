@@ -10,16 +10,9 @@ class HeaderWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image.asset(
-            "assets/logo/logo.png",
-            width: 94,
-            height: 22,
-          ),
-          Image.asset(
-            "assets/images/account.png",
-            width: 66,
-            height: 58,
-          ),
+          Image.asset("assets/logo/logo.png", width: 94, height: 22),
+          SizedBox(height: 5),
+          Image.asset("assets/images/account.png", width: 66, height: 58),
         ],
       ),
     );

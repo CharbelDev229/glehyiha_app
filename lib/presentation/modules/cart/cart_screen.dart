@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:glehiha/presentation/modules/cart/cart_controller.dart';
+import 'package:glehiha/presentation/modules/cart/cart_controller_1.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../common/constants/colors.dart';
@@ -9,13 +9,13 @@ import '../../widgets/button/custom_button.dart';
 import '../../widgets/order_form_bottom_sheet/order_form_bottom_sheet.dart';
 
 class CartScreen extends StatelessWidget {
-  final CartController controller = Get.find<CartController>();
+  final CartController1 controller = Get.find<CartController1>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Panier",
           style: TextStyle(
             fontSize: 20,
@@ -30,19 +30,17 @@ class CartScreen extends StatelessWidget {
         if (controller.cartItems.isEmpty) {
           return const Center(child: Text("Votre panier est vide."));
         }
-        SizedBox(height: 20);
+
         return Column(
           children: [
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: controller.cartItems.length,
                 itemBuilder: (context, index) {
                   final item = controller.cartItems[index];
                   return Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
+                    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -58,7 +56,7 @@ class CartScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Image.asset(
-                          item.product.image,
+                          item.image,
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
@@ -69,54 +67,39 @@ class CartScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                item.product.name,
-                                style: TextStyle(
+                                item.name,
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                   color: Colors.black,
                                 ),
                               ),
-                              SizedBox(width: 5),
                               IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.black,
-                                ),
-                                onPressed:
-                                    () =>
-                                        controller.removeFromCart(item.product),
+                                icon: const Icon(Icons.delete, color: Colors.black),
+                                onPressed: () => controller.removeFromCart(item),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               Text(
-                                item.product.description,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
-                                  color: Colors.black,
+                                item.description,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                  color: Colors.black54,
                                 ),
                               ),
-
                               Row(
                                 children: [
-                                  Expanded(
-                                    child: IconButton(
-                                      onPressed:
-                                          () => controller.decrementQuantity(
-                                            item.product,
-                                          ),
-                                      icon: const Icon(Icons.remove),
-                                    ),
+                                  IconButton(
+                                    onPressed: () => controller.decrementQuantity(item),
+                                    icon: const Icon(Icons.remove),
                                   ),
                                   Text('${item.quantity}'),
                                   IconButton(
-                                    onPressed:
-                                        () => controller.incrementQuantity(
-                                          item.product,
-                                        ),
+                                    onPressed: () => controller.incrementQuantity(item),
                                     icon: const Icon(Icons.add),
                                   ),
-                                  SizedBox(width: 8),
-                                  Text("${item.product.price} FCFA"),
+                                  const SizedBox(width: 8),
+                                  Text("${item.price} FCFA"),
                                 ],
                               ),
                             ],
@@ -145,7 +128,6 @@ class CartScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             Container(
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
@@ -162,7 +144,7 @@ class CartScreen extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(width: 40),
+                  const SizedBox(width: 40),
                   Text(
                     "${controller.totalPrice.toStringAsFixed(0)} F",
                     style: const TextStyle(
@@ -173,7 +155,6 @@ class CartScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             Center(
               child: CustomButton(
                 onPressed: () {
@@ -181,23 +162,14 @@ class CartScreen extends StatelessWidget {
                     context: context,
                     isScrollControlled: true,
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(20),
-                      ),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                     ),
-                    builder:
-                        (context) => const Padding(
-                          padding: EdgeInsets.only(
-                            bottom: 20,
-                            left: 20,
-                            right: 20,
-                            top: 20,
-                          ),
-                          child: OrderFormBottomSheet(),
-                        ),
+                    builder: (context) => const Padding(
+                      padding: EdgeInsets.only(bottom: 20, left: 20, right: 20, top: 20),
+                      child: OrderFormBottomSheet(),
+                    ),
                   );
                 },
-
                 child: const Text(
                   "Commander",
                   style: TextStyle(

@@ -1,5 +1,3 @@
-
-
 import '../../../common/enums/product_category.dart';
 
 class Product {
@@ -8,17 +6,23 @@ class Product {
   final String image;
   final ProductCategory category;
   final String price;
-  final String? description;
-  
+  final String resume;
+  final String quantity;
+  final String seller;
+  final String description;
+
   Product({
     required this.id,
     required this.name,
     required this.image,
     required this.category,
     required this.price,
-    this.description,
+    required this.resume,
+    required this .description,
+    required this.quantity,
+    required this.seller,
   });
-  
+
   // Factory constructor pour créer un Product à partir d'un Map (utile pour JSON)
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
@@ -27,10 +31,13 @@ class Product {
       image: map['image'] ?? '',
       category: map['category'] ?? ProductCategory.all,
       price: map['price'] ?? '0',
-      description: map['description'],
+      resume: map['description'] ?? '',
+      description: map['description1']?? '',
+      seller: map['seller']?? '',
+      quantity: map['quantity']?? '',
     );
   }
-  
+
   // Méthode pour convertir le Product en Map (utile pour JSON)
   Map<String, dynamic> toMap() {
     return {
@@ -39,7 +46,10 @@ class Product {
       'image': image,
       'category': category,
       'price': price,
-      'description': description,
+      'reume': resume,
+      'quantity': quantity,
+      'seller': seller,
+      'description1':description,
     };
   }
 }

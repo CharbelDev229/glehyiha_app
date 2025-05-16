@@ -52,6 +52,11 @@ class MarketScreen extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'Rechercher un produit...',
                         prefixIcon: const Icon(Icons.search),
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 5,
+                        ),
                         filled: true,
                         fillColor: AppColors.white,
                         border: OutlineInputBorder(
@@ -92,8 +97,8 @@ class MarketScreen extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryGreen,
                           padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                            horizontal: 12,
+                            vertical: 10,
+                            horizontal: 13,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -102,10 +107,7 @@ class MarketScreen extends StatelessWidget {
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.add_a_photo_sharp,
-                              color: Colors.white,
-                            ),
+                            Icon(Icons.add_a_photo_sharp, color: Colors.white),
                             SizedBox(width: 4),
                             Text(
                               'Ajouter',
@@ -134,7 +136,7 @@ class MarketScreen extends StatelessWidget {
                             backgroundColor:
                                 isSelected ? AppColors.yellow : AppColors.grey,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
+                              horizontal: 11,
                               vertical: 8,
                             ),
                             shape: RoundedRectangleBorder(

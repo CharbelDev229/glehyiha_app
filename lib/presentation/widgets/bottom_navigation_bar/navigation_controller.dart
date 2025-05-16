@@ -8,3 +8,13 @@ class NavigationController extends GetxController {
     selectedIndex.value = index;
   }
 }
+
+
+
+
+
+
+
+
+
+

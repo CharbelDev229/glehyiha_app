@@ -1,17 +1,37 @@
-import '../product_detail/product_model.dart';
+import '../../../common/enums/product_category.dart';
 
-class CartItem {
-  final ProductModel product;
-  int quantity;
+class CartItemModel {
+  final String id;
+  final String name;
+  final String image;
+  final ProductCategory category;
+  final String price;
+  final String description;
+  final int quantity; // <-- changer en int
+  final String seller;
 
-  CartItem({
-    required this.product,
-    this.quantity = 1,
+  CartItemModel({
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.category,
+    required this.price,
+    required this.description,
+    required this.quantity,
+    required this.seller,
   });
 
-  String get id => product.id;
-  String get name => product.name;
-  String get image => product.image;
-  String get price => product.price;
-  String? get description => product.description;
+  
+  CartItemModel copyWith({int? quantity}) {
+    return CartItemModel(
+      id: id,
+      name: name,
+      image: image,
+      category: category,
+      price: price,
+      description: description,
+      quantity: quantity ?? this.quantity,
+      seller: seller,
+    );
+  }
 }

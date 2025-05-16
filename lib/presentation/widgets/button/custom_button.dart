@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import '../../../common/constants/colors.dart';
 
 class CustomButton extends StatelessWidget {
-  const CustomButton(
-      {super.key,
-        required this.onPressed,
-        required this.child,
-        this.backgroundColor,
-        this.height,
-        this.padding,
-        this.isLoading = false,
-        this.borderRadius = BorderRadius.zero,
-        this.width,
-        this.elevation = 0,
-        this.gradient,
-        this.disabledBackgroundColor,
-        this.foregroundColor,
-        this.shape,
-        this.isDisabled = false,
-        this.side = BorderSide.none,
-        this.border,
-        this.shadow,
-      });
+  const CustomButton({
+    super.key,
+    required this.onPressed,
+    required this.child,
+    this.backgroundColor,
+    this.height,
+    this.padding,
+    this.isLoading = false,
+    this.borderRadius = BorderRadius.zero,
+    this.width,
+    this.elevation = 0,
+    this.gradient,
+    this.disabledBackgroundColor,
+    this.foregroundColor,
+    this.shape,
+    this.isDisabled = false,
+    this.side = BorderSide.none,
+    this.border,
+    this.shadow,
+  });
 
   final void Function()? onPressed;
   final Widget? child;
@@ -49,50 +49,55 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-       width: 317,
-       height: 51,
+      width: 317,
+      height: 51,
       // constraints: const BoxConstraints(maxWidth: 430),
       decoration: BoxDecoration(
         // shape: shape == CircleBorder() ? BoxShape.circle : BoxShape.rectangle,
-         color: backgroundColor,
+        color: backgroundColor,
         //     ? AppColors.secondaryColor
         //     : backgroundColor ?? Theme.of(context).primaryColor,
         // borderRadius: shape == null ? borderRadius : null,
         //   boxShadow: shadow,
-          border: border,
-          gradient: gradient,
+        border: border,
+        gradient: gradient,
         borderRadius: BorderRadius.circular(10),
         // border: hasBorder ? Border.all(color: borderColor, width: borderWidth) : null
       ),
       child: ElevatedButton(
         onPressed: !isLoading ? onPressed : null,
         style: ElevatedButton.styleFrom(
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          disabledBackgroundColor: disabledBackgroundColor ?? AppColors.grey.withValues(alpha: .3),
-          overlayColor: AppColors.grey.withValues(alpha: 0.1),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          disabledBackgroundColor:
+              disabledBackgroundColor ?? AppColors.grey.withValues(alpha: .3),
+          overlayColor: AppColors.primaryGreen.withValues(alpha: 0.1),
           minimumSize: Size(width ?? 0.0, height ?? 0.0),
           elevation: elevation,
-          shadowColor: AppColors.grey,
-          foregroundColor: foregroundColor ?? Theme.of(context).textTheme.bodyMedium?.color,
-          backgroundColor: gradient != null ? Colors.transparent : isLoading
-              ? AppColors.grey
-              : backgroundColor ?? Theme.of(context).primaryColor,
+          shadowColor: AppColors.primaryGreen,
+          foregroundColor:
+              foregroundColor ?? Theme.of(context).textTheme.bodyMedium?.color,
+          backgroundColor:
+              gradient != null
+                  ? Colors.transparent
+                  : isLoading
+                  ? AppColors.primaryGreen
+                  : backgroundColor ?? Theme.of(context).primaryColor,
           padding: padding ?? const EdgeInsets.symmetric(vertical: 15),
-          shape: shape ?? RoundedRectangleBorder(
-              borderRadius: borderRadius,
-              side: side ??
-                  BorderSide.none
-          ),
+          shape:
+              shape ??
+              RoundedRectangleBorder(
+                borderRadius: borderRadius,
+                side: side ?? BorderSide.none,
+              ),
         ),
-        child: !isLoading
-            ? child
-            : const SizedBox(
-          width: 25,
-          height: 25,
-          child: CircularProgressIndicator(
-            color: Colors.white,
-          ),
-        ),
+        child:
+            !isLoading
+                ? child
+                : const SizedBox(
+                  width: 25,
+                  height: 25,
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
       ),
     );
   }

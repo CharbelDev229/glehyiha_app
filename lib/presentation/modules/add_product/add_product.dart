@@ -62,9 +62,24 @@ class _AddProductState extends State<AddProduct> {
                       const SizedBox(height: 20),
                      TextFormField(
                          controller: controller.descriptionController,
-                           maxLines: 5, // ou plus si besoin
+                           maxLines: 50,
                             decoration: const InputDecoration(
-                            labelText: 'Description',
+                            labelText: 'Description du produit',
+                            border: OutlineInputBorder(),
+                             alignLabelWithHint: true, // pour centrer le label en haut
+                                ),
+                                    validator: (value) {
+                               if (value == null || value.isEmpty) {
+                               return 'Veuillez entrer une description';
+                                    }
+                                   return null;
+                                         },
+                                           ),
+                                             TextFormField(
+                         controller: controller.descriptionController,
+                           maxLines: 5, 
+                            decoration: const InputDecoration(
+                            labelText: 'Résumé du produit',
                             border: OutlineInputBorder(),
                              alignLabelWithHint: true, // pour centrer le label en haut
                                 ),

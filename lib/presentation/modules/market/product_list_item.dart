@@ -125,9 +125,9 @@ class ProductListItem extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 6),
-                    if (product.description != null)
+                    if (product.resume != null)
                       Text(
-                        product.description!,
+                        product.resume!,
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.black87,

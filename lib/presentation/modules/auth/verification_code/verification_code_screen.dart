@@ -6,9 +6,7 @@ import 'package:glehiha/presentation/modules/auth/verification_code/verification
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:glehiha/presentation/widgets/background_decoration/background_deco.dart';
 
-
 import 'package:go_router/go_router.dart';
-
 
 import '../../../../common/utils/text_field_validators.dart';
 import '../../../../common/utils/utils.dart';
@@ -34,9 +32,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     controller = widget.controller;
     super.initState();
 
-
     _controllers = List.generate(6, (_) => TextEditingController());
-  _focusNodes = List.generate(6, (_) => FocusNode());
+    _focusNodes = List.generate(6, (_) => FocusNode());
   }
 
   void _onSubmit() {
@@ -99,16 +96,16 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                 ),
                               ),
                               const SizedBox(height: 25),
-                                const Text(
+                              const Text(
                                 "Code otp",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: AppColors.black,
                                   fontSize: 32,
-                               fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                             
+
                               const Text(
                                 "Un code à 6 chiffres vous a été envoyé pour la vérification",
                                 textAlign: TextAlign.center,
@@ -118,38 +115,61 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
-                             SizedBox(height: 30,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: List.generate(6, (index) {
-                                   return SizedBox(
-                                   width: 50,
-                                   height: 60,
-                                   child: TextFormField(
-                                    controller: _controllers[index],
-                                    focusNode: _focusNodes[index],
-                                    keyboardType: TextInputType.number,
-                                   
-                                    textAlign: TextAlign.center,
-                                    maxLength: 1,
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                    fontWeight: FontWeight.bold,),
-                                     decoration: InputDecoration(
-                                       counterText: "",
-                                       enabledBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(10),),
-                                       focusedBorder: OutlineInputBorder(
-                                       borderSide: const BorderSide(color: Colors.green, width: 2),
-                                       borderRadius: BorderRadius.circular(10),),),
-                                        onChanged: (value) {
+                              SizedBox(height: 30),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: List.generate(6, (index) {
+                                  return SizedBox(
+                                    width: 35,
+                                    height: 60,
+                                    child: TextFormField(
+                                      controller: _controllers[index],
+                                      focusNode: _focusNodes[index],
+                                      keyboardType: TextInputType.number,
+
+                                      textAlign: TextAlign.center,
+                                      maxLength: 1,
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      decoration: InputDecoration(
+                                        counterText: "",
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                            color: Colors.green,
+                                            width: 2,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                      ),
+                                      onChanged: (value) {
                                         if (value.isNotEmpty && index < 5) {
-                                          FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
-                                           } else if (value.isEmpty && index > 0) {
-                                           FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
-                                             }},),);})),
-                                      const SizedBox(height: 30),
+                                          FocusScope.of(context).requestFocus(
+                                            _focusNodes[index + 1],
+                                          );
+                                        } else if (value.isEmpty && index > 0) {
+                                          FocusScope.of(context).requestFocus(
+                                            _focusNodes[index - 1],
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  );
+                                }),
+                              ),
+                              const SizedBox(height: 30),
                               Obx(
                                 () => CustomButton(
                                   isLoading: controller.isLoading.value,

@@ -50,22 +50,17 @@ class MarketController extends GetxController {
     searchTerm.value = value;
   }
 
- void selectProduct(BuildContext context, Product product) {
-  Get.snackbar(
-    'Produit sélectionné',
-    'Vous avez sélectionné ${product.name}',
-    snackPosition: SnackPosition.BOTTOM,
-    duration: const Duration(seconds: 2),
-  );
-
-  context.pushNamed(
-    AppRoutesNames.productDetail,
-    extra: product,
+  void selectProduct(BuildContext context, Product product) {
+    Get.snackbar(
+      'Produit sélectionné',
+      'Vous avez sélectionné ${product.name}',
+      snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(seconds: 2),
+    );
     
-    
-  );
-}
 
+    context.pushNamed(AppRoutesNames.productDetail, extra: Product);
+  }
 
   // Méthode pour ajouter un nouveau produit
   void addNewProduct() {

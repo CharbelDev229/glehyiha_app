@@ -49,33 +49,34 @@ class CustomBottomBar extends StatelessWidget {
         child: SafeArea(
           child: Container(
             width: MediaQuery.of(context).size.width,
-            height: 60,
+            height: 80,
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: items.map((item) {
-                var index = items.indexOf(item);
+              children:
+                  items.map((item) {
+                    var index = items.indexOf(item);
 
-                return Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      navController.changeIndex(index);
-                      _navigateToScreen(context, index); 
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
+                    return Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          navController.changeIndex(index);
+                          _navigateToScreen(context, index);
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        child: _ItemWidget(
+                          item: item,
+                          iconSize: 24,
+                          isSelected: index == selectedIndex,
+                        ),
                       ),
-                    ),
-                    child: _ItemWidget(
-                      item: item,
-                      iconSize: 24,
-                      isSelected: index == selectedIndex,
-                    ),
-                  ),
-                );
-              }).toList(),
+                    );
+                  }).toList(),
             ),
           ),
         ),
@@ -137,10 +138,7 @@ class _ItemWidget extends StatelessWidget {
 }
 
 class BottomNavyBarItem {
-  BottomNavyBarItem({
-    required this.icon,
-    required this.itemName,
-  });
+  BottomNavyBarItem({required this.icon, required this.itemName});
 
   final Widget icon;
   final String itemName;
