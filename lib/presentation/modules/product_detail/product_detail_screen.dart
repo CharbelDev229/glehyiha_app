@@ -1,23 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:glehiha/common/constants/colors.dart';
-import 'package:glehiha/data/models/product/products.dart';
-import 'package:glehiha/presentation/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../common/constants/colors.dart';
+import '../../../data/models/product/products.dart';
+import '../../router/routes.dart' show AppRoutesNames;
 import '../../widgets/product_detail_card/product_detail_card.dart';
-import 'product_detail_controller.dart';
+import '../cart/cart_1_controller.dart';
 import 'product_detail_1 controller.dart';
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   final Product product;
-  ProductDetailScreen({super.key, required this.product});
 
-  final ProductDetailController controller = Get.put(ProductDetailController());
-  final cartController = Get.find<CartController>();
+  const ProductDetailScreen({super.key, required this.product});
+
+  @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  late final ProductDetailController productController;
+  late final Cart1Controller cartController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialisation après affichage pour éviter les erreurs de layout
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!Get.isRegistered<Cart1Controller>()) {
+        Get.put(Cart1Controller(), permanent: true);
+      }
+
+      setState(() {
+        cartController = Get.find<Cart1Controller>();
+      });
+    });
+
+    productController = Get.put(ProductDetailController());
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Si le contrôleur n'est pas encore prêt, on affiche un loader ou un placeholder
+    if (!Get.isRegistered<Cart1Controller>()) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Boutique', style: TextStyle(color: Colors.white)),
@@ -27,29 +56,37 @@ class ProductDetailScreen extends StatelessWidget {
             alignment: Alignment.topRight,
             children: [
               IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {},
+                icon: const Icon(Icons.shopping_cart, color: Colors.white),
+                onPressed: () {
+                  context.pushNamed(AppRoutesNames.cart);
+                },
               ),
               Positioned(
                 right: 9,
                 top: 6,
                 child: Obx(() {
-                  final cartCount = Get.find<CartController>().cartCount;
+                  final cartCount = cartController.cartCount;
                   return cartCount > 0
                       ? Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                            color: Colors.green,
-                            shape: BoxShape.circle,
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 18,
+                          minHeight: 18,
+                        ),
+                        child: Text(
+                          '$cartCount',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
                           ),
-                          child: Text(
-                            '$cartCount',
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
-                            ),
-                          ),
-                        )
+                          textAlign: TextAlign.center,
+                        ),
+                      )
                       : const SizedBox();
                 }),
               ),
@@ -61,51 +98,108 @@ class ProductDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            ProductDetailCard(product: product),
+            ProductDetailCard(product: widget.product),
             const SizedBox(height: 30),
-
-            // Ajout panier
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Obx(() => Row(
-                      children: [
-                        IconButton(
-                          onPressed: controller.decrement,
-                          icon: const Icon(Icons.remove_circle, color: Colors.blue),
+                Row(
+                  children: [
+                    Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.black12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: productController.decrement,
+                        icon: const Icon(
+                          Icons.remove,
+                          color: Colors.white,
+                          size: 18,
                         ),
-                        Text(
-                          controller.quantity.value.toString(),
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Obx(
+                      () => Text(
+                        productController.quantity.value.toString(),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                         ),
-                        IconButton(
-                          onPressed: controller.increment,
-                          icon: const Icon(Icons.add_circle, color: Colors.blue),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.black12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: productController.increment,
+                        icon: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 18,
                         ),
-                      ],
-                    )),
+                      ),
+                    ),
+                  ],
+                ),
                 const Spacer(),
                 ElevatedButton(
                   onPressed: () {
-                    for (int i = 0; i < controller.quantity.value; i++) {
-                      cartController.addToCart(product);
+                    try {
+                      cartController.addToCart(
+                        widget.product,
+                        quantity: productController.quantity.value,
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "${productController.quantity.value} ${widget.product.name} ajouté(s) au panier",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+
+                      context.pushNamed(AppRoutesNames.cart);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Erreur: $e"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                     }
-                    Get.snackbar(
-                      "Succès",
-                      "${controller.quantity.value} ${product.name} ajouté(s) au panier",
-                      backgroundColor: Colors.green,
-                      colorText: Colors.white,
-                    );
-                    context.pushNamed(AppRoutesNames.cart);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryGreen,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   child: const Text(
                     "Ajouter au panier",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

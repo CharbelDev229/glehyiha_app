@@ -1,33 +1,47 @@
 import 'package:get/get.dart';
 import '../../../data/models/product/products.dart';
+import '../../../data/models/cart/cart_item_model.dart';
 
 class CartController extends GetxController {
-  final RxList<Product> cartItems = <Product>[].obs;
+  final RxList<CartItemModel> cartItems = <CartItemModel>[].obs;
   
-  // Méthode pour obtenir le nombre d'articles dans le panier
-  int get cartCount => cartItems.length;
+  int get cartCount =>
+      cartItems.fold(0, (sum, item) => sum + item.quantity);
   
-  // Méthode pour ajouter un produit au panier
-  void addToCart(Product product) {
-    cartItems.add(product);
+  void addToCart(Product product, int value, {int quantity = 1}) {
+    final index = cartItems.indexWhere((item) => item.id == product.id);
+    if (index >= 0) {
+      // Met à jour la quantité si le produit est déjà dans le panier
+      final updatedItem = cartItems[index].copyWith(
+        quantity: cartItems[index].quantity + quantity,
+      );
+      cartItems[index] = updatedItem;
+    } else {
+      cartItems.add(
+        CartItemModel(
+          id: product.id,
+          name: product.name,
+          image: product.image,
+          category: product.category,
+          price: product.price,
+          resume: product.resume,
+          quantity: quantity,
+          seller: product.seller,
+        ),
+      );
+    }
   }
   
-  // Méthode pour retirer un produit du panier
-  void removeFromCart(Product product) {
-    cartItems.remove(product);
+  void removeFromCart(String productId) {
+    cartItems.removeWhere((item) => item.id == productId);
   }
   
-  // Méthode pour vider le panier
   void clearCart() {
     cartItems.clear();
   }
   
-  // Méthode pour calculer le total du panier
   double get total {
-    double sum = 0;
-    for (var item in cartItems) {
-      sum += double.parse(item.price);
-    }
-    return sum;
+    return cartItems.fold(0, (sum, item) =>
+        sum + double.parse(item.price) * item.quantity);
   }
 }

@@ -6,7 +6,7 @@ class CartItemModel {
   final String image;
   final ProductCategory category;
   final String price;
-  final String description;
+  final String resume;
   final int quantity; // <-- changer en int
   final String seller;
 
@@ -16,9 +16,9 @@ class CartItemModel {
     required this.image,
     required this.category,
     required this.price,
-    required this.description,
+    required this.resume,
     required this.quantity,
-    required this.seller,
+    required this.seller, 
   });
 
   
@@ -29,7 +29,7 @@ class CartItemModel {
       image: image,
       category: category,
       price: price,
-      description: description,
+      resume: resume,
       quantity: quantity ?? this.quantity,
       seller: seller,
     );

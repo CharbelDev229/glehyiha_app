@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:glehiha/presentation/modules/auth/verification_code/verification_code_controller.dart';
-
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:glehiha/presentation/widgets/background_decoration/background_deco.dart';
-
 import 'package:go_router/go_router.dart';
-
 import '../../../../common/utils/text_field_validators.dart';
 import '../../../../common/utils/utils.dart';
 import '../../../widgets/button/custom_button.dart';
@@ -40,9 +37,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     final isFormValid = controller.formKey.currentState!.validate();
 
     if (isFormValid) {
-      context.pushNamed(
-        AppRoutesNames.parameters,
-      ); // ou context.pushNamed(...) si tu utilises go_router
+      context.pushNamed(AppRoutesNames.parameters);
     } else {
       setState(() {
         _autoValidate = true;
@@ -52,6 +47,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final boxWidth = (deviceWidth - 80) / 8; // espace adaptable
+
     return SafeArea(
       child: BackgroundDeco(
         child: Scaffold(
@@ -60,7 +58,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
             builder: (context, constraints) {
               return Column(
                 children: [
-                  SizedBox(height: Utils.deviceH(context) * 0.33),
+                  SizedBox(height: Utils.deviceH(context) * 0.5),
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -75,10 +73,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                         ),
                       ),
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 10.0,
-                        ),
                         child: Form(
                           key: controller.formKey,
                           autovalidateMode:
@@ -105,7 +99,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-
+                              const SizedBox(height: 10),
                               const Text(
                                 "Un code à 6 chiffres vous a été envoyé pour la vérification",
                                 textAlign: TextAlign.center,
@@ -115,19 +109,20 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
-                              SizedBox(height: 30),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                              const SizedBox(height: 30),
+
+                              /// ✅ Responsive champs OTP
+                              Wrap(
+                                alignment: WrapAlignment.center,
+                                spacing: 10,
                                 children: List.generate(6, (index) {
                                   return SizedBox(
-                                    width: 35,
+                                    width: boxWidth,
                                     height: 60,
                                     child: TextFormField(
                                       controller: _controllers[index],
                                       focusNode: _focusNodes[index],
                                       keyboardType: TextInputType.number,
-
                                       textAlign: TextAlign.center,
                                       maxLength: 1,
                                       style: const TextStyle(
@@ -169,6 +164,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                   );
                                 }),
                               ),
+
                               const SizedBox(height: 30),
                               Obx(
                                 () => CustomButton(
