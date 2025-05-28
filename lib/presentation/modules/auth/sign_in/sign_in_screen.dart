@@ -32,21 +32,21 @@ class _SignInScreenState extends State<SignInScreen> {
     super.initState();
   }
 
-  void _onsubmit() {
-    final isFormValid = controller.formKey.currentState!.validate();
-    setState(() {
-      _autoValidate = true;
-    });
+  // void _onsubmit() {
+  //   final isFormValid = controller.formKey.currentState!.validate();
+  //   setState(() {
+  //     _autoValidate = true;
+  //   });
 
-    if (isFormValid) {
-      // Redirection si tout est OK
-      context.pushNamed(AppRoutesNames.code);
-    } else {
-      setState(() {
-        _autoValidate = true; // Pour déclencher l'affichage des erreurs
-      });
-    }
-  }
+  //   if (isFormValid) {
+  //     // Redirection si tout est OK
+  //     context.pushNamed(AppRoutesNames.code);
+  //   } else {
+  //     setState(() {
+  //       _autoValidate = true; // Pour déclencher l'affichage des erreurs
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +206,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             // Submit Button
                             Obx(() =>
                                CustomButton(
-                                isLoading: controller.loginInLoading.value,
+                                isLoading: controller.isLoading.value,
                                 backgroundColor: Color.fromARGB(
                                   255,
                                   43,
@@ -218,10 +218,16 @@ class _SignInScreenState extends State<SignInScreen> {
                                 ),
                                 padding: EdgeInsets.symmetric(vertical: 15),
                                 onPressed:
-                                    controller.loginInLoading.value
+                                    controller.isLoading.value
                                         ? null
                                         : () {
-                                          _onsubmit();
+                                          if (controller
+                                                      .formKey
+                                                      .currentState
+                                                      ?.validate() ??
+                                                  false) {
+                                                controller.login(context);
+                                              }
                                         },
 
                                 child:
@@ -248,11 +254,11 @@ class _SignInScreenState extends State<SignInScreen> {
                                 ),
                                 padding: EdgeInsets.symmetric(vertical: 15),
                                 onPressed:
-                                    controller.loginInLoading.value
+                                    controller.isLoading.value
                                         ? null
                                         : (){context.pushNamed(AppRoutesNames.signUp);},
                                 child:
-                                    controller.loginInLoading.value
+                                    controller.isLoading.value
                                         ? CircularProgressIndicator()
                                         : const Text(
                                           "Inscrivez-vous",

@@ -6,9 +6,26 @@ import 'package:glehiha/common/constants/assets/assets.dart';
 
 import '../../../common/utils/utils.dart';
 import '../../widgets/button/custom_buttom_w.dart';
+import 'onboarding_controller.dart';
 
-class OnboardingScreen2 extends StatelessWidget {
-  const OnboardingScreen2({super.key});
+class OnboardingScreen2 extends StatefulWidget {
+  final OnboardingController controller;
+  const OnboardingScreen2({super.key, required this.controller});
+   @override
+  State<OnboardingScreen2> createState() => _OnboardingScreen2State();
+}
+
+class _OnboardingScreen2State extends State<OnboardingScreen2> {
+  
+  late OnboardingController controller;
+  @override
+  void initState() {
+    controller = widget.controller;
+   
+controller.init();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

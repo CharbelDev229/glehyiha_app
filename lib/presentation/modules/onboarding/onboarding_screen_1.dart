@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:glehiha/common/utils/utils.dart';
 import 'package:glehiha/presentation/router/routes.dart';
@@ -7,8 +6,23 @@ import 'package:glehiha/presentation/widgets/button/custom_button_with_icon.dart
 import 'package:go_router/go_router.dart';
 import 'package:glehiha/common/constants/assets/assets.dart';
 
-class OnboardingScreen1 extends StatelessWidget {
-  const OnboardingScreen1({super.key});
+import 'onboarding_controller.dart';
+
+class OnboardingScreen1 extends StatefulWidget {
+  final OnboardingController controller;
+  const OnboardingScreen1({super.key, required this.controller});
+  @override
+  State<OnboardingScreen1> createState() => _OnboardingScreen1State();
+}
+
+class _OnboardingScreen1State extends State<OnboardingScreen1> {
+  late OnboardingController controller;
+  @override
+  void initState() {
+    controller = widget.controller;
+    controller.init();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +51,7 @@ class OnboardingScreen1 extends StatelessWidget {
                   Flexible(
                     child: Text(
                       'Obtenez des conseils agricoles personnalisés,',
-                       style: const TextStyle(
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w600,
                         color: AppColors.white,

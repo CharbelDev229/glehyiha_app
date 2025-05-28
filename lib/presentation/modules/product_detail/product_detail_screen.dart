@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../common/constants/colors.dart';
 import '../../../data/models/product/products.dart';
-import '../../router/routes.dart' show AppRoutesNames;
+import '../../router/routes.dart';
 import '../../widgets/product_detail_card/product_detail_card.dart';
 import '../cart/cart_1_controller.dart';
 import 'product_detail_1 controller.dart';
@@ -15,10 +15,10 @@ class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key, required this.product});
 
   @override
-  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+  State<ProductDetailScreen> createState() => ProductDetailScreenState();
 }
 
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
+class ProductDetailScreenState extends State<ProductDetailScreen> {
   late final ProductDetailController productController;
   late final Cart1Controller cartController;
 
@@ -26,18 +26,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   void initState() {
     super.initState();
 
-    // Initialisation après affichage pour éviter les erreurs de layout
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!Get.isRegistered<Cart1Controller>()) {
-        Get.put(Cart1Controller(), permanent: true);
-      }
+    // Si le contrôleur n'existe pas encore, on le crée
+    if (!Get.isRegistered<Cart1Controller>()) {
+      cartController = Get.put(Cart1Controller(), permanent: true);
+    } else {
+      cartController = Get.find<Cart1Controller>();
+    }
 
-      setState(() {
-        cartController = Get.find<Cart1Controller>();
-      });
-    });
-
-    productController = Get.put(ProductDetailController());
+    // Pareil pour productController
+    if (!Get.isRegistered<ProductDetailController>()) {
+      productController = Get.put(ProductDetailController());
+    } else {
+      productController = Get.find<ProductDetailController>();
+    }
   }
 
   @override

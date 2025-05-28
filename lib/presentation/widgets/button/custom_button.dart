@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../common/constants/colors.dart';
 
 class CustomButton extends StatelessWidget {
-  const CustomButton({
+  CustomButton({
     super.key,
     required this.onPressed,
     required this.child,
@@ -32,7 +32,6 @@ class CustomButton extends StatelessWidget {
   final bool isLoading;
   final BorderRadiusGeometry borderRadius;
   final double elevation;
-  // final BoxBorder? border;
   final List<BoxShadow>? shadow;
   final BoxBorder? border;
   final Gradient? gradient;
@@ -42,35 +41,24 @@ class CustomButton extends StatelessWidget {
   final bool isDisabled;
   final BorderSide? side;
 
-  // final double borderWidth;
-  // final Color borderColor;
-  // final bool hasBorder;
-
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 317,
       height: 51,
-      // constraints: const BoxConstraints(maxWidth: 430),
       decoration: BoxDecoration(
-        // shape: shape == CircleBorder() ? BoxShape.circle : BoxShape.rectangle,
-        color: backgroundColor,
-        //     ? AppColors.secondaryColor
-        //     : backgroundColor ?? Theme.of(context).primaryColor,
-        // borderRadius: shape == null ? borderRadius : null,
-        //   boxShadow: shadow,
         border: border,
         gradient: gradient,
         borderRadius: BorderRadius.circular(10),
-        // border: hasBorder ? Border.all(color: borderColor, width: borderWidth) : null
+        boxShadow: shadow,
       ),
       child: ElevatedButton(
         onPressed: !isLoading ? onPressed : null,
         style: ElevatedButton.styleFrom(
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           disabledBackgroundColor:
-              disabledBackgroundColor ?? AppColors.grey.withValues(alpha: .3),
-          overlayColor: AppColors.primaryGreen.withValues(alpha: 0.1),
+              disabledBackgroundColor ?? AppColors.grey.withOpacity(0.3),
+          overlayColor: AppColors.primaryGreen.withOpacity(0.1),
           minimumSize: Size(width ?? 0.0, height ?? 0.0),
           elevation: elevation,
           shadowColor: AppColors.primaryGreen,

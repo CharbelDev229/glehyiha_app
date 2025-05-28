@@ -1,19 +1,26 @@
 import 'package:dartz/dartz.dart';
+import 'package:glehiha/common/dtos/profile_dto/profile_dto.dart';
+import 'package:glehiha/common/utils/failure.dart';
+import 'package:glehiha/data/models/user/glehiha_current_user.dart';
+import 'package:glehiha/data/models/user/glehiha_user_info.dart';
+import '../../common/dtos/profile_dto/change_pwd_dto.dart';
 
-import '../../common/utils/failure.dart';
-import '../../data/data_models/get_users_data.dart';
-import '../../data/models/user/glehiha_user_info.dart';
 
-abstract class UserRepository{
-  /// Get all users
-  Future<Either<Failure, GetUsersData>> getUsers({
-    required int page,
-    String? search,
-  });
-  
-  Future<Either<Failure, GlehihaUserInfo>> getUsersdata({
-    required int userId,
-  });
+abstract class UserRepository {
+  /// Get user infos
+  Future<Either<Failure, GlehihaCurrentUser>> getProfile();
 
-  Future<Either<Failure, String>> setPostConfidentialy({ required String type});
+  /// Update user infos
+  Future<Either<Failure, String>> updateProfile(ProfileDto dto, String email);
+
+  /// logout user
+  Future<Either<Failure, String>> logout();
+
+  /// Change password
+  Future<Either<Failure, String>> changePassword(ChangePwdDto dto,
+  );
+  /// Delete account
+  Future<Either<Failure, String>> deleteAccount({required String password});
+
+ 
 }

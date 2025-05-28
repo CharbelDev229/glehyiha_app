@@ -1,87 +1,84 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'package:glehiha/common/constants/instances.dart';
 import 'package:glehiha/domain/usescases/auth/login.dart';
-import 'package:glehiha/presentation/router/routes.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../common/utils/utils.dart';
+import '../../../../data/models/user/glehiha_user_info.dart';
+import '../../../router/routes.dart';
+import '../../order_detail/user_controller.dart';
+import '../../my_profile/my_profile_controller.dart';
 
-class SignInController extends GetxController {
-    final LoginUseCase loginUseCase;
-   
-  final formKey = GlobalKey<FormState>();
-  GlobalKey<FormState> loginFormKey = GlobalKey<FormState>(
-    debugLabel: 'sign_in',
-  );
+class SignInController {
+  final LoginUseCase loginUseCase;
 
-  TextEditingController phoneNumberController = TextEditingController();
+  // Form key
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  TextEditingController passwordController = TextEditingController();
+  // Contrôleurs pour les champs du formulaire
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  RxString phoneNumber = ''.obs;
-  RxBool isPasswordVisible = false.obs;
-  RxString errorMessage = ''.obs;
-  RxString selectedCountryCode = '+229'.obs;
-  RxBool autoValidate = false.obs;
+  // Variables réactives
+  final RxString selectedCountryCode = '+229'.obs;
+  final RxBool isPasswordVisible = false.obs;
+  final RxBool autoValidate = false.obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxBool loginInLoading = false.obs;
 
-  RxBool loginInLoading = false.obs;
-  
+  SignInController({required this.loginUseCase});
 
-
-
-  SignInController(
-      {required this.loginUseCase});
-
-  
-  @override
-  void onInit() {
-    logger.w('\nSignInController onInit\n\n');
-    super.onInit();
+  String getCompletePhoneNumber() {
+    return selectedCountryCode.value + phoneNumberController.text.trim();
   }
 
-  @override
-  void onClose() {
-    logger.w('\nSignInController onClose\n\n');
-    super.onClose();
+  Future<bool> login(BuildContext context) async {
+    bool success = false;
+    loginInLoading.value = true;
+    autoValidate.value = true;
+
+    final send = await loginUseCase.call(
+      LoginParams(
+        password: passwordController.text,
+        phoneNumber: getCompletePhoneNumber(),
+      ),
+    );
+
+     send.fold(
+      (failure) {
+        Utils.snackError(context: context, message: failure.message);
+      },
+      (response) async {
+        Utils.snackSuccess(context: context, message: 'Inscription réussie!');
+        success = true;
+
+
+        // Mettre à jour le UserController
+        // try {
+        //   final userController = Get.find<UserController>();
+        //   userController.setUser(
+        //     fName: userInfo.firstname ?? '',
+        //     lName: userInfo.lastname ?? '',
+        //     mail: userInfo.email ?? '',
+        //     phone: userInfo.phonenumber ?? getCompletePhoneNumber(),
+        //   );
+        // } catch (e) {
+        //   print('UserController non trouvé ou erreur: $e');
+        // }
+
+        // Mettre à jour le ProfileController
+
+        if (context.mounted) {
+          context.pushNamed(
+            AppRoutesNames.parameters,
+            extra: getCompletePhoneNumber(),
+          );
+        }
+      },
+    );
+
+    loginInLoading.value = false;
+    return success;
   }
-
-
-  //  Future<bool> login(BuildContext context) async {
-  //   bool success = false;
-  //   loginInLoading.value = true;
-
-
-  //   final send = await loginUseCase.call(LoginParams(
-  //     password: passwordController.text,
-  //     phoneNumber: phoneNumberController.text,
-  //   ));
-
-  //   send.fold(
-  //         (failure) {
-  //       Utils.snackError(
-  //         context: context,
-  //         message: failure.message,
-  //       );
-  //     },
-  //         (message) async {
-  //       return await profileController.onGetMyProfile().then((value) {
-  //         success = value;
-  //         if (value) {
-  //           if(context.mounted) {
-  //             Utils.snackSuccess(
-  //             context: context,
-  //             message: 'Message réusie',
-  //           );
-  //           }
-  //         }
-  //       });
-  //     },
-  //   );
-
-  //   loginInLoading.value = false;
-  //   return success;
-  // }
 }

@@ -5,8 +5,6 @@ import 'package:glehiha/presentation/modules/auth/verification_code/verification
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:glehiha/presentation/widgets/background_decoration/background_deco.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../common/utils/text_field_validators.dart';
-import '../../../../common/utils/utils.dart';
 import '../../../widgets/button/custom_button.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
@@ -19,36 +17,54 @@ class VerificationCodeScreen extends StatefulWidget {
 
 class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   late VerificationCodeController controller;
-  List<TextEditingController> _controllers = [];
-  List<FocusNode> _focusNodes = [];
-
+  late List<TextEditingController> _controllers;
+  late List<FocusNode> _focusNodes;
   bool _autoValidate = false;
+
+  late String email ; 
 
   @override
   void initState() {
-    controller = widget.controller;
     super.initState();
-
+    controller = widget.controller;
     _controllers = List.generate(6, (_) => TextEditingController());
     _focusNodes = List.generate(6, (_) => FocusNode());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final verification_code = _controllers.map((c) => c.text).join();
+      if (verification_code.length == 6) {
+        await controller.verifyUserAccount(context, verification_code, email);
+      }
+    });
   }
 
-  void _onSubmit() {
-    final isFormValid = controller.formKey.currentState!.validate();
+ 
 
-    if (isFormValid) {
+
+  Future<void> _onSubmit() async {
+  final isFormValid = controller.formKey.currentState!.validate();
+  if (isFormValid) {
+    final verification_code = _controllers.map((c) => c.text).join();
+    final email = controller.email;
+    final success = await controller.verifyUserAccount(context, verification_code, email);
+    if (success) {
       context.pushNamed(AppRoutesNames.parameters);
-    } else {
-      setState(() {
-        _autoValidate = true;
-      });
     }
+  } else {
+    setState(() {
+      _autoValidate = true;
+    });
   }
+}
+
+   Future<void> _onResendCode() async {
+     await controller.resentVerificationCode(context);
+   }
 
   @override
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
-    final boxWidth = (deviceWidth - 80) / 8; // espace adaptable
+    final boxWidth = (deviceWidth - 80) / 8;
 
     return SafeArea(
       child: BackgroundDeco(
@@ -58,13 +74,10 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
             builder: (context, constraints) {
               return Column(
                 children: [
-                  SizedBox(height: Utils.deviceH(context) * 0.5),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.30),
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0,
-                        vertical: 30.0,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 30.0),
                       decoration: const BoxDecoration(
                         color: AppColors.white,
                         borderRadius: BorderRadius.only(
@@ -75,24 +88,19 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                       child: SingleChildScrollView(
                         child: Form(
                           key: controller.formKey,
-                          autovalidateMode:
-                              _autoValidate
-                                  ? AutovalidateMode.always
-                                  : AutovalidateMode.disabled,
+                          autovalidateMode: _autoValidate
+                              ? AutovalidateMode.always
+                              : AutovalidateMode.disabled,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const SizedBox(
                                 width: 90,
-                                child: Divider(
-                                  thickness: 2,
-                                  color: AppColors.black,
-                                ),
+                                child: Divider(thickness: 2, color: AppColors.black),
                               ),
                               const SizedBox(height: 25),
                               const Text(
-                                "Code otp",
-                                textAlign: TextAlign.center,
+                                "Code OTP",
                                 style: TextStyle(
                                   color: AppColors.black,
                                   fontSize: 32,
@@ -101,7 +109,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                               ),
                               const SizedBox(height: 10),
                               const Text(
-                                "Un code à 6 chiffres vous a été envoyé pour la vérification",
+                                "Veuillez saisir le code à 6 chiffres envoyé à votre adresse email.",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: AppColors.black,
@@ -110,8 +118,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                 ),
                               ),
                               const SizedBox(height: 30),
-
-                              /// ✅ Responsive champs OTP
                               Wrap(
                                 alignment: WrapAlignment.center,
                                 spacing: 10,
@@ -132,69 +138,57 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                       decoration: InputDecoration(
                                         counterText: "",
                                         enabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
+                                          borderSide: const BorderSide(color: Colors.grey),
+                                          borderRadius: BorderRadius.circular(10),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                            color: Colors.green,
-                                            width: 2,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
+                                          borderSide: const BorderSide(color: Colors.green, width: 2),
+                                          borderRadius: BorderRadius.circular(10),
                                         ),
                                       ),
                                       onChanged: (value) {
                                         if (value.isNotEmpty && index < 5) {
-                                          FocusScope.of(context).requestFocus(
-                                            _focusNodes[index + 1],
-                                          );
+                                          FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
                                         } else if (value.isEmpty && index > 0) {
-                                          FocusScope.of(context).requestFocus(
-                                            _focusNodes[index - 1],
-                                          );
+                                          FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
                                         }
+                                      },
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return '';
+                                        }
+                                        return null;
                                       },
                                     ),
                                   );
                                 }),
                               ),
-
                               const SizedBox(height: 30),
                               Obx(
                                 () => CustomButton(
                                   isLoading: controller.isLoading.value,
-                                  backgroundColor: const Color.fromARGB(
-                                    255,
-                                    43,
-                                    131,
-                                    68,
-                                  ),
+                                  backgroundColor: const Color.fromARGB(255, 43, 131, 68),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 15,
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  onPressed: controller.isLoading.value ? null : _onSubmit,
+                                  child: const Text(
+                                    "Valider",
+                                    style: TextStyle(fontSize: 20, color: Colors.white),
                                   ),
-                                  onPressed:
-                                      controller.isLoading.value
-                                          ? null
-                                          : _onSubmit,
-                                  child:
-                                      controller.isLoading.value
-                                          ? const CircularProgressIndicator()
-                                          : const Text(
-                                            "Valider",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              TextButton(
+                                onPressed: _onResendCode,
+                                child: const Text(
+                                  "Renvoyer le code",
+                                  style: TextStyle(
+                                    color: AppColors.green,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                             ],

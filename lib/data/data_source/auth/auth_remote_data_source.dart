@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:glehiha/data/models/user/glehiha_user_info.dart';
 import '../../../common/constants/instances.dart';
 import '../../../common/dtos/auth/register_dto.dart';
 import '../../../common/helpers/request_manager.dart';
@@ -11,11 +12,14 @@ abstract class AuthRemoteDataSource {
   Future<Either<Failure, String>> signUp(RegisterDto dto);
   Future<Either<Failure, String>> userForgotPassword(String email);
 
-  Future<Either<Failure, String>> resentVerificationCode(String code);
-  Future<Either<Failure, String>> resetPassword(String email);
+  Future<Either<Failure, String>> resentVerificationCode(String email);
+  Future<Either<Failure, String>> resetPassword(String new_password, String reset_code);
   Future<Either<Failure, String>> userResetPassword(String email);
   Future<Either<Failure, String>> forgotPassword(String email);
-  Future<Either<Failure, String>> verifyUserAccount(String email);
+  Future<Either<Failure, String>> verifyUserAccount(
+    String verification_code,
+    String email,
+  );
 
   /// Check if user exist
   Future<Either<Failure, String>> resentCode(String email);
@@ -45,14 +49,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.success) {
-        prefs.setString('token', response.map['access_token']);
+       prefs.setString('token', response.map['data']['access_token']);
+      
+
         return Right(response.message);
       } else {
         return Left(ServerFailure.raise(response));
       }
     } catch (e) {
-      logger.e(e);
-      return Left(ServerFailure.onCatch());
+      return Left(ServerFailure.onCatch(e: e));
     }
   }
 
@@ -68,7 +73,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         body: dto.toMap(),
       );
       if (response.success) {
-        prefs.setString('token', response.data['access_token']);
         return Right(response.message);
       } else {
         return Left(ServerFailure.raise(response));
@@ -142,18 +146,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, String>> resentVerificationCode(String code) async {
-    /// URL of the endpoint
+  Future<Either<Failure, String>> resentVerificationCode(String email) async {
     Uri url = UriFormatter('auth/resent_verification_code').format();
 
     try {
       final response = await dioRequestManager.send(
         'POST',
         url,
-        body: {"code": code},
+        body: {"email": email},
       );
+    
       if (response.success) {
-        return Right(response.message);
+       return Right(response.message);
       } else {
         return Left(ServerFailure.raise(response));
       }
@@ -163,18 +167,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, String>> resetPassword(String email) async {
-    /// URL of the endpoint
+  Future<Either<Failure, String>> resetPassword(String new_password, String reset_code) async {
+    /// URL of the endpoint 
     Uri url = UriFormatter('auth/reset_password').format();
 
     try {
       final response = await dioRequestManager.send(
         'POST',
         url,
-        body: {"email": email},
+        body: {"new_password": new_password, "reset_code": reset_code},
       );
       if (response.success) {
-        return Right(response.message);
+       return Right(response.message);
+
       } else {
         return Left(ServerFailure.raise(response));
       }
@@ -184,15 +189,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, String>> verifyUserAccount(String email) async {
+  Future<Either<Failure, String>> verifyUserAccount(
+    String verification_code,
+    String email,
+  ) async {
     /// URL of the endpoint
-    Uri url = UriFormatter('auth/forgot_password').format();
+    Uri url = UriFormatter('auth/verify_user_account').format();
 
     try {
       final response = await dioRequestManager.send(
         'POST',
         url,
-        body: {"email": email},
+        body: {"verification_code": verification_code, "email": email},
       );
       if (response.success) {
         return Right(response.message);
@@ -207,7 +215,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Either<Failure, String>> userResetPassword(String email) async {
     /// URL of the endpoint
-    Uri url = UriFormatter('auth/forgot_password').format();
+    Uri url = UriFormatter('auth/user_reset_password').format();
 
     try {
       final response = await dioRequestManager.send(

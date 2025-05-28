@@ -122,43 +122,50 @@ class MarketScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
-
               Obx(
-                () => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children:
-                      ProductCategory.values.map((category) {
-                        final isSelected =
-                            controller.selectedCategory.value == category;
-                        return ElevatedButton(
-                          onPressed: () => controller.changeCategory(category),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                isSelected ? AppColors.yellow : AppColors.grey,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 11,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: const BorderSide(color: AppColors.grey),
-                            ),
-                          ),
-                          child: Text(
-                            category.displayName,
-                            style: TextStyle(
-                              color:
+                () => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    spacing: 12,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children:
+                        ProductCategory.values.map((category) {
+                          final isSelected =
+                              controller.selectedCategory.value == category;
+                          return ElevatedButton(
+                            onPressed:
+                                () => controller.changeCategory(category),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
                                   isSelected
-                                      ? AppColors.white
-                                      : AppColors.black,
-                              fontWeight: FontWeight.w500,
+                                      ? AppColors.yellow
+                                      : AppColors.grey,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 11,
+                                vertical: 8,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: const BorderSide(color: AppColors.grey),
+                              ),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                            child: Text(
+                              category.displayName,
+                              style: TextStyle(
+                                color:
+                                    isSelected
+                                        ? AppColors.white
+                                        : AppColors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                  ),
                 ),
               ),
 
+              //   Expanded(child: CartSummary()),
               const SizedBox(height: 20),
 
               Expanded(

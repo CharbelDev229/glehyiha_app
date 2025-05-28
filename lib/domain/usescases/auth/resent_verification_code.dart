@@ -11,15 +11,15 @@ class ResentVerificationCodeUseCase implements UseCase<String, ResentVerificatio
 
   @override
   Future<Either<Failure, String>> call(ResentVerificationCodeParams params) async {
-    return await repository.resentVerificationCode(params.code);
+    return await repository.resentVerificationCode(params.email);
   }
 }
 
 class ResentVerificationCodeParams extends Equatable {
-  final String code;
+  final String email;
 
-  const ResentVerificationCodeParams({required this.code}) : super();
+  const ResentVerificationCodeParams({required this.email}) : super();
 
   @override
-  List<Object> get props => [code];
+  List<Object> get props => [email];
 }

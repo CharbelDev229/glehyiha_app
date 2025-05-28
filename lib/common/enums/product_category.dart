@@ -2,6 +2,7 @@ enum ProductCategory {
    all,
   pesticide,
   engrais,
+  semences,
 }
 
 // Extension pour faciliter l'affichage du nom des catégories
@@ -14,6 +15,8 @@ extension ProductCategoryExtension on ProductCategory {
         return 'Pesticides';
       case ProductCategory.engrais:
         return 'Engrais';
+         case ProductCategory.semences:
+        return 'semences';
       
     }
   }

@@ -410,20 +410,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                       .currentState
                                                       ?.validate() ??
                                                   false) {
-                                                context.pushNamed(
-                                                  AppRoutesNames.code,
-                                                );
-                                              } else {
-                                                // logger.w(
-                                                //   controller
-                                                //       .formKey
-                                                //       .currentState,
-                                                // );
-                                                Utils.snackInfo(
-                                                  context: context,
-                                                  message:
-                                                      'Une erreur est dans le formulaire',
-                                                );
+                                                controller.register(context);
                                               }
                                             },
 

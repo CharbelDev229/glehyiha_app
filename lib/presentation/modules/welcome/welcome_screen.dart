@@ -5,20 +5,24 @@ import 'package:glehiha/presentation/widgets/background_decoration/background_de
 import 'package:glehiha/common/constants/assets/logo_assets.dart';
 import 'package:go_router/go_router.dart';
 
-class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key});
+import 'welcome_controller.dart';
 
+class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({super.key, required this.controller});
+  final WelcomeController controller;
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  
+  late WelcomeController controller;
   @override
   void initState() {
+    controller = widget.controller;
     Future.delayed(Duration(seconds: 3), () {
       // Code à exécuter après 2 secondes
-
-       context.pushNamed(AppRoutesNames.onboarding1);
+ if (context.mounted) {     controller.redirectInApp(context);}
     });
 
     super.initState();
@@ -40,7 +44,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             children: [
               Image.asset(
                 LogoAssets.frame1,
-      height: 96,
+                height: 96,
                 width: 203,
                 fit: BoxFit.contain,
               ),
@@ -51,7 +55,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   LogoAssets.frame2,
                   height: 22,
                   width: 168,
-fit: BoxFit.contain,
+                  fit: BoxFit.contain,
                 ),
               ),
             ],

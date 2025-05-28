@@ -6,7 +6,7 @@ import '../../../common/utils/utils.dart';
 import '../../widgets/bottom_navigation_bar/bottom_navigation_bottom_bar.dart';
 
 class ExpertPageScreen extends StatelessWidget {
-  const ExpertPageScreen({super.key});
+  const ExpertPageScreen({super.key, required String name});
 
   @override
   Widget build(BuildContext context) {

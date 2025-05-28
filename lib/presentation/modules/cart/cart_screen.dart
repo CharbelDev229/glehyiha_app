@@ -1,18 +1,47 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:glehiha/presentation/modules/cart/cart_1_controller.dart';
+import 'package:glehiha/common/constants/colors.dart';
+import 'package:glehiha/presentation/router/routes.dart';
 import 'package:go_router/go_router.dart';
-import '../../../common/constants/colors.dart';
-import '../../router/routes.dart';
+
+
+import '../../../domain/usescases/commands/commands_use_case.dart';
+import '../../widgets/order_form_bottom_sheet/order_form_bottom_controller.dart';
 import '../../widgets/order_form_bottom_sheet/order_form_bottom_sheet.dart';
 import '../product_detail/product_detail_1 controller.dart';
+import 'cart_1_controller.dart';
 
 class CartScreen extends StatelessWidget {
-  final Cart1Controller controller = Get.find<Cart1Controller>();
+  final Cart1Controller cartController = Get.put(Cart1Controller());
   final ProductDetailController productController = Get.put(
     ProductDetailController(),
   );
 
+  final OrderFormContentController controller;
+
+  CartScreen({Key? key})
+    : controller = Get.put(
+        OrderFormContentController(
+          commandsUseCase: _getCommandsUseCase(),
+        ),
+      ),
+      super(key: key);
+
+  static CommandsUseCase _getCommandsUseCase() {
+    try {
+      return Get.find<CommandsUseCase>();
+    } catch (e) {
+      // Si CommandsUseCase n'est pas trouvé, lancez une erreur explicite
+      throw Exception(
+        'CommandsUseCase n\'est pas enregistré. '
+        'Veuillez l\'enregistrer dans votre fichier d\'initialisation des dépendances '
+        'avec Get.put(CommandsUseCase(...)) ou Get.lazyPut(() => CommandsUseCase(...))'
+      );
+    }
+  }
+
+  // Le reste de votre code reste identique...
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +58,7 @@ class CartScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       body: Obx(() {
-        if (controller.cartItems.isEmpty) {
+        if (cartController.cartItems.isEmpty) {
           return const Center(child: Text("Votre panier est vide."));
         }
 
@@ -38,9 +67,9 @@ class CartScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: controller.cartItems.length,
+                itemCount: cartController.cartItems.length,
                 itemBuilder: (context, index) {
-                  final item = controller.cartItems[index];
+                  final item = cartController.cartItems[index];
                   return Container(
                     margin: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -59,7 +88,6 @@ class CartScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     child: Row(
                       children: [
                         ClipRRect(
@@ -96,7 +124,8 @@ class CartScreen extends StatelessWidget {
                                       color: Colors.black,
                                     ),
                                     onPressed:
-                                        () => controller.removeFromCart(item),
+                                        () =>
+                                            cartController.removeFromCart(item),
                                   ),
                                 ],
                               ),
@@ -115,81 +144,68 @@ class CartScreen extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 20,
-                                            height: 20,
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue,
-                                              border: Border.all(
-                                                color: Colors.black12,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                            ),
-                                            child: IconButton(
-                                              padding: EdgeInsets.zero,
-                                              onPressed:
-                                                  productController.decrement,
-                                              icon: const Icon(
-                                                Icons.remove,
-                                                color: Colors.white,
-                                                size: 18,
-                                              ),
-                                            ),
+                                      Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue,
+                                          borderRadius: BorderRadius.circular(
+                                            6,
                                           ),
-                                          const SizedBox(width: 8),
-                                          Obx(
-                                            () => Text(
-                                              productController.quantity.value
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
+                                        ),
+                                        child: IconButton(
+                                          padding: EdgeInsets.zero,
+                                          onPressed:
+                                              productController.decrement,
+                                          icon: const Icon(
+                                            Icons.remove,
+                                            size: 18,
+                                            color: Colors.white,
                                           ),
-                                          const SizedBox(width: 8),
-                                          Container(
-                                            width: 20,
-                                            height: 20,
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue,
-                                              border: Border.all(
-                                                color: Colors.black12,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                            ),
-                                            child: IconButton(
-                                              padding: EdgeInsets.zero,
-                                              onPressed:
-                                                  productController.increment,
-                                              icon: const Icon(
-                                                Icons.add,
-                                                color: Colors.white,
-                                                size: 18,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                        ),
                                       ),
-
-                                      // Text('${item.quantity}'),
-                                      SizedBox(width: 20),
-                                      Text(
-                                        "${item.price} FCFA",
-                                        style: TextStyle(
-                                          color: AppColors.primaryGreen,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
+                                      const SizedBox(width: 8),
+                                      Obx(
+                                        () => Text(
+                                          productController.quantity.value
+                                              .toString(),
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue,
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
+                                        child: IconButton(
+                                          padding: EdgeInsets.zero,
+                                          onPressed:
+                                              productController.increment,
+                                          icon: const Icon(
+                                            Icons.add,
+                                            size: 18,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ],
+                                  ),
+                                  Text(
+                                    "${item.price} F",
+                                    style: TextStyle(
+                                      color: AppColors.primaryGreen,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -202,7 +218,7 @@ class CartScreen extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -214,7 +230,7 @@ class CartScreen extends StatelessWidget {
                   style: TextStyle(
                     color: AppColors.primaryGreen,
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,
                   ),
                 ),
@@ -223,8 +239,6 @@ class CartScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Container(
-                //  height: double.infinity,
-                margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 20,
@@ -250,7 +264,7 @@ class CartScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "${controller.totalPrice.toStringAsFixed(0)} F",
+                          "${cartController.totalPrice.toStringAsFixed(0)} F",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -265,7 +279,9 @@ class CartScreen extends StatelessWidget {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (context) => const OrderFormContent(),
+                          builder:
+                              (context) =>
+                                  OrderFormContent(controller: controller),
                         );
                       },
                       style: ElevatedButton.styleFrom(

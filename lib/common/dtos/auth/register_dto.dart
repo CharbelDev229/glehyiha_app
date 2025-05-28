@@ -1,46 +1,46 @@
 import '../../enums/user_role.dart';
 
 class RegisterDto {
-  final String firstname;
-  final String lastname;
+  final String first_name;
+  final String last_name;
   final String? email;
   final String password;
-  final String phoneNumber;
+  final String phone_number;
   final UserRole userRole;
-  final String? shopName;
+  final String? nom_boutique;
   final String? experience;
-  final String? specialisation;
+  final String? specialization;
 
   RegisterDto({
-    required this.firstname,
-    required this.lastname,
+    required this.first_name,
+    required this.last_name,
     this.email,
     required this.password,
-    required this.phoneNumber,
+    required this.phone_number,
     required this.userRole,
-    this.shopName,
+    this.nom_boutique,
     this.experience,
-    this.specialisation
+    this.specialization
   });
 
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{
-      'firstname': firstname,
-      'lastname': lastname,
+      'firstname': first_name,
+      'lastname': last_name,
       'email': email,
       'password': password,
-      'phone_number': phoneNumber,
+      'phone_number': phone_number,
       'role': userRole.value,
-      'specialization':specialisation,
+      'specialization':specialization,
       'experience':experience,
     };
 
-    if (userRole == UserRole.vendeur && shopName != null) {
-      map.addAll({'nom_boutique': shopName});
+    if (userRole == UserRole.vendeur && nom_boutique != null) {
+      map.addAll({'nom_boutique': nom_boutique});
     }
 
-    if (userRole == UserRole.encadreur && experience != null&&specialisation != null) {
-      map.addAll({'experience': experience,'specialization': specialisation});
+    if (userRole == UserRole.encadreur && experience != null&&specialization != null) {
+      map.addAll({'experience': experience,'specialization': specialization});
     }
 
     return map;

@@ -11,15 +11,19 @@ class ResetPasswordUseCase implements UseCase<String, ResetPasswordParams> {
 
   @override
   Future<Either<Failure, String>> call(ResetPasswordParams params) async {
-    return await repository.resetPassword(params.email);
+    return await repository.resetPassword(
+      params.new_password,
+      params.reset_code,
+    );
   }
 }
 
 class ResetPasswordParams extends Equatable {
-  final String email;
+  final String new_password;
+  final String reset_code;
 
-  const ResetPasswordParams({required this.email}) : super();
+  const ResetPasswordParams({required this.new_password, required this.reset_code}) : super();
 
   @override
-  List<Object> get props => [email];
+  List<Object> get props => [new_password, reset_code];
 }

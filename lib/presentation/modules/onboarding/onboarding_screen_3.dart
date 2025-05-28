@@ -8,9 +8,27 @@ import 'package:glehiha/presentation/widgets/side_by_side_images/side_by_side_im
 
 import '../../../common/utils/utils.dart';
 import '../../widgets/button/custom_button_with_icon.dart.dart';
+import 'onboarding_controller.dart';
 
-class OnboardingScreen3 extends StatelessWidget {
-  const OnboardingScreen3({super.key});
+class OnboardingScreen3 extends StatefulWidget {
+  final OnboardingController controller;
+  const OnboardingScreen3({super.key, required this.controller});
+   @override
+  State<OnboardingScreen3> createState() => _OnboardingScreen3State();
+}
+
+class _OnboardingScreen3State extends State<OnboardingScreen3> {
+  
+  late OnboardingController controller;
+
+   @override
+  void initState() {
+    controller = widget.controller;
+   
+ controller.init();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

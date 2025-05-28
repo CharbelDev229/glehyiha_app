@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glehiha/presentation/modules/parameters/parameters_controller.dart';
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/gestures.dart';
@@ -7,9 +8,21 @@ import 'package:glehiha/common/constants/assets/assets.dart';
 import '../../../common/constants/colors.dart';
 
 
-class ParametersScreen extends StatelessWidget {
-  const ParametersScreen({super.key});
+class ParametersScreen extends StatefulWidget {
+  final ParametersController controller;
+  const ParametersScreen({super.key, required this.controller});
+  @override
+  State<ParametersScreen> createState() => _ParametersScreenState();
+}
 
+class _ParametersScreenState extends State<ParametersScreen> {
+  late ParametersController controller;
+  @override
+  void initState() {
+    controller = widget.controller;
+    controller.init();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,47 +97,8 @@ class ParametersScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 8),
-            GestureDetector(
-              onTap: (){
-                context.pushNamed(AppRoutesNames.photo);
-              },
-          child: Image.asset(
-             Assets.camera,
-              width: 80,
-              height: 80,
-            ),),
-            SizedBox(height: 8),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                width: 300,
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 201, 221, 214),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    text:
-                        'Prendre une photo de votre plante malade et trouver solution',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins',
-                    ),
-                    recognizer:
-                        TapGestureRecognizer()
-                          ..onTap = () {
-                            context.pushNamed(AppRoutesNames.photo);
-                          },
-                  ),
-                ),
-              ),
-            ),
-
+           
+           
             SizedBox(height: 8),
             GestureDetector(
               onTap: (){

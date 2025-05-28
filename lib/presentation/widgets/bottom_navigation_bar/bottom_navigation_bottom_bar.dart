@@ -20,10 +20,6 @@ class CustomBottomBar extends StatelessWidget {
       itemName: AppRoutesNames.expert,
     ),
     BottomNavyBarItem(
-      icon: Image.asset(Assets.camera, width: 30, height: 30),
-      itemName: AppRoutesNames.photo,
-    ),
-    BottomNavyBarItem(
       icon: Image.asset(Assets.store, width: 30, height: 30),
       itemName: AppRoutesNames.market,
     ),
@@ -90,8 +86,6 @@ class CustomBottomBar extends StatelessWidget {
     } else if (index == 1) {
       context.goNamed(AppRoutesNames.expert);
     } else if (index == 2) {
-      context.goNamed(AppRoutesNames.photo);
-    } else if (index == 3) {
       context.goNamed(AppRoutesNames.market);
     }
   }

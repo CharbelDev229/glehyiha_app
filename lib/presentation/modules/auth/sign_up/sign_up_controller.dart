@@ -9,23 +9,13 @@ import '../../../../common/dtos/auth/register_dto.dart';
 import '../../../../common/utils/utils.dart';
 import '../../../../domain/usescases/auth/sign_up.dart';
 import '../../../router/routes.dart';
-
-
-enum SignUpState { nomPrenom, emailPassword, phoneNumberlocalisation }
+import '../../order_detail/user_controller.dart';
 
 class SignUpController {
-  
-  Rx<SignUpState> signUpState = SignUpState.nomPrenom.obs;
-  PageController pageController = PageController(
-    initialPage: 0,
-    viewportFraction: 1.0,
-    keepPage: true,
-  );
-  RxInt index = 1.obs;
   final SignUpUseCase signUpUseCase;
   final formKey = GlobalKey<FormState>();
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>(
-    debugLabel: 'sign_in',
+    debugLabel: 'sign_up',
   );
 
   // Contrôleurs de formulaire
@@ -43,6 +33,7 @@ class SignUpController {
 
   TextEditingController phoneNumberController = TextEditingController();
 
+ 
   GlobalKey<FormState> nomPrenomFormKey = GlobalKey<FormState>(
     debugLabel: 'nom_prenom',
   );
@@ -61,7 +52,6 @@ class SignUpController {
   RxBool isPasswordVisible = false.obs;
   RxBool isConfirmPasswordVisible = false.obs;
   RxBool isLoading = false.obs;
-  // Ajout de la variable manquante
   RxBool signUpInLoading = false.obs;
   RxString errorMessage = ''.obs;
   RxString selectedCountryCode = '+229'.obs;
@@ -73,17 +63,8 @@ class SignUpController {
 
   SignUpController({required this.signUpUseCase});
 
-  void onPageChanged(int index) {
-    this.index.value = index;
-  }
-
-  void onChangeStep({required int index}) {
-    this.index.value = index;
-    pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.decelerate,
-    );
+  String getCompletePhoneNumber() {
+    return selectedCountryCode.value + phoneNumberController.text.trim();
   }
 
   Future<void> getCurrentLocation() async {
@@ -102,20 +83,18 @@ class SignUpController {
     bool success = false;
     signUpInLoading.value = true;
 
-    logger.d('Inscription: ${nomController.text} ${prenomController.text}');
-
     final send = await signUpUseCase.call(
       SignUpParams(
         dto: RegisterDto(
-          firstname: nomController.text,
-          lastname: prenomController.text,
+          first_name: nomController.text,
+          last_name: prenomController.text,
           email: emailController.text,
           password: passwordController.text,
-          phoneNumber: phoneNumberController.text,
+          phone_number: getCompletePhoneNumber(),
           userRole: selectedRole.value,
-          specialisation: specialisationController.text,
+          specialization: specialisationController.text,
           experience: experienceController.text,
-          shopName: shopNameController.text,
+          nom_boutique: shopNameController.text,
         ),
       ),
     );
@@ -124,14 +103,34 @@ class SignUpController {
       (failure) {
         Utils.snackError(context: context, message: failure.message);
       },
-      (email) async {
+      (response) async {
         Utils.snackSuccess(context: context, message: 'Inscription réussie!');
-
         success = true;
-      
+
+        
+
+        // Mettre à jour la variable locale
+        
+        // Mettre à jour le UserController
+         try {
+          final userController = Get.find<UserController>();
+          userController.setUser(
+            fName: nomController.text.trim(),
+            lName: prenomController.text.trim(),
+            mail: emailController.text.trim(),
+            
+           );
+         } catch (e) {
+           logger.w('UserController non trouvé: $e');
+         }
+
+        // Mettre à jour le ProfileController
+        
         if (context.mounted) {
- context.pushNamed(AppRoutesNames.code);
-                                                 
+          context.pushNamed(
+            AppRoutesNames.code,
+            extra: emailController.text.trim(),
+          );
         }
       },
     );
@@ -139,4 +138,6 @@ class SignUpController {
     signUpInLoading.value = false;
     return success;
   }
+
+ 
 }

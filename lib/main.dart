@@ -2,20 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'common/di/index.dart';
+import 'domain/usescases/commands/commands_use_case.dart';
 import 'presentation/modules/cart/cart_1_controller.dart';
+import 'presentation/modules/order_detail/user_controller.dart';
+import 'presentation/modules/my_profile/my_profile_controller.dart';
 import 'presentation/router/go_router.dart';
 import 'common/constants/colors.dart';
-import 'presentation/service/product/product_service.dart'; // <== 🔥 IMPORT À AJOUTER
-import 'common/enums/user_role.dart';
 import 'presentation/widgets/bottom_navigation_bar/navigation_controller.dart';
-
+import 'presentation/widgets/order_form_bottom_sheet/order_form_bottom_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Injecter les controllers et use cases
   Get.put(NavigationController());
   Get.put(Cart1Controller(), permanent: true);
+  Get.put(UserController());
+
+  // Injecter CommandsUseCase
+  //Get.put(CommandsUseCase());
+
+  // Injecter OrderFormContentController avec l’instance CommandsUseCase récupérée
+ // final commandsUseCase = Get.find<CommandsUseCase>();
+ // Get.put(OrderFormContentController(commandsUseCase: commandsUseCase));
+
   await Di.init();
-  final productService = Get.find<ProductService>();
-  productService.setUserRole(UserRole.vendeur); // 🔄 Change ici selon le test
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

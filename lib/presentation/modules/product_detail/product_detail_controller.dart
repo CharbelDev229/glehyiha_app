@@ -44,4 +44,6 @@ class CartController extends GetxController {
     return cartItems.fold(0, (sum, item) =>
         sum + double.parse(item.price) * item.quantity);
   }
+
+  
 }

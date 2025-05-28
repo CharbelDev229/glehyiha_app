@@ -8,48 +8,53 @@ class GlehihaUserInfo extends Equatable {
   final String firstname;
   final String lastname;
   final String? email;
-  final String? phoneNumber;
+  final String? phonenumber;
   final UserRole role;
-  final String? specialisation;
-  final String? shopName;
+  final String? specialization;
+  final String? nomvendeur;
   final String? experience;
+  final String? photoUrl;
 
   const GlehihaUserInfo({
     required this.id,
     required this.firstname,
     required this.lastname,
     this.email,
-    this.phoneNumber,
+    this.phonenumber,
     required this.role,
-    this.specialisation,
-    this.shopName,
+    this.specialization,
+    this.nomvendeur,
     this.experience,
+    this.photoUrl,
   });
 
   factory GlehihaUserInfo.fromMap(Map<String, dynamic> data) {
     return GlehihaUserInfo(
-      id: data['id'] as int,
-      firstname: data['firstname'] as String,
-      lastname: data['lastname'] as String,
+      id: data['id'] ?? 0,
+
+      firstname: data['first_name'] as String,
+      lastname: data['last_name'] as String,
       email: data['email'] as String?,
-      phoneNumber: data['phone_number'] as String?,
+      phonenumber: data['phone_number'] as String?,
       role: UserRoleExtension.fromString(data['role'] as String),
-      specialisation: data['specialisation'] as String?,
-      shopName: data['nom_boutique'] as String?,
+      specialization: data['specialisation'] as String?,
+      nomvendeur: data['nom_boutique'] as String?,
       experience: data['experience'] as String?,
+      photoUrl: data['photo_url'] as String?,
     );
   }
 
   Map<String, dynamic> toMap() => {
         'id': id,
-        'firstname': firstname,
-        'lastname': lastname,
+        'first_name': firstname,
+        'last_name': lastname,
         'email': email,
-        'phone_number': phoneNumber,
+        'phone_number': phonenumber,
         'role': role.value,
-        'specialisation': specialisation,
-        'nom_boutique': shopName,
+        'specialisation': specialization,
+        'nom_boutique': nomvendeur,
         'experience': experience,
+        'photo_url': photoUrl,
       };
 
   factory GlehihaUserInfo.fromJson(String data) {
@@ -67,10 +72,13 @@ class GlehihaUserInfo extends Equatable {
         firstname,
         lastname,
         email,
-        phoneNumber,
+        phonenumber,
         role,
-        specialisation,
-        shopName,
+        specialization,
+        nomvendeur,
         experience,
+        photoUrl,
       ];
+
+  
 }

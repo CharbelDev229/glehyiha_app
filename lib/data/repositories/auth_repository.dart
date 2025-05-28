@@ -5,6 +5,7 @@ import '../../common/utils/failure.dart';
 import '../data_source/auth/auth_local_data_source.dart';
 import '../data_source/auth/auth_remote_data_source.dart';
 
+
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource authRemoteDataSource;
   final AuthLocalDataSource authLocalDataSource;
@@ -25,16 +26,19 @@ class AuthRepositoryImpl implements AuthRepository {
     });
   }
 
-  @override
-  Future<Either<Failure, String>> login(String phoneNumber, String password) async {
-    final login = await authRemoteDataSource.login(phoneNumber, password);
+@override
+Future<Either<Failure, String>> login(
+  String phoneNumber,
+  String password,
+) async {
+  final login = await authRemoteDataSource.login(phoneNumber, password);
 
-    return login.fold((failure) async {
-      return Left(failure);
-    }, (res) async {
-      return Right(res);
-    });
-  }
+  return login.fold(
+    (failure) => Left(failure),
+    (res) => Right(res), 
+  );
+}
+
 
  
 
@@ -84,10 +88,10 @@ class AuthRepositoryImpl implements AuthRepository {
     });
   }
   @override
-  Future<Either<Failure, String>> resetPassword(String email)
+  Future<Either<Failure, String>> resetPassword(String new_password, String reset_code)
       async {
     final resetPwd =
-        await authRemoteDataSource.resetPassword(email);
+        await authRemoteDataSource.resetPassword(new_password, reset_code);
 
     return resetPwd.fold((failure) async {
       return Left(failure);
@@ -97,9 +101,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
- Future<Either<Failure, String>> verifyUserAccount(String email)
+ Future<Either<Failure, String>> verifyUserAccount(String verification_code, String email)
  async {
-    final verifyUserAccount = await authRemoteDataSource.verifyUserAccount(email);
+    final verifyUserAccount = await authRemoteDataSource.verifyUserAccount(verification_code, email);
 
     return verifyUserAccount.fold((failure) async {
       return Left(failure);
@@ -109,11 +113,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
    @override
-Future<Either<Failure, String>> resentVerificationCode(String code)
- async {
-    final resentVerificationCode = await authRemoteDataSource.resentVerificationCode(code);
+  Future<Either<Failure, String>> resentVerificationCode(
+       String email) async {
+    final verifyReInitPwdRequestCode =
+        await authRemoteDataSource.resentVerificationCode( email);
 
-    return resentVerificationCode.fold((failure) async {
+    return verifyReInitPwdRequestCode.fold((failure) async {
       return Left(failure);
     }, (res) async {
       return Right(res);
