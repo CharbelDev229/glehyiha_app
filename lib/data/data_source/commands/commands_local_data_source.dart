@@ -1,14 +1,15 @@
 import 'package:dartz/dartz.dart';
-import '../../../common/constants/instances.dart';
+import 'package:glehiha/common/constants/instances.dart';
+
 import '../../../common/constants/storage_keys.dart';
 import '../../../common/utils/failure.dart';
 
-abstract class AuthLocalDataSource {
+abstract class CommandsLocalDataSource {
   Future<Either<Failure, String>> getToken();
 }
 
-class CommandsLocalDataSource implements AuthLocalDataSource {
-  CommandsLocalDataSource();
+class CommandsLocalDataSourceImpl implements CommandsLocalDataSource {
+  CommandsLocalDataSourceImpl();
 
   @override
   Future<Either<Failure, String>> getToken() async {
@@ -21,13 +22,9 @@ class CommandsLocalDataSource implements AuthLocalDataSource {
         return Right(tokenP);
       }
 
-      return Left(
-        ServerFailure.onCatch(),
-      );
+      return Left(ServerFailure.onCatch());
     } catch (e) {
-      return Left(
-        ServerFailure.onCatch(),
-      );
+      return Left(ServerFailure.onCatch());
     }
   }
 }

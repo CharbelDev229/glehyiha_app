@@ -25,7 +25,7 @@ class ExpertScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const HeaderWidget(),
+              HeaderWidget(),
               const SizedBox(height: 25),
 
               Center(

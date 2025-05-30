@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:glehiha/data/models/message/chat_message.dart';
 import 'package:glehiha/presentation/modules/chat/chat_controller.dart';
 import 'package:glehiha/presentation/widgets/bottom_navigation_bar/navigation_controller.dart';
-import 'package:glehiha/presentation/widgets/footer_widget/footer_widget.dart';
+import 'package:glehiha/presentation/widgets/footer_widget/footer_widget.dart'; // Ton footer actuel
 import 'dart:async';
 import 'package:glehiha/presentation/widgets/header_widget/header_widget.dart';
 import 'package:get/get.dart';
@@ -22,15 +22,17 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   late List<AnimationController> _controllers;
   late List<Animation<Offset>> _animations;
 
+  late ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
     _controllers = [];
     _animations = [];
+    _scrollController = ScrollController();
     _sendFirstMessage();
   }
 
-  // Méthode pour ajouter des messages avec un délai
   Future<void> _sendFirstMessage() async {
     await Future.delayed(Duration(seconds: 1));
     _addMessage(
@@ -38,52 +40,46 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     );
   }
 
-  // Ajoute un message à la liste du controller
   void _addMessage(String messageText) {
-    // Ajouter le message au controller
-    chatController.messages.add(ChatMessage(
-      id: chatController.messages.length,
-      text: messageText,
-      content: messageText,
-      senderId: 0, // Bot message
-      isUser: false,
-      isDeletedAt: null,
-      updateAt: DateTime.now().toIso8601String(),
-    ));
+    chatController.messages.add(
+      ChatMessage(
+        id: chatController.messages.length,
+        text: messageText,
+        content: messageText,
+        senderId: 0,
+        isUser: false,
+        isDeletedAt: null,
+        updateAt: DateTime.now().toIso8601String(),
+      ),
+    );
 
-    // Créer un contrôleur d'animation pour chaque message
     AnimationController controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: 1),
     );
 
     Animation<Offset> animation = Tween<Offset>(
-      begin: Offset(0.0, 1.0), // Commence en bas
-      end: Offset.zero, // Fin de l'animation
+      begin: Offset(0.0, 1.0),
+      end: Offset.zero,
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
 
-    // Ajouter l'animation et démarrer
     _controllers.add(controller);
     _animations.add(animation);
-    controller.forward(); // Démarre l'animation
+    controller.forward();
   }
 
-  // Méthode pour envoyer un message depuis le FooterWidget
+  // Fonction appelée par ton footer quand l'utilisateur envoie un message
   void _sendMessage(String message) {
     if (message.isNotEmpty) {
-      // Ajouter une animation pour le nouveau message utilisateur
       _addAnimationController();
-      
-      chatController.sendMessage(message); // Envoi du message via le controller
-      
-      // Ajouter une animation pour la réponse du bot (sera ajoutée après la réponse)
+      chatController.sendMessage(message);
+
       Timer(Duration(milliseconds: 100), () {
         _addAnimationController();
       });
     }
   }
 
-  // Méthode pour ajouter un contrôleur d'animation
   void _addAnimationController() {
     AnimationController controller = AnimationController(
       vsync: this,
@@ -100,42 +96,39 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     controller.forward();
   }
 
-  // Méthode pour construire chaque message avec animation
   Widget _buildMessage(ChatMessage message, int index) {
-    // S'assurer qu'on a assez d'animations
     if (index >= _animations.length) {
       _addAnimationController();
     }
 
+    bool isUser = message.isUser;
+
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Align(
-        alignment: message.isUser 
-            ? Alignment.centerRight 
-            : Alignment.centerLeft,
+        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
         child: SlideTransition(
-          position: index < _animations.length 
-              ? _animations[index] 
-              : _animations.last, // Utiliser la dernière animation si index trop grand
+          position:
+              index < _animations.length
+                  ? _animations[index]
+                  : _animations.last,
           child: Container(
             constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.7,
+              maxWidth: MediaQuery.of(context).size.width * 0.75,
             ),
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             decoration: BoxDecoration(
-              color: message.isUser 
-                  ? AppColors.primaryGreen 
-                  : AppColors.black,
-              borderRadius: BorderRadius.circular(20),
+              color: isUser ? Color(0xFFDCF8C6) : Colors.grey[300],
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(18),
+                topRight: Radius.circular(18),
+                bottomLeft: Radius.circular(isUser ? 18 : 0),
+                bottomRight: Radius.circular(isUser ? 0 : 18),
+              ),
             ),
             child: Text(
               message.text,
-              style: TextStyle(
-                fontSize: 14,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w300,
-                color: AppColors.white,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.black87),
             ),
           ),
         ),
@@ -158,17 +151,28 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 Expanded(
                   child: Stack(
                     children: [
-                      Expanded(
-                        child: Obx(() {
-                          final messageList = chatController.messages;
-                          return ListView.builder(
-                            itemCount: messageList.length,
-                            itemBuilder: (context, index) {
-                              return _buildMessage(messageList[index], index);
-                            },
-                          );
-                        }),
-                      ),
+                      Obx(() {
+                        final messageList = chatController.messages;
+
+                        // Scroll automatique
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (_scrollController.hasClients) {
+                            _scrollController.animateTo(
+                              _scrollController.position.maxScrollExtent,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeOut,
+                            );
+                          }
+                        });
+
+                        return ListView.builder(
+                          controller: _scrollController,
+                          itemCount: messageList.length,
+                          itemBuilder: (context, index) {
+                            return _buildMessage(messageList[index], index);
+                          },
+                        );
+                      }),
                       if (chatController.isLoading.value)
                         Positioned(
                           bottom: 0,
@@ -207,6 +211,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
+                // Ici ton FooterWidget existant, tu ne changes rien
                 FooterWidget(onSendMessage: _sendMessage),
               ],
             ),
@@ -219,10 +224,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    // Nettoyer les contrôleurs d'animation
     for (var controller in _controllers) {
       controller.dispose();
     }
+    _scrollController.dispose();
     super.dispose();
   }
 }

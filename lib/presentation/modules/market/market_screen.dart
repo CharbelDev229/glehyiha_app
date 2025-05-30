@@ -24,7 +24,7 @@ class MarketScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              const HeaderWidget(),
+               HeaderWidget(),
               const SizedBox(height: 15),
               Container(
                 width: double.infinity,

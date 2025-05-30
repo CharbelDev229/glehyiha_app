@@ -1,5 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../../service/profile service .dart';
 import '../../../widgets/avatar/custom_avatar.dart';
 import '../../../widgets/button/custom_button.dart';
 import '../../../widgets/text/custom_gradient_text.dart';
@@ -15,18 +19,29 @@ class MyProfileAccountInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center, // centre horizontalement
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Obx(() {
-            return CustomAvatar(
-              imageUrl: controller.profileService.currentUser.value?.avatar,
-              width: 80,
-              height: 80,
-              border: Border.all(color: const Color(0xFFF2F2F2)),
-              borderRadius: BorderRadius.circular(40), // rond
+            return GestureDetector(
               onTap: () async {
-               
+                await pickImageFromGallery();
+                Get.find<ProfileService>().pickImage();
               },
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage:
+                    controller.profileService.profileImagePath.value.isNotEmpty
+                        ? FileImage(
+                          File(
+                            controller.profileService.profileImagePath.value,
+                          ),
+                        )
+                        : null,
+                child:
+                    controller.profileService.profileImagePath.value.isEmpty
+                        ? const Icon(Icons.person, size: 50)
+                        : null,
+              ),
             );
           }),
 
@@ -65,7 +80,7 @@ class MyProfileAccountInfoCard extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFF563267),
-                fontSize: 15,
+                fontSize: 20,
                 fontWeight: FontWeight.w400,
                 height: 1.2,
               ),
@@ -104,5 +119,15 @@ class MyProfileAccountInfoCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+Future<void> pickImageFromGallery() async {
+  final picker = ImagePicker();
+  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+  if (image != null) {
+    final profileService = Get.find<ProfileService>();
+    profileService.updateProfileImage(image.path);
   }
 }

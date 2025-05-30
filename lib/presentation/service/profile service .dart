@@ -1,15 +1,20 @@
+import 'dart:io';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:glehiha/common/constants/instances.dart';
 import 'package:glehiha/data/models/user/glehiha_current_user.dart';
+import 'package:glehiha/data/models/user/glehiha_user.dart';
 import 'package:glehiha/domain/usescases/user/update_profile.dart';
+import 'package:glehiha/domain/usescases/user/get_profile.dart';
+import 'package:glehiha/domain/usescases/user/delete_account.dart';
+import 'package:glehiha/domain/usescases/user/change_password.dart';
+import 'package:glehiha/domain/usescases/user/loyout.dart';
 import '../../common/dtos/profile_dto/change_pwd_dto.dart';
-import '../../data/models/user/glehiha_user.dart';
-import '../../domain/usescases/user/change_password.dart';
-import '../../domain/usescases/user/delete_account.dart';
-import '../../domain/usescases/user/get_profile.dart';
-import '../../domain/usescases/user/loyout.dart';
 
 class ProfileService extends GetxService {
+  static const _keyImagePath = 'profile_image_path';
+
   final GetProfileUseCase getProfileUseCase;
   final UpdateProfileUseCase updateProfileUseCase;
   final LogoutUseCase logoutUseCase;
@@ -25,24 +30,57 @@ class ProfileService extends GetxService {
   });
 
   final isLoading = false.obs;
-    RxString selectedImagePath = ''.obs;
-
-  Rxn<GlehihaCurrentUser> currentUser = Rxn<GlehihaCurrentUser>();
+  final RxString profileImagePath = ''.obs;
+  final Rxn<GlehihaCurrentUser> currentUser = Rxn<GlehihaCurrentUser>();
 
   final oldPassword = ''.obs;
   final newPassword = ''.obs;
 
-  void setIsLoading(bool status) {
-    isLoading.value = status;
+  @override
+  void onInit() {
+    super.onInit();
+    _loadProfileImagePath();
   }
-  void clearCurrentUser() {
-    currentUser.value = null;
+
+  /// Sauvegarde du chemin de l'image
+  Future<void> _saveProfileImagePath(String path) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyImagePath, path);
+    profileImagePath.value = path;
   }
-     void updateProfileImage(String path) {
-    selectedImagePath.value = path;
+
+  /// Chargement du chemin de l'image sauvegardée
+  Future<void> _loadProfileImagePath() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedPath = prefs.getString(_keyImagePath);
+    if (savedPath != null) {
+      profileImagePath.value = savedPath;
+    }
   }
-  /// Récupération des infos utilisateur
-  // for get user infos
+
+  /// Nettoyage de l'image
+  Future<void> clearProfileImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyImagePath);
+    profileImagePath.value = '';
+  }
+
+  /// Mise à jour locale du chemin de l'image
+  void updateProfileImage(String path) {
+    profileImagePath.value = path;
+    _saveProfileImagePath(path); // Ajouté pour persister à chaque mise à jour
+  }
+
+  /// Ouverture de la galerie pour choisir une image
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      updateProfileImage(image.path);
+    }
+  }
+
+  /// Récupération du profil utilisateur
   Future<bool> onGetMyProfile() async {
     bool success = false;
     final send = await getProfileUseCase.call(const GetProfileParams());
@@ -54,33 +92,28 @@ class ProfileService extends GetxService {
       (response) {
         logger.f(response);
         logger.f("Type de response: ${response.runtimeType}");
-         logger.f("Contenu de response: $response");
-
-
- currentUser.value = response;
-
-
-      
+        logger.f("Contenu de response: $response");
+        currentUser.value = response;
         success = true;
       },
     );
+
     return success;
   }
 
   /// Déconnexion de l'utilisateur
   Future<void> onLogout() async {
     setIsLoading(true);
-
     final result = await logoutUseCase.call(const LogoutParams());
 
     result.fold(
       (failure) => logger.e(failure),
       (response) => logger.f(response),
     );
-    setIsLoading(false);
 
-   
-  
+    setIsLoading(false);
+    clearCurrentUser();
+    clearProfileImage(); // nettoyage du cache image à la déconnexion
   }
 
   /// Suppression du compte utilisateur
@@ -120,15 +153,22 @@ class ProfileService extends GetxService {
     setIsLoading(false);
   }
 
+  /// Conversion en GlehihaUser
   GlehihaUser getUserHasGlehihaUserInfo() {
-    GlehihaCurrentUser glehihaCurrentUser = currentUser.value!;
-    GlehihaUser glehihaUser = GlehihaUser(
+    final GlehihaCurrentUser glehihaCurrentUser = currentUser.value!;
+    return GlehihaUser(
       id: glehihaCurrentUser.id,
       pseudo: glehihaCurrentUser.pseudo,
       media: glehihaCurrentUser.media,
       role: glehihaCurrentUser.role,
     );
+  }
 
-    return glehihaUser;
+  void setIsLoading(bool status) {
+    isLoading.value = status;
+  }
+
+  void clearCurrentUser() {
+    currentUser.value = null;
   }
 }

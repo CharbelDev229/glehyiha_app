@@ -7,6 +7,7 @@ import 'package:glehiha/domain/usescases/auth/reset_password.dart';
 import 'package:glehiha/domain/usescases/auth/user_forgot_password.dart';
 import 'package:glehiha/domain/usescases/auth/user_reset_password.dart';
 import 'package:glehiha/domain/usescases/auth/verify_user_account.dart';
+import 'package:glehiha/domain/usescases/commands/commands_use_case.dart';
 
 import '../../domain/usescases/auth/login.dart';
 import '../../domain/usescases/auth/sign_up.dart';
@@ -94,4 +95,8 @@ class DiUseCases {
       fenix: true,
     );
    
+
+  // commaands
+
+     Get.lazyPut(() => CommandsUseCase(repository: Get.find()), fenix: true);
   }}

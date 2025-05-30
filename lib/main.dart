@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:glehiha/domain/repositories/commands_repositories.dart';
+import 'package:glehiha/presentation/service/profile%20service%20.dart';
 import 'common/di/index.dart';
 import 'domain/usescases/commands/commands_use_case.dart';
 import 'presentation/modules/cart/cart_1_controller.dart';
@@ -17,6 +19,7 @@ void main() async {
   Get.put(NavigationController());
   Get.put(Cart1Controller(), permanent: true);
   Get.put(UserController());
+  
 
   // Injecter CommandsUseCase
   //Get.put(CommandsUseCase());

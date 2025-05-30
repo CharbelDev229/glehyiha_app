@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../router/routes.dart';
 import '../../widgets/button/custom_button.dart';
@@ -85,10 +86,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     onPressed: () async {
                       await controller.onLogout();
                       controller.profileService.clearCurrentUser();
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        AppRoutesNames.signIn,
-                        (route) => false,
-                      );
+                      context.pushNamed(AppRoutesNames.signIn);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,

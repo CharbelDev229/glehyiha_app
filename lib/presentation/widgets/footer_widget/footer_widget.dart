@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class FooterWidget extends StatefulWidget {
- 
   final Function(String) onSendMessage;
 
-  const FooterWidget({super.key, required this.onSendMessage}); // Ici, nous utilisons "required" pour s'assurer que la fonction est fournie.
+  const FooterWidget({
+    super.key,
+    required this.onSendMessage,
+  }); // Ici, nous utilisons "required" pour s'assurer que la fonction est fournie.
 
   @override
   State<FooterWidget> createState() => _FooterWidgetState();
@@ -13,13 +15,14 @@ class FooterWidget extends StatefulWidget {
 class _FooterWidgetState extends State<FooterWidget> {
   final TextEditingController _controller = TextEditingController();
   bool _isWriting = false;
-  
 
   void _sendMessage() {
     String message = _controller.text.trim();
     if (message.isNotEmpty) {
       // Appel de la fonction passée en paramètre, pour envoyer le message
-      widget.onSendMessage(message); // Accès via "widget" pour accéder au paramètre de la classe parent
+      widget.onSendMessage(
+        message,
+      ); // Accès via "widget" pour accéder au paramètre de la classe parent
       _controller.clear();
       setState(() {
         _isWriting = false;
@@ -33,15 +36,11 @@ class _FooterWidgetState extends State<FooterWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          Image.asset(
-            "assets/images/camera1.png",
-            width: 37,
-            height: 43,
-          ),
-          const SizedBox(width: 5),
+          Image.asset("assets/images/camera1.png", width: 45, height: 50),
+          const SizedBox(width: 15),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 204, 200, 200),
                 border: Border.all(color: Colors.black, width: 0.5),
@@ -66,7 +65,8 @@ class _FooterWidgetState extends State<FooterWidget> {
                       },
                       cursorColor: Colors.black,
                       decoration: const InputDecoration(
-                        hintText: 'Tapez votre message ici ou prenez une photo...',
+                        hintText:
+                            'Tapez votre message ici ou prenez une photo...',
                         border: InputBorder.none,
                         hintStyle: TextStyle(
                           color: Colors.black,
@@ -87,7 +87,7 @@ class _FooterWidgetState extends State<FooterWidget> {
                   const SizedBox(width: 8),
                   Container(
                     width: 40,
-                    height: 40,
+                    height: 30,
                     decoration: const BoxDecoration(
                       color: Color.fromARGB(255, 43, 131, 68),
                       shape: BoxShape.circle,

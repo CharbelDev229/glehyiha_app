@@ -22,17 +22,12 @@ abstract class ChatRoomMessageRemoteDataSource {
     required int page,
   });
 
-
-
-  /// Delete a message from a chat room
+/// Delete a message from a chat room
   Future<Either<Failure, String>> deleteMessage({
     required int chatRoomId,
     required int messageId,
     required String token,
   });
-
-
-
 }
 
 class ChatRoomMessageRemoteDataSourceImpl

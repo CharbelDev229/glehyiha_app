@@ -49,16 +49,13 @@ class MyProfileController {
   }
 
   Future<void> pickImageFromGallery() async {
-  final ImagePicker picker = ImagePicker();
-  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-  if (image != null) {
-    File imageFile = File(image.path);
-    print('Image sélectionnée : ${imageFile.path}');
-  } else {
-    print('Aucune image sélectionnée');
+    if (image != null) {
+      profileService.updateProfileImage(image.path);
+    }
   }
-}
 
   void showUpdateProfileDialog({required BuildContext context}) {
     showGeneralDialog(
