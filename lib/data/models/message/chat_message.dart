@@ -10,8 +10,8 @@ class ChatMessage extends ChatRoomItem {
   final int senderId;
   final String updateAt;
   final String? isDeletedAt;
-  final String text;
-  final bool isUser;
+ // final String text;
+ // final bool isUser;
 
   const ChatMessage({
     required this.id,
@@ -19,8 +19,8 @@ class ChatMessage extends ChatRoomItem {
     required this.senderId,
     required this.isDeletedAt,
     required this.updateAt,
-    required this.text,
-    required this.isUser,
+  //  required this.text,
+  //  required this.isUser,
   });
 
   factory ChatMessage.fromMap(Map<String, dynamic> data) {
@@ -31,8 +31,8 @@ class ChatMessage extends ChatRoomItem {
       senderId: data['sender_id'] as int,
       updateAt: data['update_at'] as String,
       isDeletedAt: data['is_deleted_at'] as String?,
-      text: data['text'] as String,
-      isUser: data['is_user'] as bool,
+   //   text: data['text'] as String,
+     // isUser: data['is_user'] as bool,
     );
   }
 
@@ -42,8 +42,8 @@ class ChatMessage extends ChatRoomItem {
         'sender_id': senderId,
         'update_at': updateAt,
         'is_deleted_at': isDeletedAt,
-        'text': text,
-        'is_user': isUser,
+      //  'text': text,
+        //'is_user': isUser,
       };
 
   ChatMessage copyWith({
@@ -61,8 +61,8 @@ class ChatMessage extends ChatRoomItem {
       senderId: senderId ?? this.senderId,
       updateAt: updateAt ?? this.updateAt,
       isDeletedAt: isDeletedAt ?? this.isDeletedAt,
-      text: text ?? this.text,
-      isUser: isUser ?? this.isUser,
+    //  text: text ?? this.text,
+     // isUser: isUser ?? this.isUser,
     );
   }
 
@@ -76,6 +76,9 @@ class ChatMessage extends ChatRoomItem {
 
   @override
   List<Object?> get props {
-    return [id, content, senderId, updateAt, isDeletedAt, text, isUser];
+    return [id, content, senderId, updateAt, isDeletedAt, 
+    //text, 
+    //isUser
+    ];
   }
 }

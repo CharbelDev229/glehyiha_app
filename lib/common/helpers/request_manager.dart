@@ -22,57 +22,62 @@ class DioRequestManager {
     Map<String, dynamic> body = const {},
     CancelToken? cancelToken,
   }) async {
+    Map<String, dynamic>? header =
+        headers.isNotEmpty
+            ? headers
+            : {
+              'Accept': '*/*',
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json',
+              'Authorization': token.isNotEmpty ? 'Bearer $token' : null,
+            };
 
-    Map<String, dynamic>? header = headers.isNotEmpty
-        ? headers
-        : {
-      'Accept': '*/*',
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-      'Authorization': token.isNotEmpty ? 'Bearer $token' : null,
-    };
-   
-    Options options = Options(
-      method: method,
-      headers: header,
-    );
+    Options options = Options(method: method, headers: header);
 
     logger.e('url $url \n cancelToken : $cancelToken');
     logger.i('body ${json.encode(body)}');
     logger.i('token $token');
 
     try {
-      final response = await dio.request(url.toString(),
-          options: options, data: json.encode(body), cancelToken: cancelToken);
+      final response = await dio.request(
+        url.toString(),
+        options: options,
+        data: json.encode(body),
+        cancelToken: cancelToken,
+      );
       logger.e('\n\n\n after request\n\n');
 
       logger.i('response.data : ${response.data}');
 
-      Map<String, dynamic> map = response.data is String
-          ? json.decode(response.data)
-          : response.data is Map<String, dynamic>
+      Map<String, dynamic> map =
+          response.data is String
+              ? json.decode(response.data)
+              : response.data is Map<String, dynamic>
               ? response.data
               : {};
 
       ApiResponse apiResponse = ApiResponse(
-          body: response.data is String
-              ? response.data
-              : json.encode(response.data),
-          map: map,
-          message: map['message'] ?? '',
-          data: map['data'] ?? {},
-          problems: map['problems'] ?? [],
-          statusCode: response.statusCode ?? 0,
-          success: [200, 201, 204, 301, 302, 304].contains(response.statusCode),
-          result: response.data);
+        body:
+            response.data is String
+                ? response.data
+                : json.encode(response.data),
+        map: map,
+        message: map['message'] ?? '',
+        data: map['data'] ?? {},
+        problems: map['problems'] ?? [],
+        statusCode: response.statusCode ?? 0,
+        success: [200, 201, 204, 301, 302, 304].contains(response.statusCode),
+        result: response.data,
+      );
 
       return apiResponse;
     } on DioException catch (e) {
       logger.e(
-          'on DioException : $e with message : ${(e.response?.data != null && e.response?.data is Map && e.response?.data['message'] != null) ? e.response?.data['message'] : 'An error occurred'}');
+        'on DioException : $e with message : ${(e.response?.data != null && e.response?.data is Map && e.response?.data['message'] != null) ? e.response?.data['message'] : 'An error occurred'}',
+      );
       String errorMessage = 'An error occurred';
       if (e.response != null) {
-        if(e.response?.statusCode != null && e.response!.statusCode == 401){
+        if (e.response?.statusCode != null && e.response!.statusCode == 401) {
           appService.redirectUserForTokenExpire();
         }
         if (e.response?.data != null &&
@@ -115,18 +120,15 @@ class DioRequestManager {
     final Map<String, String> headers = const {},
     Map<String, String> fields = const {},
   }) async {
+    Map<String, dynamic>? header =
+        headers.isNotEmpty
+            ? headers
+            : {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': 'Bearer $token',
+            };
 
-    Map<String, dynamic>? header = headers.isNotEmpty
-        ? headers
-        : {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': 'Bearer $token',
-    };
-    
-    Options options = Options(
-      method: method,
-      headers: header
-    );
+    Options options = Options(method: method, headers: header);
 
     FormData formData = FormData();
 
@@ -171,16 +173,18 @@ class DioRequestManager {
 
       logger.i(response.data);
 
-      Map<String, dynamic> map = response.data is String
-          ? json.decode(response.data)
-          : response.data is Map<String, dynamic>
+      Map<String, dynamic> map =
+          response.data is String
+              ? json.decode(response.data)
+              : response.data is Map<String, dynamic>
               ? response.data
               : {};
 
       ApiResponse apiResponse = ApiResponse(
-        body: response.data is String
-            ? response.data
-            : json.encode(response.data),
+        body:
+            response.data is String
+                ? response.data
+                : json.encode(response.data),
         map: map,
         message: map['message'] ?? '',
         data: map['data'] ?? {},
@@ -194,17 +198,18 @@ class DioRequestManager {
     } on DioException catch (e) {
       debugPrint('\n \n error msg : ${e.response?.statusMessage}');
       if (e.response != null) {
-        if(e.response?.statusCode != null && e.response!.statusCode == 401){
+        if (e.response?.statusCode != null && e.response!.statusCode == 401) {
           appService.redirectUserForTokenExpire();
         }
         return ApiResponse(
           body: e.response.toString(),
           map: {},
-          message: (e.response?.data != null &&
-                  e.response?.data is Map &&
-                  e.response?.data['message'] != null)
-              ? e.response?.data['message']
-              : 'An error occurred',
+          message:
+              (e.response?.data != null &&
+                      e.response?.data is Map &&
+                      e.response?.data['message'] != null)
+                  ? e.response?.data['message']
+                  : 'An error occurred',
           data: {},
           problems: [],
           statusCode: e.response?.statusCode ?? 0,
@@ -271,23 +276,27 @@ class HttpRequestManager {
     Map<String, dynamic> map = json.decode(bodyRes);
 
     ApiResponse apiResponse = ApiResponse(
-        body: bodyRes,
-        map: map,
-        message: map['message'] ?? '',
-        data: map['data'] ?? {},
-        problems: map['problems'] ?? [],
-        statusCode: code,
-        success: map['success'] ?? false);
+      body: bodyRes,
+      map: map,
+      message: map['message'] ?? '',
+      data: map['data'] ?? {},
+      problems: map['problems'] ?? [],
+      statusCode: code,
+      success: map['success'] ?? false,
+    );
 
     return apiResponse;
   }
 
   Future<ApiResponse> sendMultipart(
-      String method, Uri url, List<FileDetails> files,
-      {String token = '',
-      final Map<String, String> headers = const {},
-      Map<String, String> fields = const {},
-      String? fieldFile}) async {
+    String method,
+    Uri url,
+    List<FileDetails> files, {
+    String token = '',
+    final Map<String, String> headers = const {},
+    Map<String, String> fields = const {},
+    String? fieldFile,
+  }) async {
     Map<String, String> reqHeaders = {};
 
     if (headers.isNotEmpty) {
@@ -309,7 +318,8 @@ class HttpRequestManager {
     for (var file in files) {
       request.files.add(
         await http.MultipartFile.fromPath(
-          fieldFile ?? 'files', file.path,
+          fieldFile ?? 'files',
+          file.path,
           // contentType: MediaType.parse(file.mimeType)
         ),
       );
@@ -374,15 +384,16 @@ class ApiResponse {
   bool success;
   dynamic result;
 
-  ApiResponse(
-      {required this.body,
-      required this.map,
-      required this.message,
-      required this.data,
-      this.problems = const [],
-      required this.statusCode,
-      required this.success,
-      this.result});
+  ApiResponse({
+    required this.body,
+    required this.map,
+    required this.message,
+    required this.data,
+    this.problems = const [],
+    required this.statusCode,
+    required this.success,
+    this.result,
+  });
 }
 
 class FileDetails {

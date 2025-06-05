@@ -41,7 +41,6 @@ class CartScreen extends StatelessWidget {
     }
   }
 
-  // Le reste de votre code reste identique...
   @override
   Widget build(BuildContext context) {
     return Scaffold(

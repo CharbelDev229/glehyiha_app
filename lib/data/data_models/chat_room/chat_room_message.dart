@@ -17,10 +17,18 @@ class GetChatRoomMessageData {
     currentPage = json["current_page"] ?? 0;
     lastPage = json["last_page"] ?? 0;
     total = json["total"] ?? 0;
+    // for (var item in json["data"]) {
+    //   chatRoomItems?.add(_mapToChatRoomItem(item));
+    // }
     for (var item in json["data"]) {
-      chatRoomItems?.add(_mapToChatRoomItem(item));
-    }
+  chatRoomItems?.add(_mapToChatRoomItem(item as Map<String, dynamic>));
+}
+
   }
+
+  
+
+ 
 
   // Method to determine the correct ChatRoomItem type and instantiate it
   ChatRoomItem _mapToChatRoomItem(Map<String, dynamic> data) {

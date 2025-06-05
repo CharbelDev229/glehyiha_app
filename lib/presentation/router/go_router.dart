@@ -7,6 +7,7 @@ import 'package:glehiha/presentation/modules/add_product/add_product.dart';
 import 'package:glehiha/presentation/modules/cart/cart_screen.dart';
 import 'package:glehiha/presentation/modules/chat/chat_controller.dart';
 import 'package:glehiha/presentation/modules/expert_page/expert_page_screen.dart';
+import 'package:glehiha/presentation/modules/modify/modify_controller.dart';
 import 'package:glehiha/presentation/modules/onboarding/onboarding_controller.dart';
 import 'package:glehiha/presentation/modules/order_detail/order_detail_screen.dart';
 import 'package:glehiha/presentation/modules/product_detail/product_detail_screen.dart';
@@ -28,6 +29,7 @@ import '../modules/auth/verification_code/verification_code_screen.dart';
 import '../modules/chat/chat_screen.dart';
 import '../modules/expert/expert_screen.dart';
 import '../modules/market/market_screen.dart';
+import '../modules/modify/modify_screen.dart';
 import '../modules/onboarding/onboarding_screen_3.dart';
 import '../modules/onboarding/onboarding_screen_1.dart';
 import '../modules/onboarding/onboarding_screen_2.dart';
@@ -37,6 +39,7 @@ import '../modules/welcome/welcome_controller.dart';
 import '../modules/welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/edit_personnal_info/edit_personnal_info_controller.dart';
 import 'routes.dart';
 
 class AppRoute {
@@ -187,20 +190,45 @@ class AppRoute {
           );
         },
       ),
-    GoRoute(
-  path: '/my_profile',
-  name: AppRoutesNames.myprofile,
-  pageBuilder: (BuildContext context, GoRouterState state) {
-    return CustomTransitionPage(
-      key: state.pageKey,
-      transitionDuration: const Duration(milliseconds: 500),
-      child: MyProfileScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
-      },
-    );
-  },
-),
+    
+     GoRoute(
+        path: '/my_profile',
+        name: AppRoutesNames.myprofile,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            transitionDuration: const Duration(milliseconds: 500),
+            child: MyProfileScreen(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },),
+
+        GoRoute(
+        path: '/modify',
+        name: AppRoutesNames.modify,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            transitionDuration: const Duration(milliseconds: 500),
+            child: ModifyScreen(),
+            transitionsBuilder: (
+              context,
+              animation,
+              secondaryAnimation,
+              child,
+            ) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },),
+
 
 
       GoRoute(

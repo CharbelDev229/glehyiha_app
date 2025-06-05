@@ -54,6 +54,7 @@ class MyProfileController {
 
     if (image != null) {
       profileService.updateProfileImage(image.path);
+      
     }
   }
 

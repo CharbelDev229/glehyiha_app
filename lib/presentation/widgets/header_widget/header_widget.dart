@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:glehiha/presentation/router/routes.dart';
-import 'package:go_router/go_router.dart';
 
+import '../../modules/my_profile/my_profile_sreen.dart';
 import '../../service/profile service .dart';
 
 class HeaderWidget extends StatelessWidget {
@@ -24,7 +23,50 @@ class HeaderWidget extends StatelessWidget {
             Image.asset("assets/logo/logo.png", width: 94, height: 22),
             GestureDetector(
               onTap: () {
-                context.pushNamed(AppRoutesNames.myprofile);
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    opaque: false,
+                    barrierDismissible: true,
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return Align(
+                        alignment: Alignment.centerRight,
+                        child: FractionallySizedBox(
+                          widthFactor: 0.7, // 80% de l’écran
+                          child: Material(
+                            color: Colors.white,
+                            elevation: 8,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              bottomLeft: Radius.circular(20),
+                            ),
+                            child: const MyProfileScreen(),
+                          ),
+                        ),
+                      );
+                    },
+                    transitionsBuilder: (
+                      context,
+                      animation,
+                      secondaryAnimation,
+                      child,
+                    ) {
+                      return SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(
+                            1.0,
+                            0.0,
+                          ), // Animation depuis la droite
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      );
+                    },
+                    transitionDuration: const Duration(milliseconds: 500),
+                    reverseTransitionDuration: const Duration(
+                      milliseconds: 300,
+                    ),
+                  ),
+                );
               },
               child: CircleAvatar(
                 radius: 29,

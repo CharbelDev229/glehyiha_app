@@ -11,6 +11,7 @@ import 'package:glehiha/domain/usescases/user/delete_account.dart';
 import 'package:glehiha/domain/usescases/user/change_password.dart';
 import 'package:glehiha/domain/usescases/user/loyout.dart';
 import '../../common/dtos/profile_dto/change_pwd_dto.dart';
+import '../../common/dtos/profile_dto/profile_dto.dart';
 
 class ProfileService extends GetxService {
   static const _keyImagePath = 'profile_image_path';
@@ -70,6 +71,33 @@ class ProfileService extends GetxService {
     profileImagePath.value = path;
     _saveProfileImagePath(path); // Ajouté pour persister à chaque mise à jour
   }
+  // envoi de l'url
+  Future<bool> sendAvatarUrl(String avatarUrl) async {
+  setIsLoading(true);
+  bool success = false;
+
+  final profileDto = ProfileDto(media: avatarUrl);
+
+  // Appel asynchrone, stocké dans 'send'
+  final send = await updateProfileUseCase.call(
+    UpdateProfileParams(profileDto: profileDto, email: ''),
+  );
+
+  send.fold(
+    (failure) {
+      logger.e(failure);
+      success = false;
+    },
+    (response) {
+      logger.i("Avatar mis à jour côté backend");
+      success = true;
+    },
+  );
+
+  setIsLoading(false);
+  return success;
+}
+
 
   /// Ouverture de la galerie pour choisir une image
   Future<void> pickImage() async {

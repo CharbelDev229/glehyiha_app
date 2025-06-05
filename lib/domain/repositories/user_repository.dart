@@ -11,10 +11,13 @@ abstract class UserRepository {
   Future<Either<Failure, GlehihaCurrentUser>> getProfile();
 
   /// Update user infos
-  Future<Either<Failure, String>> updateProfile(ProfileDto dto, String email);
+  Future<Either<Failure, String>> updateProfile( ProfileDto dto, 
+  String email);
 
   /// logout user
   Future<Either<Failure, String>> logout();
+  // avatar user
+   Future<Either<Failure, String>> avatar(String avatarUrl);
 
   /// Change password
   Future<Either<Failure, String>> changePassword(ChangePwdDto dto,

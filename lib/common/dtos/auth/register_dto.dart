@@ -25,8 +25,8 @@ class RegisterDto {
 
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{
-      'firstname': first_name,
-      'lastname': last_name,
+      'first_name': first_name,
+      'last_name': last_name,
       'email': email,
       'password': password,
       'phone_number': phone_number,

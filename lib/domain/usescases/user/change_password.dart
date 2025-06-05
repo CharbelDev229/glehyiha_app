@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:glehiha/common/dtos/auth/register_dto.dart';
 import '../../../common/dtos/profile_dto/change_pwd_dto.dart';
 import '../../../common/utils/failure.dart';
 import '../../../common/utils/usecase.dart';

@@ -6,22 +6,24 @@ import 'package:equatable/equatable.dart';
 class ProfileDto extends Equatable {
   final String? firstname;
   final String? lastname;
-  //final String? email; // <- Retiré temporairement de l'envoi
+  final String? email; // <- Retiré temporairement de l'envoi
   final String? phoneNumber;
   final String? role;
   final String? pseudo;
   final String? sex;
   final File? avatar;
+  final String? media;
 
   const ProfileDto({
     this.firstname,
     this.lastname,
-    //this.email,
+    this.email,
     this.phoneNumber,
     this.role,
     this.pseudo,
     this.sex,
     this.avatar,
+    this.media,
   });
 
   Map<String, String> toMap() {
@@ -40,6 +42,7 @@ class ProfileDto extends Equatable {
     addIfNotNull('role', role);
     addIfNotNull('pseudo', pseudo);
     addIfNotNull('sex', sex);
+    addIfNotNull('media', media);
 
     // ⚠️ N'ajoute pas l'email ici pour éviter erreur serveur
     // addIfNotNull('email', email);
@@ -57,12 +60,13 @@ class ProfileDto extends Equatable {
     return [
       firstname,
       lastname,
-     // email,
+      // email,
       phoneNumber,
       role,
       pseudo,
       sex,
-      avatar
+      avatar,
+      media,
     ];
   }
 }

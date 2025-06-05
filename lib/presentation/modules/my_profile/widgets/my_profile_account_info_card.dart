@@ -80,7 +80,7 @@ class MyProfileAccountInfoCard extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFF563267),
-                fontSize: 20,
+                fontSize: 15,
                 fontWeight: FontWeight.w400,
                 height: 1.2,
               ),
@@ -89,33 +89,33 @@ class MyProfileAccountInfoCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          CustomButton(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-            gradient: const LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [
-                Color.fromARGB(255, 237, 231, 240),
-                Color.fromARGB(255, 234, 229, 236),
-              ],
-            ),
-            border: Border.all(
-              color: const Color.fromARGB(255, 224, 221, 226).withOpacity(0.5),
-            ),
-            borderRadius: BorderRadius.circular(999),
-            onPressed: () {
-              controller.showUpdateProfileDialog(context: context);
-            },
-            child: const Text(
-              "Compléter le profil",
-              style: TextStyle(
-                color: Color.fromARGB(255, 12, 12, 11),
-                fontWeight: FontWeight.w700,
-                fontStyle: FontStyle.italic,
-                fontSize: 15,
-              ),
-            ),
-          ),
+          // CustomButton(
+          //   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+          //   gradient: const LinearGradient(
+          //     begin: Alignment.bottomCenter,
+          //     end: Alignment.topCenter,
+          //     colors: [
+          //       Color.fromARGB(255, 237, 231, 240),
+          //       Color.fromARGB(255, 234, 229, 236),
+          //     ],
+          //   ),
+          //   border: Border.all(
+          //     color: const Color.fromARGB(255, 224, 221, 226).withOpacity(0.5),
+          //   ),
+          //   borderRadius: BorderRadius.circular(999),
+          //   onPressed: () {
+          //     controller.showUpdateProfileDialog(context: context);
+          //   },
+          //   child: const Text(
+          //     "Compléter le profil",
+          //     style: TextStyle(
+          //       color: Color.fromARGB(255, 12, 12, 11),
+          //       fontWeight: FontWeight.w700,
+          //       fontStyle: FontStyle.italic,
+          //       fontSize: 15,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

@@ -23,12 +23,11 @@ class AppRoutesNames {
   static const cart = 'cart';
   static const orderDetail = 'order_detail';
   static const resetcode = 'reset_code';
-   static const myprofile = 'my_profile';
- 
- 
+  static const myprofile = 'my_profile';
+  static const modify = 'modify';
+
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
-
 
   //fonction pour rediriger vers la page de connection
   void _redirecToLogin() {

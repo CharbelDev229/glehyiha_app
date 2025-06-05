@@ -22,7 +22,7 @@ abstract class ChatRoomMessageRemoteDataSource {
     required int page,
   });
 
-/// Delete a message from a chat room
+  /// Delete a message from a chat room
   Future<Either<Failure, String>> deleteMessage({
     required int chatRoomId,
     required int messageId,
@@ -66,15 +66,9 @@ class ChatRoomMessageRemoteDataSourceImpl
       logger.f('response : ${response.body}');
 
       if (response.success) {
-        return Right(
-          ChatMessage.fromMap(response.data),
-        );
+        return Right(ChatMessage.fromMap(response.data));
       } else {
-        return Left(
-          ServerFailure.raise(
-            response,
-          ),
-        );
+        return Left(ServerFailure.raise(response));
       }
     } catch (e) {
       return Left(ServerFailure.onCatch(e: e));
@@ -88,35 +82,32 @@ class ChatRoomMessageRemoteDataSourceImpl
     required int page,
   }) async {
     Uri url =
-        UriFormatter('chat-room/$chatRoomId/messages', extras: {'page': page})
-            .format();
+        UriFormatter(
+          'chat-room/$chatRoomId/messages',
+          extras: {'page': page},
+        ).format();
 
     try {
-      final response = await dioRequestManager.send(
-        'GET',
-        url,
-        token: token,
-      );
+      final response = await dioRequestManager.send('GET', url, token: token);
 
       logger.f('response : ${response.body}');
       if (response.success) {
         logger.f('response.map : ${response.map}');
         if (response.data is Map<String, dynamic>) {
+          logger.f('TYPE DE DATA: ${response.data.runtimeType}');
+          logger.f(
+            'TYPE DE response.data["data"]: ${response.data["data"].runtimeType}',
+          );
+
           return Right(GetChatRoomMessageData.fromMap(response.data));
         } else {
-          return Left(
-            ServerFailure.raise(response),
-          );
+          return Left(ServerFailure.raise(response));
         }
       } else {
-        return Left(
-          ServerFailure.raise(response),
-        );
+        return Left(ServerFailure.raise(response));
       }
     } catch (e) {
-      return Left(
-        ServerFailure.onCatch(e: e),
-      );
+      return Left(ServerFailure.onCatch(e: e));
     }
   }
 
@@ -130,7 +121,11 @@ class ChatRoomMessageRemoteDataSourceImpl
         UriFormatter('chat-rooms/$chatRoomId/messages/$messageId').format();
 
     try {
-      final response = await dioRequestManager.send('DELETE', url, token: token);
+      final response = await dioRequestManager.send(
+        'DELETE',
+        url,
+        token: token,
+      );
 
       if (response.success) {
         return Right(response.message);
@@ -141,6 +136,4 @@ class ChatRoomMessageRemoteDataSourceImpl
       return Left(ServerFailure.onCatch(e: e));
     }
   }
-
- 
 }

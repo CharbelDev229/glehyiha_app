@@ -14,10 +14,17 @@ abstract class UserRemoteDataSource {
   Future<Either<Failure, GlehihaCurrentUser>> getProfile(String token);
 
   /// Update user infos
-  Future<Either<Failure, String>> updateProfile(ProfileDto dto, String token, String email);
+  Future<Either<Failure, String>> updateProfile(
+    ProfileDto dto,
+    String token,
+    String email,
+  );
 
   /// logout user
   Future<Either<Failure, String>> logout(String token);
+  
+  /// logout user
+  Future<Either<Failure, String>> avatar(String token, String avatarUrl);
 
   /// Change password
   Future<Either<Failure, String>> changePassword(
@@ -47,7 +54,6 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     try {
       final response = await dioRequestManager.send('GET', url, token: token);
       if (response.success) {
-        
         var user = GlehihaCurrentUser.fromMap(response.map['data']);
 
         return Right(user);
@@ -62,9 +68,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<Either<Failure, String>> updateProfile(
     ProfileDto dto,
-    String token,
+    String token, 
     String email,
-    
   ) async {
     /// URL of the endpoint
     Uri url = UriFormatter('user/update_profile').format();
@@ -109,6 +114,30 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
       return Left(ServerFailure.onCatch(e: e));
     }
   }
+  @override
+Future<Either<Failure, String>> avatar(String token, String avatarUrl) async {
+  // URL de l'endpoint
+  Uri url = UriFormatter('user/avatar').format();
+
+  try {
+    // Envoi d'une requête POST avec le token + avatar dans le body
+    final response = await dioRequestManager.send(
+      'POST',
+      url,
+      token: token,
+    // data: {"avatar": avatarUrl}, // <-- Ajout du body ici
+    );
+
+    if (response.success) {
+      prefs.remove(StorageKeys.token); 
+      return Right(response.message);  
+    } else {
+      return Left(ServerFailure.raise(response));
+    }
+  } catch (e) {
+    return Left(ServerFailure.onCatch(e: e));
+  }
+}
 
   @override
   Future<Either<Failure, String>> changePassword(

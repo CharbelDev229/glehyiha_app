@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:glehiha/common/dtos/profile_dto/profile_dto.dart';
 import 'package:glehiha/data/models/user/glehiha_current_user.dart';
-import 'package:glehiha/data/models/user/glehiha_user_info.dart';
+
 import '../../common/dtos/profile_dto/change_pwd_dto.dart';
 import '../../common/utils/failure.dart';
 import '../../domain/repositories/user_repository.dart';
@@ -21,99 +21,148 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, GlehihaCurrentUser>> getProfile() async {
     final accessToken = await authLocalDataSource.getToken();
 
-    return accessToken.fold((failure) {
-      return Left(failure);
-    }, (accessToken) async {
-      final remoteUser = await userRemoteDataSource.getProfile(accessToken);
-
-      return remoteUser.fold((failure) async {
+    return accessToken.fold(
+      (failure) {
         return Left(failure);
-      }, (user) async {
-        return Right(user);
-      });
-    });
+      },
+      (accessToken) async {
+        final remoteUser = await userRemoteDataSource.getProfile(accessToken);
+
+        return remoteUser.fold(
+          (failure) async {
+            return Left(failure);
+          },
+          (user) async {
+            return Right(user);
+          },
+        );
+      },
+    );
   }
 
   @override
   Future<Either<Failure, String>> changePassword(ChangePwdDto dto) async {
     final accessToken = await authLocalDataSource.getToken();
 
-    return accessToken.fold((failure) {
-      return Left(failure);
-    }, (accessToken) async {
-      final remoteChangePwd = await userRemoteDataSource.changePassword(
-        dto,
-        accessToken,
-      );
-
-      return remoteChangePwd.fold((failure) async {
+    return accessToken.fold(
+      (failure) {
         return Left(failure);
-      }, (res) async {
-        return Right(res);
-      });
-    });
+      },
+      (accessToken) async {
+        final remoteChangePwd = await userRemoteDataSource.changePassword(
+          dto,
+          accessToken,
+        );
+
+        return remoteChangePwd.fold(
+          (failure) async {
+            return Left(failure);
+          },
+          (res) async {
+            return Right(res);
+          },
+        );
+      },
+    );
   }
 
   @override
-  Future<Either<Failure, String>> deleteAccount({required String password}) async {
+  Future<Either<Failure, String>> deleteAccount({
+    required String password,
+  }) async {
     final accessToken = await authLocalDataSource.getToken();
 
-    return accessToken.fold((failure) {
-      return Left(failure);
-    }, (accessToken) async {
-      final remoteDeleteAccount = await userRemoteDataSource.deleteAccount(
-        token: accessToken,
-        password: password
-      );
-
-      return remoteDeleteAccount.fold((failure) async {
+    return accessToken.fold(
+      (failure) {
         return Left(failure);
-      }, (res) async {
-        return Right(res);
-      });
-    });
+      },
+      (accessToken) async {
+        final remoteDeleteAccount = await userRemoteDataSource.deleteAccount(
+          token: accessToken,
+          password: password,
+        );
+
+        return remoteDeleteAccount.fold(
+          (failure) async {
+            return Left(failure);
+          },
+          (res) async {
+            return Right(res);
+          },
+        );
+      },
+    );
   }
 
   @override
   Future<Either<Failure, String>> logout() async {
     final accessToken = await authLocalDataSource.getToken();
 
-    return accessToken.fold((failure) {
-      return Left(failure);
-    }, (accessToken) async {
-      final remoteLogout = await userRemoteDataSource.logout(
-        accessToken,
-      );
-
-      return remoteLogout.fold((failure) async {
+    return accessToken.fold(
+      (failure) {
         return Left(failure);
-      }, (res) async {
-        return Right(res);
-      });
-    });
+      },
+      (accessToken) async {
+        final remoteLogout = await userRemoteDataSource.logout(accessToken);
+
+        return remoteLogout.fold(
+          (failure) async {
+            return Left(failure);
+          },
+          (res) async {
+            return Right(res);
+          },
+        );
+      },
+    );
   }
+ @override
+Future<Either<Failure, String>> avatar(String avatarUrl) async {
+  final accessToken = await authLocalDataSource.getToken();
 
-   @override
-   Future<Either<Failure, String>> updateProfile(ProfileDto dto, String email) async {
-   final accessToken = await authLocalDataSource.getToken();
+  return accessToken.fold(
+    (failure) {
+      return Left(failure);
+    },
+    (token) async {
+      final remoteAvatar = await userRemoteDataSource.avatar(token, avatarUrl);
 
-     return accessToken.fold((failure) {
-       return Left(failure);
-     }, (accessToken) async {
-       final remoteUpdate = await userRemoteDataSource.updateProfile(
-         dto,
-         accessToken,
-         email,
-       );
+      return remoteAvatar.fold(
+        (failure) => Left(failure),
+        (res) => Right(res),
+      );
+    },
+  );
+}
 
-       return remoteUpdate.fold((failure) async {
-         return Left(failure);
-       }, (res) async {
-         return Right(res);
-       });
-     });
-   }
 
- 
+  @override
+  Future<Either<Failure, String>> updateProfile(
+    ProfileDto dto,
+    String email,
+  ) async {
+    final accessToken = await authLocalDataSource.getToken();
+
+    return accessToken.fold(
+      (failure) {
+        return Left(failure);
+      },
+      (accessToken) async {
+        final remoteUpdate = await userRemoteDataSource.updateProfile(
+          dto,
+          accessToken,
+          email,
+        );
+
+        return remoteUpdate.fold(
+          (failure) async {
+            return Left(failure);
+          },
+          (res) async {
+            return Right(res);
+          },
+        );
+      },
+    );
   }
-
+}

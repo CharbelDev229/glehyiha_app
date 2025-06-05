@@ -6,7 +6,7 @@ class GlehihaCurrentUser extends Equatable {
   final String firstName;
   final String lastName;
   final String email;
-  final String? phoneNumber;
+  final String phoneNumber;
   final String? emailVerifiedAt;
   final bool isActive;
   final String? lastSeen;
@@ -24,7 +24,7 @@ class GlehihaCurrentUser extends Equatable {
     required this.firstName,
     required this.lastName,
     required this.email,
-    this.phoneNumber,
+   required this.phoneNumber,
     this.emailVerifiedAt,
     required this.isActive,
     this.lastSeen,
@@ -44,7 +44,7 @@ class GlehihaCurrentUser extends Equatable {
       firstName: data['first_name']?.toString() ?? '', // ✅ Corrigé
       lastName: data['last_name']?.toString() ?? '',   // ✅ Corrigé
       email: data['email']?.toString() ?? '',
-      phoneNumber: data['phone_number']?.toString(),
+      phoneNumber: data['phone_number']?.toString() ?? '',
       emailVerifiedAt: data['email_verified_at']?.toString(),
       isActive: data['is_verified'] == true, // ✅ Corrigé selon ton backend
       lastSeen: data['last_seen']?.toString(),

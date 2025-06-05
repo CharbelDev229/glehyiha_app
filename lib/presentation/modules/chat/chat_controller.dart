@@ -1,77 +1,127 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart';
+import 'package:glehiha/domain/usescases/chat_room_message/get_messages_use_case.dart.dart';
+import 'package:glehiha/domain/usescases/chat_room_message/send_message_use_case.dart';
+
+import '../../../common/utils/utils.dart';
 import '../../../data/models/message/chat_message.dart';
+import '../../../domain/usescases/chat_room_message/delete_message_use_case.dart';
 
-class ChatController extends GetxController {
-  final RxList<ChatMessage> messages = <ChatMessage>[].obs;
-  final RxBool isLoading = false.obs;
+class ChatController  {
+  final DeleteMessageUseCase deleteMessageUseCase =
+      Get.find<DeleteMessageUseCase>();
+  final GetMessagesUseCase getMessagesUseCase = Get.find<GetMessagesUseCase>();
+  final SendMessageUseCase sendMessageUseCase = Get.find<SendMessageUseCase>();
 
-  final Dio _dio = Dio();
+  RxBool isLoading = false.obs;
+  RxBool chatControllerInLoading = false.obs;
+  RxBool autoValidate = false.obs;
 
-  Future<void> sendMessage(String userInput) async {
-    if (userInput.trim().isEmpty) return;
+ 
+  RxInt currentChatRoomId = 1.obs; // ID de la room de chat par défaut
+  RxString currentMessage = ''.obs;
+  //RxList<dynamic> messages = <dynamic>[].obs; // Liste des messages
+  RxList<ChatMessage> messages = <ChatMessage>[].obs;
 
-    // Ajouter le message utilisateur
-    messages.add(
-      ChatMessage(
-        id: 0,
-        text: userInput,
-        content: userInput,
-        senderId: 1,
-        isUser: true,
-        isDeletedAt: null,
-        updateAt: DateTime.now().toIso8601String(),
+  RxInt currentPage = 0.obs;
+
+  // Méthode pour définir le message à envoyer
+  void setMessage(String message) {
+    currentMessage.value = message;
+  }
+
+  // Méthode pour définir l'ID de la room de chat
+  void setChatRoomId(int chatRoomId) {
+    currentChatRoomId.value = chatRoomId;
+  }
+
+  Future<bool> send(BuildContext context, String message) async {
+    bool success = false;
+    chatControllerInLoading.value = true;
+
+    // Mise à jour du message avant envoi
+    setMessage(message);
+
+    final send = await sendMessageUseCase.call(
+      SendMessageParams(
+        chatRoomId: currentChatRoomId.value, 
+        content: currentMessage.value, 
+        mentionedUsers: []
       ),
     );
 
-    isLoading.value = true;
-
-    try {
-    
-      final response = await _dio.post(
-        'https://mobileapi.alwaysdata.net/api/chat',
-        data: {'message': userInput},
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-          sendTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
-        ),
-      );
-
-      // Afficher la réponse (pour debug)
-      print('Réponse: ${response.data}');
-
-      final String botReply = response.data['reply'] ?? 'Pas de réponse';
-
-      // Ajouter la réponse du bot
-      messages.add(
-        ChatMessage(
-          id: 0,
-          text: botReply,
-          content: botReply,
-          senderId: 0,
-          isUser: false,
-          isDeletedAt: null,
-          updateAt: DateTime.now().toIso8601String(),
-        ),
-      );
-    } catch (e) {
-      // Afficher l'erreur complète (pour debug)
-      print('Erreur complète: $e');
-
-      messages.add(
-        ChatMessage(
-          id: 0,
-          text: "Erreur: Impossible de contacter le serveur",
-          content: "Erreur de connexion",
-          senderId: 0,
-          isUser: false,
-          isDeletedAt: null,
-          updateAt: DateTime.now().toIso8601String(),
-        ),
-      );
-    }
-
-    isLoading.value = false;
+    send.fold(
+      (failure) {
+        Utils.snackError(context: context, message: failure.message);
+      },
+      (response) async {
+        Utils.snackSuccess(context: context, message: 'Message envoyé avec succès!');
+        success = true;
+        // Recharger les messages après envoi
+        await get(context);
+      },
+    );
+    chatControllerInLoading.value = false;
+    return success;
   }
+
+  Future<bool> get(BuildContext context) async {
+    bool success = false;
+    chatControllerInLoading.value = true;
+
+    final result = await getMessagesUseCase.call(
+      GetMessagesParams(
+        chatRoomId: currentChatRoomId.value, 
+        page: currentPage.value
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        Utils.snackError(context: context, message: failure.message);
+      },
+      (response) async {
+        // Stocker les messages récupérés
+       // messages.value = response.data ?? [];
+       messages.value = (response.chatRoomItems ?? [])
+    .whereType<ChatMessage>()
+    .toList();
+
+
+
+        Utils.snackSuccess(context: context, message: 'Messages chargés avec succès!');
+        success = true;
+      },
+    );
+    chatControllerInLoading.value = false;
+    return success;
+  }
+
+  Future<bool> delete(BuildContext context, int messageId) async {
+    bool success = false;
+    chatControllerInLoading.value = true;
+
+    final result = await deleteMessageUseCase.call(
+      DeleteMessageParams(
+        chatRoomId: currentChatRoomId.value, 
+        messageId: messageId,
+      ),
+    );
+    
+    result.fold(
+      (failure) {
+        Utils.snackError(context: context, message: failure.message);
+      },
+      (response) async {
+        Utils.snackSuccess(context: context, message: 'Message supprimé avec succès!');
+        success = true;
+        // Recharger les messages après suppression
+        await get(context);
+      },
+    );
+    chatControllerInLoading.value = false;
+    return success;
+  }
+
+ 
 }
