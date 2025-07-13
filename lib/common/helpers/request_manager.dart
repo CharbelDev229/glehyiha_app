@@ -18,8 +18,10 @@ class DioRequestManager {
     String method,
     Uri url, {
     String token = '',
+    
     final Map<String, String> headers = const {},
-    Map<String, dynamic> body = const {},
+   // Map<String, dynamic> body = const {},
+    dynamic body,
     CancelToken? cancelToken,
   }) async {
     Map<String, dynamic>? header =
@@ -27,7 +29,7 @@ class DioRequestManager {
             ? headers
             : {
               'Accept': '*/*',
-              'Access-Control-Allow-Origin': '*',
+             // 'Access-Control-Allow-Origin': '*',
               'Content-Type': 'application/json',
               'Authorization': token.isNotEmpty ? 'Bearer $token' : null,
             };
@@ -35,14 +37,22 @@ class DioRequestManager {
     Options options = Options(method: method, headers: header);
 
     logger.e('url $url \n cancelToken : $cancelToken');
-    logger.i('body ${json.encode(body)}');
+    if (body is! FormData) {
+  logger.i('body ${json.encode(body)}');
+} else {
+  logger.i('body is FormData (cannot encode to JSON)');
+}
+
+ //   logger.i('body ${json.encode(body)}');
     logger.i('token $token');
 
     try {
       final response = await dio.request(
         url.toString(),
         options: options,
-        data: json.encode(body),
+      //  data: json.encode(body),
+      data: body, // ✅ Laisse Dio gérer FormData ou Map automatiquement
+
         cancelToken: cancelToken,
       );
       logger.e('\n\n\n after request\n\n');
@@ -251,7 +261,7 @@ class HttpRequestManager {
     if (headers.isEmpty) {
       reqHeaders.addAll({
         'Accept': '/',
-        'Access-Control-Allow-Origin': '*',
+       // 'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       });
@@ -306,7 +316,7 @@ class HttpRequestManager {
     if (headers.isEmpty) {
       reqHeaders.addAll({
         'Accept': '/',
-        'Access-Control-Allow-Origin': '*',
+      //  'Access-Control-Allow-Origin': '*',
         'Accept-Language': prefs.getString('languageCode')!,
         'Content-Type': 'multipart/form-data',
         'Authorization': 'Bearer $token',

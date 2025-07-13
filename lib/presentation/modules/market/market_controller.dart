@@ -1,47 +1,41 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:glehiha/presentation/router/routes.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../common/enums/product_category.dart';
 import '../../../common/enums/user_role.dart';
+import '../../../common/dtos/product/add_product_dto.dart';
 import '../../../data/models/product/products.dart';
+import '../../router/routes.dart';
 import '../../service/product/product_service.dart';
 import '../add_product/add_product.dart';
+import '../controller/user_seller_cpntroller.dart'; // <- pour récupérer le vrai sellerId
 
 class MarketController extends GetxController {
-  // Dépendances
-  final ProductService _productService = Get.find<ProductService>();
+  final ProductService productService = Get.find<ProductService>();
 
-  // État observable
-  final Rx<ProductCategory> selectedCategory = ProductCategory.all.obs;
+  final Rx<ProductCategory> selectedCategory = ProductCategory.ALL.obs;
   final RxString searchTerm = ''.obs;
   final TextEditingController searchController = TextEditingController();
-
-  // Rôle de l'utilisateur
-  Rx<UserRole> selectedRole = UserRole.vendeur.obs;
-
-  // Initialisation
+  final Rx<UserRole> selectedRole = UserRole.vendeur.obs;
+ void _loadProductsBasedOnRole() {
+    if (selectedRole.value == UserRole.vendeur) {
+      getMyProducts();
+    } else {
+      getAllProducts();
+    }
+  }
   @override
   void onInit() {
     super.onInit();
-
-    // Écouter les changements de rôle
-    ever(_productService.userRole, (role) {
+    ever(productService.userRole, (role) {
       selectedRole.value = role;
-      print('Rôle mis à jour : $role');
+      _loadProductsBasedOnRole();
     });
 
-    // Initialiser avec le rôle actuel du service
-    selectedRole.value = _productService.userRole.value;
+    selectedRole.value = productService.userRole.value;
+    _loadProductsBasedOnRole();
   }
 
-  // Obtenir les produits filtrés
-  List<Product> get filteredProducts => _productService.getFilteredProducts(
-    selectedCategory.value,
-    searchTerm.value,
-  );
-
-  // Méthodes de manipulation d'état
   void changeCategory(ProductCategory category) {
     selectedCategory.value = category;
   }
@@ -51,32 +45,73 @@ class MarketController extends GetxController {
   }
 
   void selectProduct(BuildContext context, Product product) {
-    Get.snackbar(
-      'Produit sélectionné',
-      'Vous avez sélectionné ${product.name}',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 2),
-    );
-    
-
-    context.pushNamed(AppRoutesNames.productDetail, extra: Product);
+    context.pushNamed(AppRoutesNames.productDetail, extra: product);
   }
 
-  // Méthode pour ajouter un nouveau produit
   void addNewProduct() {
-    // Vérifier si l'utilisateur est un vendeur
     if (selectedRole.value == UserRole.vendeur) {
-      // Naviguer vers l'écran d'ajout de produit
-      Get.to(() => AddProduct());
+      Get.to(() => const AddProduct())?.then((_) {
+        refreshAfterProductCreated();
+      });
     } else {
-      Get.snackbar(
-        'Accès refusé',
-        'Seuls les vendeurs peuvent ajouter des produits',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar("Accès refusé", "Seuls les vendeurs peuvent ajouter des produits");
     }
+  }
+
+  List<Product> get filteredProducts {
+    final sourceProducts = selectedRole.value == UserRole.vendeur
+        ? productService.myProducts
+        : productService.simpleProducts;
+
+    return sourceProducts.where((product) {
+      final matchCategory = selectedCategory.value == ProductCategory.ALL ||
+          product.category == selectedCategory.value;
+
+      final matchSearch = searchTerm.value.isEmpty ||
+          product.name.toLowerCase().contains(searchTerm.value.toLowerCase());
+
+      return matchCategory && matchSearch;
+    }).toList();
+  }
+
+  Future<void> refreshAfterProductCreated() async {
+    if (selectedRole.value == UserRole.vendeur) {
+      await getMyProducts();
+    } else {
+      await getAllProducts();
+    }
+  }
+
+  Future<void> getAllProducts() async {
+    await productService.loadAllProducts();
+  }
+
+  Future<void> getMyProducts() async {
+    final sellerId = _getCurrentSellerId();
+    if (sellerId != null) {
+      await productService.loadProductsBySeller(sellerId);
+    } else {
+      Get.snackbar("Erreur", "Impossible de récupérer l'ID du vendeur");
+    }
+  }
+
+  Product convertDtoToProduct(AddProductDto dto) {
+    return Product(
+      id: DateTime.now().millisecondsSinceEpoch,
+      name: dto.name,
+      image: dto.filename,
+      category: dto.category,
+      prix_unitaire: dto.price,
+      resume: dto.resume,
+      quantite: '${dto.stock} ${dto.unit}',
+      seller: _getCurrentSellerId() ?? "vendeur inconnu",
+      description: dto.description,
+    );
+  }
+
+  String? _getCurrentSellerId() {
+    final controller = Get.find<UserSellerController>();
+    return controller.getUserId(); // 🔧 Remplace avec le vrai ID vendeur
   }
 
   @override

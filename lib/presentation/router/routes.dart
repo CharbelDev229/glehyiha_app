@@ -29,6 +29,8 @@ class AppRoutesNames {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
+
+
   //fonction pour rediriger vers la page de connection
   void _redirecToLogin() {
     navigatorKey.currentContext?.goNamed(AppRoutesNames.signIn);

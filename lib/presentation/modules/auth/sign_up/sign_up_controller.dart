@@ -7,8 +7,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../common/dtos/auth/register_dto.dart';
 import '../../../../common/utils/utils.dart';
+import '../../../../data/models/user_model.dart';
 import '../../../../domain/usescases/auth/sign_up.dart';
 import '../../../router/routes.dart';
+import '../../controller/user_seller_cpntroller.dart';
 import '../../order_detail/user_controller.dart';
 
 class SignUpController {
@@ -107,23 +109,27 @@ class SignUpController {
         Utils.snackSuccess(context: context, message: 'Inscription réussie!');
         success = true;
 
-        
+        final roleEnum = selectedRole.value;
+    final sellerController = Get.find<UserSellerController>();
+    sellerController.setRole(roleEnum);
 
-        // Mettre à jour la variable locale
-        
+    // try {
+    //       final userController = Get.find<UserController>();
+    //       userController.setAddressAndComment(
+    //         adress: adresseController.text.trim(),
+    //         comment: commentaireController.text.trim(),
+    //         phone: getCompletePhoneNumber(),
+    //       );
+
+    //       fName.f
+    // lastName.value = lName;
+    // email.value = mail; 
+    //     } catch (e) {
+    //       logger.w('UserController non trouvé: $e');
+    //     }
+
         // Mettre à jour le UserController
-         try {
-          final userController = Get.find<UserController>();
-          userController.setUser(
-            fName: nomController.text.trim(),
-            lName: prenomController.text.trim(),
-            mail: emailController.text.trim(),
-            
-           );
-         } catch (e) {
-           logger.w('UserController non trouvé: $e');
-         }
-
+        
         // Mettre à jour le ProfileController
         
         if (context.mounted) {

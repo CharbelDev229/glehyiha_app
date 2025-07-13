@@ -1,62 +1,53 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:glehiha/common/enums/product_category.dart';
-import 'package:glehiha/common/constants/instances.dart';
-import 'package:glehiha/common/services/location_service.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:glehiha/common/enums/product_category.dart';
+import 'package:glehiha/common/services/location_service.dart';
+import 'package:glehiha/common/constants/instances.dart';
+import 'package:glehiha/common/utils/utils.dart';
+import 'package:glehiha/domain/usescases/product/create_product.dart';
 
+import '../../../common/dtos/product/add_product_dto.dart';
+import '../../../common/enums/user_role.dart';
+import '../../router/routes.dart';
+import '../../service/product/product_service.dart';
+import '../market/market_controller.dart';
 
-class AddProductController {
-  
-  PageController pageController = PageController(
-    initialPage: 0,
-    viewportFraction: 1.0,
-    keepPage: true,
-  );
-  RxInt index = 1.obs;
-  // final SignUpUseCase signUpUseCase;
+class AddProductController extends GetxController {
+  final CreateProductUseCase createProductUseCase;
+
+  AddProductController({required this.createProductUseCase});
+
   final formKey = GlobalKey<FormState>();
-  GlobalKey<FormState> loginFormKey = GlobalKey<FormState>(
-    debugLabel: 'add_product',
-  );
 
-  // Contrôleurs de formulaire
-  TextEditingController nomController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  TextEditingController marqueController = TextEditingController();
-  TextEditingController uniteController = TextEditingController();
-  
-  
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final resumeController = TextEditingController();
+  final marqueController = TextEditingController();
+  final priceController = TextEditingController();
+  final unitController = TextEditingController();
+  final fabricationDateController = TextEditingController();
+  final expirationDateController = TextEditingController();
+  final stockController = TextEditingController();
 
-  // Variables observables
-final Rx<ProductCategory> selectedProduct = ProductCategory.engrais.obs;
- 
-  RxBool isLoading = false.obs;
-  // Ajout de la variable manquante
-  // RxBool signUpInLoading = false.obs;
-  // RxString errorMessage = ''.obs;
-  // RxString selectedCountryCode = '+229'.obs;
-  RxBool autoValidate = false.obs;
-  
+  final Rx<ProductCategory> selectedCategory = ProductCategory.ENGRAIS.obs;
+  final Rx<XFile?> pickedImage = Rxn<XFile>();
+  final ImagePicker imagePicker = ImagePicker();
 
-  // Variables de localisation
-  RxString latitude = ''.obs;
-  RxString longitude = ''.obs;
+  final RxBool createproductinLoading = false.obs;
+  final RxBool autoValidate = false.obs;
 
-  //SignUpController({required this.signUpUseCase});
+  final RxString latitude = ''.obs;
+  final RxString longitude = ''.obs;
 
-  void onPageChanged(int index) {
-    this.index.value = index;
-  }
-
-  void onChangeStep({required int index}) {
-    this.index.value = index;
-    pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.decelerate,
-    );
+  Future<void> pickImage() async {
+    final XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      pickedImage.value = image;
+    }
   }
 
   Future<void> getCurrentLocation() async {
@@ -67,63 +58,94 @@ final Rx<ProductCategory> selectedProduct = ProductCategory.engrais.obs;
         longitude.value = position.longitude.toString();
       }
     } catch (e) {
-      logger.e('Erreur de localisation: $e');
+      logger.e("Erreur localisation : $e");
     }
   }
 
-  //   Future<bool> register(BuildContext context) async {
-  //     bool success = false;
-  //     signUpInLoading.value = true;
-
-  //     logger.d('Inscription: ${nomController.text} ${prenomController.text}');
-
-  //     final send = await signUpUseCase.call(
-  //       SignUpParams(
-  //         dto: RegisterDto(
-  //           firstname: nomController.text,
-  //           lastname: prenomController.text,
-  //           email: emailController.text,
-  //           password: passwordController.text,
-  //           phoneNumber: phoneNumberController.text,
-  //           userRole: selectedRole.value,
-  //           specialisation: specialisationController.text,
-  //           experience: experienceController.text,
-  //           shopName: shopNameController.text,
-  //         ),
-  //       ),
-  //     );
-
-  //     send.fold(
-  //       (failure) {
-  //         Utils.snackError(context: context, message: failure.message);
-  //       },
-  //       (email) async {
-  //         Utils.snackSuccess(context: context, message: 'Inscription réussie!');
-
-  //         success = true;
-
-  //         if (context.mounted) {
-  //  //context.pushNamed(AppRoutesNames.code);
-
-  //         }
-  //       },
-  //     );
-
-  //     signUpInLoading.value = false;
-  //     return success;
-  //   }
-
-  final pickedImage = Rxn<XFile>();
-  final ImagePicker imagePicker = ImagePicker();
-
-  get selectedRole => null;
-
-  Future<void> pickImage() async {
-    final XFile? image = await imagePicker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (image != null) {
-      pickedImage.value = image;
+  Future<void> createProduct(BuildContext context) async {
+    if (!(formKey.currentState?.validate() ?? false)) {
+      Utils.snackInfo(context: context, message: "Veuillez corriger les erreurs du formulaire.");
+      autoValidate.value = true;
+      return;
     }
+
+    if (pickedImage.value == null) {
+      Utils.snackError(context: context, message: "Veuillez sélectionner une image.");
+      return;
+    }
+
+    createproductinLoading.value = true;
+
+    try {
+      await getCurrentLocation();
+      final Uint8List bytes = await pickedImage.value!.readAsBytes();
+
+      DateTime? fabricationDate;
+      DateTime? expirationDate;
+
+      if (fabricationDateController.text.contains('/')) {
+        final parts = fabricationDateController.text.split('/');
+        fabricationDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+      }
+
+      if (expirationDateController.text.contains('/')) {
+        final parts = expirationDateController.text.split('/');
+        expirationDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+      }
+
+      final dto = AddProductDto(
+        name: nameController.text.trim(),
+        description: descriptionController.text.trim(),
+        resume: resumeController.text.trim(),
+        marque: marqueController.text.trim(),
+        price: double.tryParse(priceController.text.trim()) ?? 0.0,
+        stock: int.tryParse(stockController.text.trim()) ?? 0,
+        category: selectedCategory.value,
+        unit: unitController.text.trim(),
+        imageBytes: bytes,
+        filename: pickedImage.value!.name,
+        dateFabrication: fabricationDate!.toIso8601String(),
+        datePeremption: expirationDate!.toIso8601String(),
+        latitude: latitude.value,
+        longitude: longitude.value,
+      );
+
+      final result = await createProductUseCase.call(CreateProductParams(dto: dto));
+
+      result.fold(
+        (failure) {
+          Utils.snackError(context: context, message: failure.message);
+        },
+        (message) async {
+          Utils.snackSuccess(context: context, message: "Produit ajouté avec succès !");
+          final marketController = Get.find<MarketController>();
+
+          // Ajout local immédiat
+          final newProduct = marketController.convertDtoToProduct(dto);
+          final role = marketController.selectedRole.value;
+          if (role == UserRole.vendeur) {
+            marketController.productService.myProducts.add(newProduct);
+          } else {
+            marketController.productService.simpleProducts.add(newProduct);
+          }
+
+          await marketController.refreshAfterProductCreated();
+
+          if (context.mounted) {
+            context.pushNamed(AppRoutesNames.market);
+          }
+        },
+      );
+    } catch (e) {
+      Utils.snackError(context: context, message: "Erreur : $e");
+    }
+
+    createproductinLoading.value = false;
+  }
+
+ 
+
+  void changeCategory(ProductCategory category) {
+    selectedCategory.value = category;
   }
 }

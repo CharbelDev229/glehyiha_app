@@ -40,7 +40,7 @@ class ProductDetailCard extends StatelessWidget {
             ),
             const SizedBox(width: 50),
             Text(
-              '${product.price} F',
+              '${product.prix_unitaire} F',
               style: const TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
@@ -53,7 +53,7 @@ class ProductDetailCard extends StatelessWidget {
         const SizedBox(height: 10),
 
         Text(
-          "Quantité disponible : ${product.quantity}",
+          "Quantité disponible : ${product.quantite}",
           style: const TextStyle(
             fontSize: 16,
             color: Colors.black,

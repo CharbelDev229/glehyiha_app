@@ -1,10 +1,11 @@
 import 'dart:ui';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import '../../../common/utils/text_field_validators.dart';
 import '../custom_text_form_field/custom_text_form_field.dart';
-import 'order_form_bottom_controller.dart'; // Remplace par le chemin correct de ton controller
+import 'order_form_bottom_controller.dart';
 
 class OrderFormContent extends StatefulWidget {
   final OrderFormContentController controller;
@@ -57,15 +58,12 @@ class _OrderFormContentState extends State<OrderFormContent>
             height: double.infinity,
           ),
         ),
-
         SlideTransition(
           position: _animation,
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height:
-                  screenHeight *
-                  0.75, // Augmenté de 0.55 à 0.75 pour plus d'espace
+              height: screenHeight * 0.75,
               width: 350,
               decoration: const BoxDecoration(
                 color: AppColors.white,
@@ -77,13 +75,11 @@ class _OrderFormContentState extends State<OrderFormContent>
               child: Obx(
                 () => Form(
                   key: controller.formKey,
-                  autovalidateMode:
-                      controller.autoValidate.value
-                          ? AutovalidateMode.always
-                          : AutovalidateMode.disabled,
+                  autovalidateMode: controller.autoValidate.value
+                      ? AutovalidateMode.always
+                      : AutovalidateMode.disabled,
                   child: Column(
                     children: [
-                      // Header fixe (non scrollable)
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
@@ -95,10 +91,7 @@ class _OrderFormContentState extends State<OrderFormContent>
                               child: Container(
                                 width: 60,
                                 height: 5,
-                                margin: const EdgeInsets.only(
-                                  top: 8,
-                                  bottom: 10,
-                                ),
+                                margin: const EdgeInsets.only(top: 8, bottom: 10),
                                 decoration: BoxDecoration(
                                   color: Colors.grey.shade300,
                                   borderRadius: BorderRadius.circular(10),
@@ -117,7 +110,7 @@ class _OrderFormContentState extends State<OrderFormContent>
                         ),
                       ),
 
-                      // Contenu scrollable
+                      // Formulaire scrollable
                       Expanded(
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
@@ -130,13 +123,53 @@ class _OrderFormContentState extends State<OrderFormContent>
                                 validator: TextFieldValidators.required,
                                 labelText: "Adresse de livraison",
                               ),
+                              // const SizedBox(height: 15),
+
+                              // CustomTextFormField(
+                              //   controller: controller.numController,
+                              //   validator: TextFieldValidators.required,
+                              //   labelText: "Nom",
+                              // ),
                               const SizedBox(height: 15),
-                              CustomTextFormField(
-                                controller: controller.numController,
-                                validator: TextFieldValidators.required,
-                                labelText: "Nom",
+                                CustomTextFormField(
+                                controller: controller.phoneNumberController,
+                                keyboardType: TextInputType.phone,
+                                labelText: 'Numéro de téléphone',
+                                validator: (value) {
+                                  return TextFieldValidators.validatePhoneNumber(
+                                    context: context,
+                                    value:
+                                        '${controller.selectedCountryCode.value}${value ?? ''}',
+                                  );
+                                },
+                                prefixIcon: Container(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: CountryCodePicker(
+                                    onChanged: (CountryCode code) {
+                                      if (code.dialCode != null) {
+                                        controller.selectedCountryCode.value =
+                                            code.dialCode!;
+                                      }
+                                    },
+                                    initialSelection:
+                                        controller.selectedCountryCode.value,
+                                    favorite: ['+229', 'BJ'],
+                                    showCountryOnly: false,
+                                    showOnlyCountryWhenClosed: false,
+                                    alignLeft: false,
+                                    padding: EdgeInsets.zero,
+                                    textStyle: const TextStyle(
+                                      fontSize: 14,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+                                ),
                               ),
+
+
+                             
                               const SizedBox(height: 15),
+
                               TextFormField(
                                 controller: controller.commentaireController,
                                 maxLines: 3,
@@ -152,15 +185,37 @@ class _OrderFormContentState extends State<OrderFormContent>
                                   return null;
                                 },
                               ),
-                              const SizedBox(
-                                height: 100,
-                              ), // Espace pour éviter que le bouton cache le dernier champ
+                              const SizedBox(height: 15),
+
+                              // CustomTextFormField(
+                              //   controller: controller.produitIdController,
+                              //   validator: TextFieldValidators.required,
+                              //   labelText: "ID du produit",
+                              //   keyboardType: TextInputType.number,
+                              // ),
+                              // const SizedBox(height: 15),
+
+                              // CustomTextFormField(
+                              //   controller: controller.quantiteController,
+                              //   validator: TextFieldValidators.required,
+                              //   labelText: "Quantité",
+                              //   keyboardType: TextInputType.number,
+                              // ),
+                              // const SizedBox(height: 15),
+
+                              // CustomTextFormField(
+                              //   controller: controller.prixUnitaireController,
+                              //   validator: TextFieldValidators.required,
+                              //   labelText: "Prix unitaire",
+                              //   keyboardType: TextInputType.number,
+                              // ),
+                              const SizedBox(height: 100),
                             ],
                           ),
                         ),
                       ),
 
-                      // Bouton fixe en bas
+                      // Bouton
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -177,16 +232,13 @@ class _OrderFormContentState extends State<OrderFormContent>
                         child: SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed:
-                                controller.isLoading.value
-                                    ? null
-                                    : () {
-                                      if (controller.formKey.currentState
-                                              ?.validate() ??
-                                          false) {
-                                        controller.commande(context);
-                                      }
-                                    },
+                            onPressed: controller.isLoading.value
+                                ? null
+                                : () {
+                                    if (controller.formKey.currentState?.validate() ?? false) {
+                                      controller.commande(context);
+                                    }
+                                  },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryGreen,
                               foregroundColor: Colors.white,

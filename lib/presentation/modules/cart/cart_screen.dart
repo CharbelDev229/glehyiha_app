@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:glehiha/presentation/router/routes.dart';
 import 'package:go_router/go_router.dart';
-
 
 import '../../../domain/usescases/commands/commands_use_case.dart';
 import '../../widgets/order_form_bottom_sheet/order_form_bottom_controller.dart';
@@ -17,14 +15,11 @@ class CartScreen extends StatelessWidget {
   final ProductDetailController productController = Get.put(
     ProductDetailController(),
   );
-
   final OrderFormContentController controller;
 
   CartScreen({Key? key})
     : controller = Get.put(
-        OrderFormContentController(
-          commandsUseCase: _getCommandsUseCase(),
-        ),
+        OrderFormContentController(commandsUseCase: _getCommandsUseCase()),
       ),
       super(key: key);
 
@@ -32,11 +27,9 @@ class CartScreen extends StatelessWidget {
     try {
       return Get.find<CommandsUseCase>();
     } catch (e) {
-      // Si CommandsUseCase n'est pas trouvé, lancez une erreur explicite
       throw Exception(
         'CommandsUseCase n\'est pas enregistré. '
-        'Veuillez l\'enregistrer dans votre fichier d\'initialisation des dépendances '
-        'avec Get.put(CommandsUseCase(...)) ou Get.lazyPut(() => CommandsUseCase(...))'
+        'Veuillez l\'enregistrer avec Get.put(...) ou Get.lazyPut(...)',
       );
     }
   }
@@ -156,7 +149,8 @@ class CartScreen extends StatelessWidget {
                                         child: IconButton(
                                           padding: EdgeInsets.zero,
                                           onPressed:
-                                              productController.decrement,
+                                              () => cartController
+                                                  .decrementQuantity(item),
                                           icon: const Icon(
                                             Icons.remove,
                                             size: 18,
@@ -165,14 +159,11 @@ class CartScreen extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(width: 8),
-                                      Obx(
-                                        () => Text(
-                                          productController.quantity.value
-                                              .toString(),
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                          ),
+                                      Text(
+                                        item.quantite.toString(),
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
                                         ),
                                       ),
                                       const SizedBox(width: 8),
@@ -188,7 +179,8 @@ class CartScreen extends StatelessWidget {
                                         child: IconButton(
                                           padding: EdgeInsets.zero,
                                           onPressed:
-                                              productController.increment,
+                                              () => cartController
+                                                  .incrementQuantity(item),
                                           icon: const Icon(
                                             Icons.add,
                                             size: 18,
@@ -199,7 +191,7 @@ class CartScreen extends StatelessWidget {
                                     ],
                                   ),
                                   Text(
-                                    "${item.price} F",
+                                    "${item.prix_unitaire} F",
                                     style: TextStyle(
                                       color: AppColors.primaryGreen,
                                       fontSize: 16,
@@ -221,9 +213,7 @@ class CartScreen extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {
-                  context.pushNamed(AppRoutesNames.market);
-                },
+                onPressed: () => context.pushNamed(AppRoutesNames.market),
                 child: const Text(
                   "Continuer votre achat",
                   style: TextStyle(
@@ -274,6 +264,7 @@ class CartScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
+                      // ✅ Sélection du produit
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
@@ -283,6 +274,7 @@ class CartScreen extends StatelessWidget {
                                   OrderFormContent(controller: controller),
                         );
                       },
+
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryGreen,
                         padding: const EdgeInsets.symmetric(

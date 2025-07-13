@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../../../data/models/user_model.dart';
+
 class UserController extends GetxController {
   // Champs utilisateur
   RxString firstName = ''.obs;
@@ -29,4 +31,13 @@ class UserController extends GetxController {
     this.comment.value = comment;
     this.phone.value = phone;
   }
+void setUserData(UserModel user) {
+    email.value = user.email;
+    firstName.value = user.firstName;
+    lastName.value = user.lastName;
+    
+  }
+
+
+  
 }

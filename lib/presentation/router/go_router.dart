@@ -148,28 +148,31 @@ class AppRoute {
           );
         },
       ),
-
-      GoRoute(
-        path: '/sign_in',
-        name: AppRoutesNames.signIn,
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          return CustomTransitionPage(
-            key: state.pageKey,
-            transitionDuration: const Duration(milliseconds: 500),
-            child: SignInScreen(
-              controller: SignInController(loginUseCase: Get.find()),
-            ),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          );
-        },
+GoRoute(
+  path: '/sign_in',
+  name: AppRoutesNames.signIn,
+  pageBuilder: (BuildContext context, GoRouterState state) {
+    return CustomTransitionPage(
+      key: state.pageKey,
+      transitionDuration: const Duration(milliseconds: 500),
+      child: SignInScreen(
+        controller: SignInController(
+          loginUseCase: Get.find(),
+          getProfileUseCase: Get.find(), // ✅ tu dois injecter les deux
+        ),
       ),
+      transitionsBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+  },
+),
+
 
       GoRoute(
         path: '/parameters',
@@ -272,24 +275,24 @@ class AppRoute {
       ),
 
       GoRoute(
-        path: '/market',
-        name: AppRoutesNames.market,
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          return CustomTransitionPage(
-            key: state.pageKey,
-            transitionDuration: const Duration(milliseconds: 500),
-            child: const MarketScreen(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          );
-        },
-      ),
+  path: '/market',
+  name: AppRoutesNames.market,
+  pageBuilder: (BuildContext context, GoRouterState state) {
+    return CustomTransitionPage(
+      key: state.pageKey,
+      transitionDuration: const Duration(milliseconds: 500),
+      child:  MarketScreen(), // Assure-toi que MarketScreen est bien un StatelessWidget
+      transitionsBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+  },
+),
 
       GoRoute(
         path: '/forget_password',

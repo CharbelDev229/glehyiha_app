@@ -8,12 +8,21 @@ import 'package:glehiha/domain/usescases/auth/user_forgot_password.dart';
 import 'package:glehiha/domain/usescases/auth/user_reset_password.dart';
 import 'package:glehiha/domain/usescases/auth/verify_user_account.dart';
 import 'package:glehiha/domain/usescases/commands/commands_use_case.dart';
+import 'package:glehiha/domain/usescases/commands/get_all_commande_use_case.dart';
+import 'package:glehiha/domain/usescases/product/delete_product_use_case.dart';
 
 import '../../domain/usescases/auth/login.dart';
 import '../../domain/usescases/auth/sign_up.dart';
 import '../../domain/usescases/chat_room_message/delete_message_use_case.dart';
 import '../../domain/usescases/chat_room_message/get_messages_use_case.dart.dart';
 import '../../domain/usescases/chat_room_message/send_message_use_case.dart';
+import '../../domain/usescases/commands/delete_commads_use_case.dart';
+import '../../domain/usescases/commands/get_commands_by_id_use_case.dart';
+import '../../domain/usescases/commands/update_commande_status_use_case.dart';
+import '../../domain/usescases/commands/update_commande_use_case.dart';
+import '../../domain/usescases/product/create_product.dart';
+import '../../domain/usescases/product/get_all_products_use_case.dart';
+import '../../domain/usescases/product/get_product_by_id_use_case.dart';
 import '../../domain/usescases/user/change_password.dart';
 import '../../domain/usescases/user/delete_account.dart';
 import '../../domain/usescases/user/get_profile.dart';
@@ -26,6 +35,10 @@ class DiUseCases {
     Get.lazyPut(() => LoginUseCase(repository: Get.find()), fenix: true);
     Get.lazyPut(
       () => ForgotPasswordUseCase(repository: Get.find()),
+      fenix: true,
+    );
+     Get.lazyPut(
+      () => GetProfileUseCase(repository: Get.find()),
       fenix: true,
     );
     
@@ -99,4 +112,33 @@ class DiUseCases {
   // commaands
 
      Get.lazyPut(() => CommandsUseCase(repository: Get.find()), fenix: true);
+     Get.lazyPut(() => DeleteCommandeUseCase(repository: Get.find()), fenix: true);
+     Get.lazyPut(() => GetCommandeByIdUseCase(repository: Get.find()), fenix: true);
+     Get.lazyPut(() => UpdateCommandeStatusUseCase(repository: Get.find()), fenix: true);
+       Get.lazyPut(() => UpdateCommandeUseCase(repository: Get.find()), fenix: true);
+Get.lazyPut(() => GetAllCommandesUseCase(repository: Get.find()), fenix: true);
+
+
+ Get.lazyPut(
+      () => CreateProductUseCase(repository: Get.find()),
+      fenix: true,
+    );
+     Get.lazyPut(
+      () => GetAllProductsUseCase(repository: Get.find()),
+      fenix: true,
+    );
+     Get.lazyPut(
+      () => GetProductByIdUseCase(repository: Get.find()),
+      fenix: true,
+    );
+     Get.lazyPut(
+      () => UpdateProductUseCase(repository: Get.find()),
+      fenix: true,
+    );
+    
+    Get.lazyPut(
+      () => DeleteProductUseCase(repository: Get.find()),
+      fenix: true,
+    );
+
   }}

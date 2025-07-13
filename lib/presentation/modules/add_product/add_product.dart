@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import 'package:glehiha/common/enums/product_category.dart';
 import 'package:glehiha/common/utils/text_field_validators.dart';
-
 import 'package:glehiha/presentation/modules/add_product/add_product_controller.dart';
-
-
-import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
-
-
-import '../../../common/utils/utils.dart';
-import '../../router/routes.dart';
 import '../../widgets/button/custom_button.dart';
 import '../../widgets/custom_text_form_field/custom_text_form_field.dart';
 
@@ -23,7 +15,7 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AddProductState extends State<AddProduct> {
-  final controller = AddProductController(); 
+  final controller = Get.find<AddProductController>();
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +26,14 @@ class _AddProductState extends State<AddProduct> {
           backgroundColor: AppColors.primaryGreen,
           title: const Text(
             'Ajouter un produit',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
           ),
         ),
         body: LayoutBuilder(
           builder: (context, constraints) {
             return Obx(
               () => SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: Form(
                   key: controller.formKey,
                   autovalidateMode: controller.autoValidate.value
@@ -55,201 +43,192 @@ class _AddProductState extends State<AddProduct> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CustomTextFormField(
-                        controller: controller.nomController,
+                        controller: controller.nameController,
                         validator: TextFieldValidators.required,
-                        labelText: "Nom",),
-                      
-                      const SizedBox(height: 20),
-                     TextFormField(
-                         controller: controller.descriptionController,
-                           maxLines: 50,
-                            decoration: const InputDecoration(
-                            labelText: 'Description du produit',
-                            border: OutlineInputBorder(),
-                             alignLabelWithHint: true, // pour centrer le label en haut
-                                ),
-                                    validator: (value) {
-                               if (value == null || value.isEmpty) {
-                               return 'Veuillez entrer une description';
-                                    }
-                                   return null;
-                                         },
-                                           ),
-                                             TextFormField(
-                         controller: controller.descriptionController,
-                           maxLines: 5, 
-                            decoration: const InputDecoration(
-                            labelText: 'Résumé du produit',
-                            border: OutlineInputBorder(),
-                             alignLabelWithHint: true, // pour centrer le label en haut
-                                ),
-                                    validator: (value) {
-                               if (value == null || value.isEmpty) {
-                               return 'Veuillez entrer une description';
-                                    }
-                                   return null;
-                                         },
-                                           ),
-
-                          const SizedBox(height: 20),
-                      CustomTextFormField(
-                        controller: controller.marqueController,
-                        validator: TextFieldValidators.required,
-                        labelText: "Marque",),
-                      
-                      const SizedBox(height: 20),
-
-                      CustomTextFormField(
-                        controller: controller.marqueController,
-                        validator: TextFieldValidators.required,
-                        labelText: "Prix",),
-                      
-                      const SizedBox(height: 20),
-
-                   DropdownButtonFormField<ProductCategory>(
-                   dropdownColor: AppColors.white,
-                    value: controller.selectedProduct.value,
-                    decoration: InputDecoration(
-                     labelText: "Catégorie",
-                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                       borderSide: const BorderSide(color: Colors.grey),
-                           ),
-                      enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: Colors.grey),
+                        labelText: "Nom du produit",
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                            ),
-                       isExpanded: true,
-                       onChanged: (newValue) {
-                       if (newValue != null) {
-                          controller.selectedProduct.value = newValue;
-                                 }
-                                  },
-                            items: ProductCategory.values.map((category) {
-                            return DropdownMenuItem<ProductCategory>(
-                              value: category,
-                                 child: Text(
-                                 category.name,
-                                   style: const TextStyle(fontSize: 12),
-                                     ),
-                                       );
-                                        }).toList(),
-                                      ),
-                        const SizedBox(height: 20),
+                      const SizedBox(height: 20),
+
+                      TextFormField(
+                        controller: controller.descriptionController,
+                        maxLines: 4,
+                        decoration: const InputDecoration(
+                          labelText: 'Description du produit',
+                          border: OutlineInputBorder(),
+                          alignLabelWithHint: true,
+                        ),
+                        validator: (value) =>
+                            value!.isEmpty ? 'Veuillez entrer une description' : null,
+                      ),
+                      const SizedBox(height: 20),
+
+                      CustomTextFormField(
+                        controller: controller.resumeController,
+                        validator: TextFieldValidators.required,
+                        labelText: "Résumé du produit",
+                      ),
+                      const SizedBox(height: 20),
+
+                      CustomTextFormField(
+                        controller: controller.marqueController,
+                        validator: TextFieldValidators.required,
+                        labelText: "Marque",
+                      ),
+                      const SizedBox(height: 20),
+
+                      CustomTextFormField(
+                        controller: controller.priceController,
+                        validator: TextFieldValidators.required,
+                        labelText: "Prix (en FCFA)",
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 20),
+
+                      DropdownButtonFormField<ProductCategory>(
+                        dropdownColor: AppColors.white,
+                        value: controller.selectedCategory.value,
+                        decoration: InputDecoration(
+                          labelText: "Catégorie",
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        ),
+                        isExpanded: true,
+                        onChanged: (newValue) {
+                          if (newValue != null) {
+                            controller.selectedCategory.value = newValue;
+                          }
+                        },
+                        items: ProductCategory.values
+                            .map((category) => DropdownMenuItem<ProductCategory>(
+                                  value: category,
+                                  child: Text(category.name),
+                                ))
+                            .toList(),
+                      ),
+                      const SizedBox(height: 20),
+
                       DropdownButtonFormField<String>(
-                         value: controller.uniteController.text.isEmpty ? null : controller.uniteController.text,
-                         decoration: const InputDecoration(
+                        value: controller.unitController.text.isEmpty
+                            ? null
+                            : controller.unitController.text,
+                        decoration: const InputDecoration(
                           labelText: 'Unité',
-                           border: OutlineInputBorder(),
-                                    ),
-                                   items: ['kg', 'litre', 'tonne', 'sachet', 'pièce'].map((unite) {
-                                  return DropdownMenuItem<String>(
-                                value: unite,
-                               child: Text(unite),
-                               );
-                                }).toList(),
-                                 onChanged: (value) {
-                                 controller.uniteController.text = value!;
-                                   },
-                                validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                return 'Veuillez choisir une unité';
-                                      }
-                            return null;
-                              },
-                              ),
-
-
+                          border: OutlineInputBorder(),
+                        ),
+                        items: ['kg', 'L', 'g', 'bag']
+                            .map((unite) => DropdownMenuItem<String>(
+                                  value: unite,
+                                  child: Text(unite),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          controller.unitController.text = value!;
+                        },
+                        validator: (value) =>
+                            value == null || value.isEmpty ? 'Choisir une unité' : null,
+                      ),
                       const SizedBox(height: 20),
+
+                      CustomTextFormField(
+                        controller: controller.stockController,
+                        validator: TextFieldValidators.required,
+                        labelText: "Quantité en stock",
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 20),
+
                       Obx(() => GestureDetector(
-                         onTap: () => controller.pickImage(),
-                          child: Container(
-                         padding: const EdgeInsets.all(16),
-                         decoration: BoxDecoration(
-                       border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8),
+                            onTap: controller.pickImage,
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                         child: Row(
-                      children: [
-                    const Icon(Icons.image, color: AppColors.black),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                      controller.pickedImage.value != null
-                       ? controller.pickedImage.value!.name
-                      : "Choisir une photo du produit",
-            style: const TextStyle(fontSize: 14),))]))),),
-                  
-                  const SizedBox(height: 20),
-                     CustomTextFormField(
-                        controller: controller.marqueController,
-                        validator: TextFieldValidators.required,
-                        labelText: "Date de faabrication"),
-                      
-                      const SizedBox(height: 20),
-                     CustomTextFormField(
-                        controller: controller.marqueController,
-                        validator: TextFieldValidators.required,
-                        labelText: "Date de péremption",),
-                      
-                      const SizedBox(height: 20),
-
-                         Obx(
-                                  () => CustomButton(
-                                    isLoading: controller.isLoading.value,
-                                    backgroundColor: const Color.fromARGB(
-                                      255,
-                                      43,
-                                      131,
-                                      68,
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.image, color: AppColors.black),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      controller.pickedImage.value != null
+                                          ? controller.pickedImage.value!.name
+                                          : "Choisir une photo du produit",
                                     ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 15,
-                                    ),
-                                    onPressed:
-                                        controller.isLoading.value
-                                            ? null
-                                            : () {
-                                              if (controller
-                                                      .formKey
-                                                      .currentState
-                                                      ?.validate() ??
-                                                  false) {
-                                                context.pushNamed(
-                                                  AppRoutesNames.expert,
-                                                );
-                                              } else {
-                                                // logger.w(
-                                                //   controller
-                                                //       .formKey
-                                                //       .currentState,
-                                                // );
-                                                Utils.snackInfo(
-                                                  context: context,
-                                                  message:
-                                                      'Une erreur est dans le formulaire',
-                                                );
-                                              }
-                                            },
-
-                                    child:
-                                        controller.isLoading.value
-                                            ? const CircularProgressIndicator()
-                                            : const Text(
-                                              "Soumettre",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.white,
-                                              ),
-                                            ),
                                   ),
+                                ],
+                              ),
+                            ),
+                          )),
+                      const SizedBox(height: 20),
+
+                      // 📅 Date de fabrication
+                      TextFormField(
+                        controller: controller.fabricationDateController,
+                        readOnly: true,
+                        decoration: const InputDecoration(
+                          labelText: "Date de fabrication",
+                          border: OutlineInputBorder(),
+                        ),
+                        onTap: () async {
+                          final date = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime(2100),
+                          );
+                          if (date != null) {
+                            controller.fabricationDateController.text =
+                                "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 20),
+
+                      // 📅 Date de péremption
+                      TextFormField(
+                        controller: controller.expirationDateController,
+                        readOnly: true,
+                        decoration: const InputDecoration(
+                          labelText: "Date de péremption",
+                          border: OutlineInputBorder(),
+                        ),
+                        onTap: () async {
+                          final date = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime(2100),
+                          );
+                          if (date != null) {
+                            controller.expirationDateController.text =
+                                "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 20),
+
+                      Obx(
+                        () => CustomButton(
+                          isLoading: controller.createproductinLoading.value,
+                          backgroundColor: const Color(0xFF2B8344),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          onPressed: controller.createproductinLoading.value
+                              ? null
+                              : () {
+                                  if (controller.formKey.currentState?.validate() ?? false) {
+                                    controller.createProduct(context);
+                                  }
+                                },
+                          child: controller.createproductinLoading.value
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                  "Soumettre",
+                                  style: TextStyle(fontSize: 20, color: Colors.white),
                                 ),
-                     
+                        ),
+                      ),
                     ],
                   ),
                 ),

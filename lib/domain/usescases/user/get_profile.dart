@@ -9,6 +9,8 @@ import '../../repositories/user_repository.dart';
 class GetProfileUseCase implements UseCase<GlehihaCurrentUser, GetProfileParams> {
   final UserRepository repository;
 
+  
+
   GetProfileUseCase({required this.repository});
 
   @override
