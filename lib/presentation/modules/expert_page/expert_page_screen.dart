@@ -1,12 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:glehiha/data/models/expert/expert_model.dart';
 import 'package:glehiha/presentation/widgets/header_widget/header_widget.dart';
 import 'package:glehiha/common/constants/colors.dart';
 import '../../../common/constants/assets/assets.dart';
 import '../../../common/utils/utils.dart';
 import '../../widgets/bottom_navigation_bar/bottom_navigation_bottom_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ExpertPageScreen extends StatelessWidget {
-  const ExpertPageScreen({super.key, required String name});
+  final String name;
+  final Expert expert;
+  
+  const ExpertPageScreen({super.key, required this.name, required this.expert});
+
+  // Fonction pour lancer un appel téléphonique
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    } else {
+      throw 'Impossible de lancer l\'appel vers $phoneNumber';
+    }
+  }
+
+  // Fonction pour ouvrir WhatsApp
+  Future<void> _openWhatsApp(String phoneNumber) async {
+    // Formater le numéro de téléphone (supprimer les espaces et le +)
+    String formattedNumber = phoneNumber.replaceAll(' ', '');
+    if (formattedNumber.startsWith('+')) {
+      formattedNumber = formattedNumber.substring(1);
+    }
+    
+    // Créer l'URL WhatsApp
+    final Uri whatsappUri = Uri.parse('https://wa.me/$formattedNumber');
+    
+    if (await canLaunchUrl(whatsappUri)) {
+      await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Impossible d\'ouvrir WhatsApp pour $phoneNumber';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +75,7 @@ class ExpertPageScreen extends StatelessWidget {
                           children: [
                             SizedBox(height: 20),
                             Text(
-                              'Dr Maria Rodriguez',
+                              "${expert.firstName} ${expert.lastName}" ?? 'Nom non disponible',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
@@ -48,7 +84,7 @@ class ExpertPageScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 16),
                             Text(
-                              'Spécialiste des maladies des cultures',
+                              expert.specialization ?? 'Spécialité non disponible',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w400,
@@ -66,8 +102,8 @@ class ExpertPageScreen extends StatelessWidget {
                     children: [
                       Image.asset(Assets.location, width: 30, height: 30),
                       const SizedBox(width: 8),
-                      const Text(
-                        'Dogo, Plateau, Bénin',
+                      Text(
+                        expert.adresse ?? 'Localisation non disponible',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w400,
@@ -78,8 +114,8 @@ class ExpertPageScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  const Text(
-                    'Expert en conseils et solutions agricoles pour les agriculteurs locaux. Disponible pour les consultations, des visites sur le terrain et un accompagnement continu de vos exploitations agricoles.',
+                  Text(
+                    "Expérience: ${expert.experience} ans" ?? 'Description non disponible',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
@@ -91,53 +127,81 @@ class ExpertPageScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 11,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.green,
-                          //  borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(Assets.phone, width: 24, height: 24),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Appeler',
-                              style: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
+                      GestureDetector(
+                        onTap: () {
+                          if (expert.phoneNumber != null && expert.phoneNumber!.isNotEmpty) {
+                            _makePhoneCall(expert.phoneNumber!);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Numéro de téléphone non disponible'),
+                                backgroundColor: Colors.red,
                               ),
-                            ),
-                          ],
+                            );
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 11,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.green,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset(Assets.phone, width: 24, height: 24),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Appeler',
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 11,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.green,
-                          //borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(Assets.message, width: 24, height: 24),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Message',
-                              style: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
+                      GestureDetector(
+                        onTap: () {
+                          if (expert.phoneNumber != null && expert.phoneNumber!.isNotEmpty) {
+                            _openWhatsApp(expert.phoneNumber!);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Numéro de téléphone non disponible'),
+                                backgroundColor: Colors.red,
                               ),
-                            ),
-                          ],
+                            );
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 11,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.green,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset(Assets.message, width: 24, height: 24),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Message',
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],

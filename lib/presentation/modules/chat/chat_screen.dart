@@ -9,6 +9,7 @@ import 'package:glehiha/common/constants/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../widgets/bottom_navigation_bar/bottom_navigation_bottom_bar.dart';
 import 'chat_controller.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class BubbleTrianglePainter extends CustomPainter {
   final Color color;
@@ -81,6 +82,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       userId: 0,
       message: "Bienvenue, je suis GLEHYIHA votre assistant agricole. Comment puis-je vous aider aujourd'hui ?",
       createdAt: DateTime.now(),
+      isUser: true,
     );
     chatController.messages.add(welcomeMessage);
     _addAnimation();
@@ -111,6 +113,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       userId: 1,
       message: message,
       createdAt: DateTime.now(),
+      isUser: true,
     );
     chatController.messages.add(userMessage);
     _addAnimation();
@@ -179,14 +182,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (message.imagePath != null && message.imagePath!.isNotEmpty)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.file(
-                            File(message.imagePath!),
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                        _buildImageWidget(message.imagePath!),
                       if (message.imagePath != null && message.imagePath!.isNotEmpty)
                         SizedBox(height: 8),
                       Text(
@@ -220,6 +216,114 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Widget _buildImageWidget(String imagePath) {
+    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
+      // Image distante (URL)
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.network(
+          imagePath,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: 200, // Ajouter une hauteur fixe
+          errorBuilder: (context, error, stackTrace) {
+            print('Erreur de chargement d\'image réseau: $error');
+            return Container(
+              height: 150,
+              color: Colors.grey.shade300,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error, color: Colors.grey.shade600),
+                    SizedBox(height: 8),
+                    Text('Erreur de chargement', 
+                         style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                  ],
+                ),
+              ),
+            );
+          },
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Container(
+              height: 150,
+              color: Colors.grey.shade200,
+              child: Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded / 
+                        loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    } else {
+      // Image locale (File)
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: FutureBuilder<bool>(
+          future: File(imagePath).exists(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                height: 150,
+                color: Colors.grey.shade200,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            
+            if (snapshot.data == true) {
+              return Image.file(
+                File(imagePath),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 200, // Ajouter une hauteur fixe
+                errorBuilder: (context, error, stackTrace) {
+                  print('Erreur de chargement d\'image locale: $error, chemin: $imagePath');
+                  return Container(
+                    height: 150,
+                    color: Colors.grey.shade300,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error, color: Colors.grey.shade600),
+                          SizedBox(height: 8),
+                          Text('Erreur de chargement', 
+                               style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            } else {
+              return Container(
+                height: 150,
+                color: Colors.grey.shade300,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.image_not_supported, color: Colors.grey.shade600),
+                      SizedBox(height: 8),
+                      Text('Image non trouvée', 
+                           style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                    ],
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+      );
+    }
   }
 
   String _formatTimestamp(String timestamp) {
@@ -333,23 +437,24 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   // Methode pour traiter l'image sélectionnée
   Future<void> _processImage(XFile image) async {
-    final imageFile = File(image.path);
-    chatController.chatControllerInLoading.value = true;
-    final userImageMessage = ChatMessage(
-      id: DateTime.now().millisecondsSinceEpoch,
-      userId: 1,
-      message: "",
-      createdAt: DateTime.now(),
-      reply: "",
-      imagePath: image.path,
-    );
-    chatController.messages.add(userImageMessage);
-    _addAnimation();
-    _scrollToBottom();
-    final response = await chatController.sendImage(context, imageFile);
-    if (response != null) {
-      _addAnimation();
-      _scrollToBottom();
+    print("Image sélectionnée: ${image.path}"); // Debug
+    
+    if (kIsWeb) {
+      final bytes = await image.readAsBytes();
+      await chatController.sendImage(
+        context,
+        imageBytes: bytes,
+        filename: image.name,
+      );
+    } else {
+      final file = File(image.path);
+      print("Fichier existe: ${await file.exists()}"); // Vérifier si le fichier existe
+      
+      await chatController.sendImage(
+        context,
+        imageFile: file,
+        filename: image.name,
+      );
     }
   }
   // Dispose methode pour libérer les ressources

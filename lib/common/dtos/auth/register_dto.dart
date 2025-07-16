@@ -10,6 +10,8 @@ class RegisterDto {
   final String? nom_boutique;
   final String? experience;
   final String? specialization;
+  final double? latitude;
+  final double? longitude;
 
   RegisterDto({
     required this.first_name,
@@ -20,7 +22,9 @@ class RegisterDto {
     required this.userRole,
     this.nom_boutique,
     this.experience,
-    this.specialization
+    this.specialization,
+    this.latitude,
+    this.longitude,
   });
 
   Map<String, dynamic> toMap() {
@@ -40,7 +44,7 @@ class RegisterDto {
     }
 
     if (userRole == UserRole.encadreur && experience != null&&specialization != null) {
-      map.addAll({'experience': experience,'specialization': specialization});
+      map.addAll({'experience': experience,'specialization': specialization, 'latitude': latitude,'longitude':longitude});
     }
 
     return map;

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:glehiha/domain/usescases/chat_room_message/get_messages_use_case.dart.dart';
@@ -32,9 +33,7 @@ class ChatController {
 
     try {
       final send = await sendMessageUseCase.call(
-        SendMessageParams(
-          message: currentMessage.value,
-        ),
+        SendMessageParams(message: currentMessage.value),
       );
 
       return send.fold(
@@ -46,7 +45,6 @@ class ChatController {
           // Ajouter le message à la liste des messages
           messages.add(response);
           chatControllerInLoading.value = false;
-          
         },
       );
     } catch (e) {
@@ -54,32 +52,72 @@ class ChatController {
     }
   }
 
-  Future<String?> sendImage(BuildContext context, File image) async {
+  // Méthode mise à jour pour accepter les paramètres nommés
+  Future<String?> sendImage(
+    BuildContext context, {
+    File? imageFile,
+    Uint8List? imageBytes,
+    required String filename,
+  }) async {
     chatControllerInLoading.value = true;
 
+    ChatMessage? tempMessage;
     try {
+      if (imageFile != null && await imageFile.exists()) {
+        tempMessage = ChatMessage(
+          id: DateTime.now().millisecondsSinceEpoch,
+          userId: 1,
+          message: "Analyse en cours...",
+          imagePath: imageFile.path,
+          createdAt: DateTime.now(),
+          isUser: true,
+        );
+        messages.add(tempMessage);
+      }
+
       final send = await sendImageMessageUseCase.call(
         SendImageMessageParams(
-          image: image,
+          imageFile: imageFile,
+          imageBytes: imageBytes,
+          filename: filename,
         ),
       );
 
       return send.fold(
         (failure) {
           Utils.snackError(context: context, message: failure.message);
+          if (tempMessage != null) messages.remove(tempMessage);
           chatControllerInLoading.value = false;
           return null;
         },
         (response) async {
-          // Ajouter le message à la liste des messages
-          messages.add(response);
+          // Mise à jour ou pas du message utilisateur (tempMessage suffit déjà)
+          if (tempMessage != null) {
+            final index = messages.indexOf(tempMessage);
+            if (index != -1) {
+              messages[index] = tempMessage;
+            }
+          }
+
+          // Ajout du message IA
+          final botReplyMessage = ChatMessage(
+            id: response.id ?? DateTime.now().millisecondsSinceEpoch,
+            userId: response.userId,
+            message: response.message,
+            reply: response.reply,
+            imagePath: response.imagePath,
+            createdAt: response.createdAt,
+            isUser: false,
+          );
+          messages.add(botReplyMessage);
+
           chatControllerInLoading.value = false;
-          
-          // Retourner la réponse du chatbot pour l'affichage
-          return response.reply ?? "Pas d'analyse d'image disponible";
+          return response.reply ?? "Pas d’analyse d’image disponible";
         },
       );
     } catch (e) {
+      print("Erreur lors de l’envoi de l’image: $e");
+      if (tempMessage != null) messages.remove(tempMessage);
       chatControllerInLoading.value = false;
       return null;
     }
@@ -96,9 +134,8 @@ class ChatController {
         return false;
       },
       (response) async {
-        messages.value = (response.chatRoomItems ?? [])
-            .whereType<ChatMessage>()
-            .toList();
+        messages.value =
+            (response.chatRoomItems ?? []).whereType<ChatMessage>().toList();
         return true;
       },
     );

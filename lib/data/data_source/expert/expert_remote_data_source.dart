@@ -1,16 +1,19 @@
 import 'package:dartz/dartz.dart';
+import 'package:glehiha/data/models/expert/expert_pagination_model.dart';
 import '../../../common/utils/failure.dart';
 import '../../../common/helpers/request_manager.dart';
 import '../../../common/utils/uri_formatter.dart';
 import '../../models/expert/expert_model.dart';
+import 'package:glehiha/common/constants/instances.dart';
 
 abstract class ExpertRemoteDataSource {
-  Future<Either<Failure, ExpertResponse>> fetchExpertsProches({
-    int? page,
-    int? pageSize,
-    String? sortBy,
-    String? order,
-    Map<String, dynamic>? additionalParams,
+  Future<Either<Failure, ExpertResponse>> getExpertsProches({
+    required double latitude,
+    required double longitude,
+  });
+  Future<Either<Failure, AllTrainersResponse>> getAllTrainers({
+    int page = 1,
+    int perPage = 10,
   });
 }
 
@@ -19,33 +22,64 @@ class ExpertRemoteDataSourceImpl implements ExpertRemoteDataSource {
 
   ExpertRemoteDataSourceImpl({required this.dioRequestManager});
 
+  String _getToken() {
+    return prefs.getString('token') ?? '';
+  }
+
   @override
-  Future<Either<Failure, ExpertResponse>> fetchExpertsProches({
-    int? page,
-    int? pageSize,
-    String? sortBy,
-    String? order,
-    Map<String, dynamic>? additionalParams,
+  Future<Either<Failure, ExpertResponse>> getExpertsProches({
+    required double latitude,
+    required double longitude,
   }) async {
+    Uri url = UriFormatter('user/experts-proches').format().replace(
+      queryParameters: {
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+      },
+    );
+    final token = _getToken();
+
     try {
-      final controls = <String, dynamic>{
-        if (page != null) 'page': page,
-        if (pageSize != null) 'pageSize': pageSize,
-        if (sortBy != null) 'sortBy': sortBy,
-        if (order != null) 'order': order,
-      };
+      final response = await dioRequestManager.send(
+        'GET',
+        url,
+        token: token,
+      );
 
-      final extras = additionalParams ?? {};
+      if (response.success) {
+        final expertResponse = ExpertResponse.fromJson(response.map);
+        return Right(expertResponse);
+      } else {
+        return Left(ServerFailure.raise(response));
+      }
+    } catch (e) {
+      return Left(ServerFailure.onCatch(e: e));
+    }
+  }
 
-      final uri = UriFormatter(
-        'user/experts-proches',
-        extras: {...controls, ...extras},
-      ).format();
+  @override
+  Future<Either<Failure, AllTrainersResponse>> getAllTrainers({
+    int page = 1,
+    int perPage = 10,
+  }) async {
+    Uri url = UriFormatter('user/get_all_trainers').format().replace(
+      queryParameters: {
+        'page': page.toString(),
+        'per_page': perPage.toString(),
+      },
+    );
+    final token = _getToken();
 
-      final response = await dioRequestManager.send('GET', uri);
+    try {
+      final response = await dioRequestManager.send(
+        'GET', 
+        url,
+        token: token,
+      );
 
-      if (response.success && response.data is Map<String, dynamic>) {
-        return Right(ExpertResponse.fromJson(response.data));
+      if (response.success) {
+        final allTrainersResponse = AllTrainersResponse.fromJson(response.map);
+        return Right(allTrainersResponse);
       } else {
         return Left(ServerFailure.raise(response));
       }

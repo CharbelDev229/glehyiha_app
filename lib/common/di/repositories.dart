@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:glehiha/data/data_source/commands/commands_local_data_source.dart';
+import 'package:glehiha/data/data_source/expert/expert_remote_data_source.dart';
 import 'package:glehiha/data/repositories/commands_repository.dart';
+import 'package:glehiha/data/repositories/expert_repository.dart';
 
 import '../../data/data_source/auth/auth_local_data_source.dart';
 import '../../data/data_source/auth/auth_remote_data_source.dart';
@@ -39,5 +41,21 @@ class DiRepositories {
       ),
       fenix: true,
     );
+
+    Get.lazyPut<CommandsRepository>(
+      () => CommandsRepositoryImpl(
+        commandsRemoteDataSource: Get.find<CommandsRemoteDataSource>(),
+        commandsLocalDataSource: Get.find<CommandsLocalDataSource>(),
+      ),
+      fenix: true,
+    );
+
+    Get.lazyPut<ExpertRepository>(
+      () => ExpertRepositoryImpl(
+        expertRemoteDataSource: Get.find<ExpertRemoteDataSource>(),
+      ),
+      fenix: true,
+    );
+
   }
 }

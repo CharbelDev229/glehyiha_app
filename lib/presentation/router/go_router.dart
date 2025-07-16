@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:glehiha/data/models/expert/expert_model.dart';
 import 'package:glehiha/domain/usescases/auth/forgot_password.dart';
 import 'package:glehiha/domain/usescases/auth/resent_verification_code.dart';
 import 'package:glehiha/domain/usescases/auth/sign_up.dart';
@@ -367,9 +368,10 @@ class AppRoute {
         path: '/expert_page',
         name: AppRoutesNames.expertPage,
         pageBuilder: (BuildContext context, GoRouterState state) {
+          final expert = state.extra as Expert;
           return CustomTransitionPage<void>(
             key: state.pageKey,
-            child: const ExpertPageScreen(name: 'name'),
+            child: ExpertPageScreen(name: expert.name ?? 'Expert', expert: expert),
             transitionDuration: const Duration(milliseconds: 500),
             transitionsBuilder: (
               context,

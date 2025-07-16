@@ -30,7 +30,8 @@ class GetChatRoomMessageData {
     for (var item in chats) {
       if (item is Map<String, dynamic>) {
         try {
-          chatRoomItems.add(ChatMessage.fromMap(item));
+          // Utiliser la méthode _mapToChatRoomItem pour convertir correctement
+          chatRoomItems.add(_mapToChatRoomItem(item));
         } catch (e) {
           // Si l'élément ne peut pas être converti en ChatMessage, essayez de le convertir en ChatRoomSeparatedDate
           try {
@@ -51,10 +52,10 @@ class GetChatRoomMessageData {
   }
 
   // Method to determine the correct ChatRoomItem type and instantiate it
-  ChatRoomItem _mapToChatRoomItem(Map<String, dynamic> data) {
-    if (data.containsKey('content')) {
-      // This is a ChatRoomMessage
-      return ChatMessage.fromMap(data);
+  static ChatRoomItem _mapToChatRoomItem(Map<String, dynamic> data) {
+    if (data.containsKey('message')) {
+      // This is a ChatMessage that implements ChatRoomItem
+      return ChatMessage.fromMap(data) as ChatRoomItem;
     } else if (data.containsKey('date')) {
       // This is a ChatRoomSeparatedDate
       return ChatRoomSeparatedDate.fromMap(data);

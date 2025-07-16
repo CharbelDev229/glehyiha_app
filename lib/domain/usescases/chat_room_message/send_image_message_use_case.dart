@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dartz/dartz.dart';
+import 'dart:typed_data';
 import '../../../common/utils/failure.dart';
 import '../../../common/utils/usecase.dart';
 import '../../../data/models/message/chat_message.dart';
@@ -13,13 +14,21 @@ class SendImageMessageUseCase implements UseCase<ChatMessage, SendImageMessagePa
   @override
   Future<Either<Failure, ChatMessage>> call(SendImageMessageParams params) async {
     return await repository.sendImageMessage(
-      image: params.image,
+      imageFile: params.imageFile,
+      imageBytes: params.imageBytes,
+      filename: params.filename,
     );
   }
 }
 
 class SendImageMessageParams {
-  final File image;
+  final File? imageFile;
+  final Uint8List? imageBytes;
+  final String filename;
 
-  SendImageMessageParams({required this.image});
+  SendImageMessageParams({
+    this.imageFile,
+    this.imageBytes,
+    required this.filename,
+  });
 }

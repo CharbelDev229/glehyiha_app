@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 import '../../common/utils/failure.dart';
 import '../../data/data_models/chat_room/chat_room_message.dart';
@@ -12,7 +13,9 @@ abstract class ChatRoomMessageRepository {
 
   /// Send an image to the bot for analysis
   Future<Either<Failure, ChatMessage>> sendImageMessage({
-    required File image,
+    File? imageFile,
+    Uint8List? imageBytes,
+    required String filename,
   });
 
   /// Get chat history

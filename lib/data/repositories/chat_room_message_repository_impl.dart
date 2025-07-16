@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 import '../../common/utils/failure.dart';
 import '../../domain/repositories/chat_room_message_repository.dart';
@@ -36,7 +37,9 @@ class ChatRoomMessageRepositoryImpl implements ChatRoomMessageRepository {
 
   @override
   Future<Either<Failure, ChatMessage>> sendImageMessage({
-    required File image,
+    File? imageFile,
+    Uint8List? imageBytes,
+    required String filename,
   }) async {
     final accessToken = await authLocalDataSource.getToken();
 
@@ -44,7 +47,9 @@ class ChatRoomMessageRepositoryImpl implements ChatRoomMessageRepository {
       (failure) => Left(failure),
       (token) async {
         final result = await remoteDataSource.sendImageMessage(
-          image: image,
+          imageFile: imageFile,
+          imageBytes: imageBytes,
+          filename: filename,
           token: token,
         );
         return result;

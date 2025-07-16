@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:glehiha/data/models/expert/expert_model.dart';
 import 'package:glehiha/presentation/modules/expert_page/expert_page_screen.dart';
 
 import '../../../common/utils/utils.dart';
@@ -9,6 +10,7 @@ class ExpertCardWidget extends StatelessWidget {
   final String specialty;
   final String distance;
   final double rating;
+  final Expert expert;
   final VoidCallback? onTap;
 
   const ExpertCardWidget({
@@ -17,6 +19,7 @@ class ExpertCardWidget extends StatelessWidget {
     required this.specialty,
     required this.distance,
     required this.rating,
+    required this.expert,
     this.onTap,
   }) : super(key: key);
 
@@ -26,7 +29,12 @@ class ExpertCardWidget extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ExpertPageScreen(name: name)),
+          MaterialPageRoute(
+            builder: (context) => ExpertPageScreen(
+              name: name,
+              expert: expert,
+            ),
+          ),
         );
       },
       child: Container(
@@ -59,16 +67,16 @@ class ExpertCardWidget extends StatelessWidget {
                       Text(
                         name,
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 18),
+                      SizedBox(height: 16),
                       Text(
                         specialty,
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 16,
+                          fontSize: 12,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -97,7 +105,7 @@ class ExpertCardWidget extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
