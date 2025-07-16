@@ -50,7 +50,7 @@ class MarketController extends GetxController {
 
   void addNewProduct() {
     if (selectedRole.value == UserRole.vendeur) {
-      Get.to(() => const AddProduct())?.then((_) {
+      Get.to(() => AddProduct())?.then((_) {
         refreshAfterProductCreated();
       });
     } else {

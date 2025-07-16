@@ -24,7 +24,7 @@ void main() async {
   Get.put(UserController());
  Get.put(UserSellerController(), permanent: true);
  Get.lazyPut(() => AddProductController(
-    createProductUseCase: Get.find(),
+    createProductUseCase: Get.find(), getAllProductsUseCase: Get.find(),
   ), fenix: true);
   Get.put(MarketController());
 

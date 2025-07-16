@@ -12,16 +12,20 @@ import 'package:glehiha/domain/usescases/product/create_product.dart';
 
 import '../../../common/dtos/product/add_product_dto.dart';
 import '../../../common/enums/user_role.dart';
+import '../../../domain/usescases/product/get_all_products_use_case.dart';
 import '../../router/routes.dart';
-import '../../service/product/product_service.dart';
 import '../market/market_controller.dart';
 
 class AddProductController extends GetxController {
   final CreateProductUseCase createProductUseCase;
+  final GetAllProductsUseCase getAllProductsUseCase;
 
-  AddProductController({required this.createProductUseCase});
+  AddProductController({
+    required this.createProductUseCase,
+    required this.getAllProductsUseCase,
+  });
 
-  final formKey = GlobalKey<FormState>();
+  final RxList<Map<String, dynamic>> allProducts = <Map<String, dynamic>>[].obs;
 
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
@@ -43,6 +47,12 @@ class AddProductController extends GetxController {
   final RxString latitude = ''.obs;
   final RxString longitude = ''.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    resetForm();
+  }
+
   Future<void> pickImage() async {
     final XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
     if (image != null) {
@@ -63,14 +73,11 @@ class AddProductController extends GetxController {
   }
 
   Future<void> createProduct(BuildContext context) async {
-    if (!(formKey.currentState?.validate() ?? false)) {
-      Utils.snackInfo(context: context, message: "Veuillez corriger les erreurs du formulaire.");
-      autoValidate.value = true;
-      return;
-    }
-
     if (pickedImage.value == null) {
-      Utils.snackError(context: context, message: "Veuillez sélectionner une image.");
+      Utils.snackError(
+        context: context,
+        message: "Veuillez sélectionner une image.",
+      );
       return;
     }
 
@@ -85,12 +92,20 @@ class AddProductController extends GetxController {
 
       if (fabricationDateController.text.contains('/')) {
         final parts = fabricationDateController.text.split('/');
-        fabricationDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+        fabricationDate = DateTime(
+          int.parse(parts[2]),
+          int.parse(parts[1]),
+          int.parse(parts[0]),
+        );
       }
 
       if (expirationDateController.text.contains('/')) {
         final parts = expirationDateController.text.split('/');
-        expirationDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+        expirationDate = DateTime(
+          int.parse(parts[2]),
+          int.parse(parts[1]),
+          int.parse(parts[0]),
+        );
       }
 
       final dto = AddProductDto(
@@ -120,7 +135,6 @@ class AddProductController extends GetxController {
           Utils.snackSuccess(context: context, message: "Produit ajouté avec succès !");
           final marketController = Get.find<MarketController>();
 
-          // Ajout local immédiat
           final newProduct = marketController.convertDtoToProduct(dto);
           final role = marketController.selectedRole.value;
           if (role == UserRole.vendeur) {
@@ -130,6 +144,7 @@ class AddProductController extends GetxController {
           }
 
           await marketController.refreshAfterProductCreated();
+          update();
 
           if (context.mounted) {
             context.pushNamed(AppRoutesNames.market);
@@ -138,14 +153,37 @@ class AddProductController extends GetxController {
       );
     } catch (e) {
       Utils.snackError(context: context, message: "Erreur : $e");
+    } finally {
+      createproductinLoading.value = false;
     }
-
-    createproductinLoading.value = false;
   }
 
- 
+  Future<void> getAllProducts(BuildContext context) async {
+    final send = await getAllProductsUseCase.call(NoParams());
 
-  void changeCategory(ProductCategory category) {
-    selectedCategory.value = category;
+    send.fold(
+      (failure) {
+        Utils.snackError(context: context, message: failure.message);
+      },
+      (products) {
+        allProducts.assignAll(products);
+      },
+    );
+  }
+
+  void resetForm() {
+    nameController.clear();
+    descriptionController.clear();
+    resumeController.clear();
+    marqueController.clear();
+    priceController.clear();
+    unitController.clear();
+    fabricationDateController.clear();
+    expirationDateController.clear();
+    stockController.clear();
+
+    pickedImage.value = null;
+    selectedCategory.value = ProductCategory.ENGRAIS;
+    autoValidate.value = false;
   }
 }

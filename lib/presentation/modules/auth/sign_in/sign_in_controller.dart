@@ -84,11 +84,6 @@ class SignInController {
             final roleEnum = mapApiRoleToUserRole(user.role);
             userSellerController.setRole(roleEnum);
             print('🎯 Rôle défini : $roleEnum');
-
-
-          //    if (roleEnum == UserRole.vendeur) {
-          //   await userSellerController.initVendeur(); // ← placé ici proprement
-          // }
           },
         );
 
