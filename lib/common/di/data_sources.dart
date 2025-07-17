@@ -35,11 +35,6 @@ class DiDataSources {
       fenix: true,
     );
 
-        Get.lazyPut<UserLocalDataSource>(
-      () => UserLocalDataSourceImpl(),
-      fenix: true,
-    );
-
           ///Chat room message
     Get.lazyPut<ChatRoomMessageRemoteDataSource>(
           () => ChatRoomMessageRemoteDataSourceImpl(

@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import '../../../common/dtos/product/add_product_dto.dart';
 
 class UpdateProductParams extends Equatable {

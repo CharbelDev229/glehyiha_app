@@ -158,7 +158,10 @@ class AppRoute {
             key: state.pageKey,
             transitionDuration: const Duration(milliseconds: 500),
             child: SignInScreen(
-              controller: SignInController(loginUseCase: Get.find()),
+              controller: SignInController(
+                loginUseCase: Get.find(),
+                getProfileUseCase: Get.find(),
+              ),
             ),
             transitionsBuilder: (
               context,
@@ -513,3 +516,4 @@ class AppRoute {
     }
   }
 }
+

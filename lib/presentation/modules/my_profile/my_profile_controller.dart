@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../common/constants/storage_keys.dart';
-import '../../service/profile service .dart';
+import '../../service/profile_service.dart';
 import 'models/profile_view_select_item.dart';
 
 class MyProfileController {

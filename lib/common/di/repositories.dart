@@ -49,7 +49,7 @@ class DiRepositories {
     // Chat room message Repository
     Get.lazyPut<ChatRoomMessageRepository>(
       () => ChatRoomMessageRepositoryImpl(
-        chatRoomMessageRemoteDataSource: Get.find<ChatRoomMessageRemoteDataSource>(),
+        remoteDataSource: Get.find<ChatRoomMessageRemoteDataSource>(),
         authLocalDataSource: Get.find<AuthLocalDataSource>(),
       ),
       fenix: true,

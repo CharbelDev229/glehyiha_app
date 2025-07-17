@@ -1,100 +1,82 @@
 import '../../../common/enums/product_category.dart';
 
 class CartItemModel {
-  final int productId;
+  final int product_id;
   final String name;
   final String image;
   final ProductCategory category;
-  final double price;
+  final double prix_unitaire;
   final String resume;
-  final int quantity;
+  final int quantite;
   final String seller;
 
   CartItemModel({
-    required this.productId,
+    required this.product_id,
     required this.name,
     required this.image,
     required this.category,
-    required this.price,
+    required this.prix_unitaire,
     required this.resume,
-    required this.quantity,
+    required this.quantite,
     required this.seller,
   });
 
-  /// Permet de copier en modifiant certaines valeurs (ex: la quantité)
   CartItemModel copyWith({
-    int? productId,
+    int? product_id,
     String? name,
     String? image,
     ProductCategory? category,
-    double? price,
+    double? prix_unitaire,
     String? resume,
-    int? quantity,
+    int? quantite,
     String? seller,
   }) {
     return CartItemModel(
-      productId: productId ?? this.productId,
+      product_id: product_id ?? this.product_id,
       name: name ?? this.name,
       image: image ?? this.image,
       category: category ?? this.category,
-      price: price ?? this.price,
+      prix_unitaire: prix_unitaire ?? this.prix_unitaire,
       resume: resume ?? this.resume,
-      quantity: quantity ?? this.quantity,
+      quantite: quantite ?? this.quantite,
       seller: seller ?? this.seller,
     );
   }
 
-  /// Convertir en map pour l’envoyer à l’API
   Map<String, dynamic> toMap() {
     return {
-      'product_id': productId,
+      'product_id': product_id,
       'name': name,
       'image': image,
-      'category': category.name, // enum → string
-      'price': price,
+      'category': category.name,
+      'prix_unitaire': prix_unitaire,
       'resume': resume,
-      'quantity': quantity,
+      'quantite': quantite,
       'seller': seller,
     };
   }
 
-  /// Créer à partir d’une map reçue depuis l’API
   factory CartItemModel.fromMap(Map<String, dynamic> map) {
     return CartItemModel(
-      productId: _parseInt(map['product_id']),
+      product_id: map['product_id'] is int ? map['product_id'] : int.tryParse(map['product_id'].toString()) ?? 0,
       name: map['name']?.toString() ?? '',
       image: map['image']?.toString() ?? '',
-      category: _parseCategory(map['category']),
-      price: _parseDouble(map['price']),
+      category: ProductCategory.values.firstWhere(
+        (e) => e.name == map['category'],
+        orElse: () => ProductCategory.ENGRAIS,
+      ),
+      prix_unitaire: map['prix_unitaire'] is double
+          ? map['prix_unitaire']
+          : double.tryParse(map['prix_unitaire'].toString()) ?? 0.0,
       resume: map['resume']?.toString() ?? '',
-      quantity: _parseInt(map['quantity']),
+      quantite: _parseInt(map['quantite']),
       seller: map['seller']?.toString() ?? '',
     );
   }
 
-  /// Helpers internes pour convertir dynamiquement
   static int _parseInt(dynamic value) {
     if (value is int) return value;
     if (value is String) return int.tryParse(value) ?? 0;
     return 0;
-  }
-
-  static double _parseDouble(dynamic value) {
-    if (value is double) return value;
-    if (value is int) return value.toDouble();
-    if (value is String) return double.tryParse(value) ?? 0.0;
-    return 0.0;
-  }
-
-  static ProductCategory _parseCategory(dynamic value) {
-    if (value == null) return ProductCategory.ENGRAIS;
-    try {
-      return ProductCategory.values.firstWhere(
-        (e) => e.name.toLowerCase() == value.toString().toLowerCase(),
-        orElse: () => ProductCategory.ENGRAIS,
-      );
-    } catch (_) {
-      return ProductCategory.ENGRAIS;
-    }
   }
 }

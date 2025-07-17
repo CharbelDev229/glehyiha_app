@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../service/profile service .dart';
+import '../../../service/profile_service.dart';
 import '../../../widgets/avatar/custom_avatar.dart';
 import '../../../widgets/button/custom_button.dart';
 import '../../../widgets/text/custom_gradient_text.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../modules/my_profile/my_profile_sreen.dart';
-import '../../service/profile service .dart';
+import '../../service/profile_service.dart';
 
 class HeaderWidget extends StatelessWidget {
   HeaderWidget({super.key});
@@ -108,3 +108,5 @@ class HeaderWidget extends StatelessWidget {
     });
   }
 }
+
+

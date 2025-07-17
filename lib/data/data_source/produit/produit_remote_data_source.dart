@@ -29,11 +29,12 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     try {
       final formData = await dto.toFormData();
 
-      final response = await dioRequestManager.send(
+      final response = await dioRequestManager.sendMultipart(
         'POST',
         url,
-        body: formData,
-        headers: {'Authorization': 'Bearer $token'},
+        [], // files list - à adapter selon votre DTO
+        token: token ?? '',
+        fields: {}, // fields - à adapter selon votre DTO
       );
 
       if (response.success) {
@@ -131,11 +132,12 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     try {
       final formData = await dto.toFormData();
 
-      final response = await dioRequestManager.send(
+      final response = await dioRequestManager.sendMultipart(
         'PUT',
         url,
-        body: formData,
-        headers: {'Authorization': 'Bearer $token'},
+        [], // files list - à adapter selon votre DTO
+        token: token ?? '',
+        fields: {}, // fields - à adapter selon votre DTO
       );
 
       if (response.success) {
