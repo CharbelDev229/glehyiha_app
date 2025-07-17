@@ -1,12 +1,12 @@
 import '../../../common/enums/product_category.dart';
 
 class Product {
-  final String id;
+  final int id;
   final String name;
   final String image;
   final ProductCategory category;
-  final String price;
-  final String resume;
+  final double price; // prix_unitaire en double
+  final String summary; // resume renommé en summary pour clarté
   final String quantity;
   final String seller;
   final String description;
@@ -17,39 +17,46 @@ class Product {
     required this.image,
     required this.category,
     required this.price,
-    required this.resume,
-    required this .description,
+    required this.summary,
     required this.quantity,
     required this.seller,
+    required this.description,
   });
 
-  // Factory constructor pour créer un Product à partir d'un Map (utile pour JSON)
-  factory Product.fromMap(Map<String, dynamic> map) {
+  // Conversion JSON → Product
+  factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      image: map['image'] ?? '',
-      category: map['category'] ?? ProductCategory.all,
-      price: map['price'] ?? '0',
-      resume: map['description'] ?? '',
-      description: map['description1']?? '',
-      seller: map['seller']?? '',
-      quantity: map['quantity']?? '',
+      id: json['id'] is int
+          ? json['id']
+          : int.tryParse(json['id'].toString()) ?? 0,
+      name: json['name'] ?? '',
+      image: json['image'] ?? '',
+      category: ProductCategory.values.firstWhere(
+        (e) => e.name.toLowerCase() == json['category'].toString().toLowerCase(),
+        orElse: () => ProductCategory.ALL,
+      ),
+      price: json['price'] is double
+          ? json['price']
+          : double.tryParse(json['price']?.toString() ?? '') ?? 0.0,
+      summary: json['summary'] ?? json['resume'] ?? '',
+      quantity: json['quantity'] ?? json['quantite'] ?? '',
+      seller: json['seller'] ?? '',
+      description: json['description'] ?? '',
     );
   }
 
-  // Méthode pour convertir le Product en Map (utile pour JSON)
-  Map<String, dynamic> toMap() {
+  // Conversion Product → JSON
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
       'image': image,
-      'category': category,
+      'category': category.name,
       'price': price,
-      'reume': resume,
+      'summary': summary,
       'quantity': quantity,
       'seller': seller,
-      'description1':description,
+      'description': description,
     };
   }
 }

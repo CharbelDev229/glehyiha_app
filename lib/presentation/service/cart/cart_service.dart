@@ -5,18 +5,36 @@ class CartService extends GetxService {
   final RxList<CartItemModel> cartItems = <CartItemModel>[].obs;
 
   void addToCart(CartItemModel item) {
-    final index = cartItems.indexWhere((element) => element.id == item.id);
+    final index = cartItems.indexWhere((element) => element.product_id == item.product_id);
     if (index != -1) {
       final currentItem = cartItems[index];
-      cartItems[index] = currentItem.copyWith(quantity: currentItem.quantity + 1);
+      cartItems[index] = currentItem.copyWith(
+        quantite: currentItem.quantite + item.quantite,
+      );
     } else {
       cartItems.add(item);
     }
   }
 
   void removeFromCart(CartItemModel item) {
-    cartItems.removeWhere((element) => element.id == item.id);
+    cartItems.removeWhere((element) => element.product_id == item.product_id);
   }
 
-  // ... autres méthodes similaires à celles du controller
+  void clearCart() {
+    cartItems.clear();
+  }
+
+  double get totalPrice {
+    return cartItems.fold(
+      0.0,
+      (sum, item) => sum + item.prix_unitaire * item.quantite,
+    );
+  }
+
+  int get totalItems {
+    return cartItems.fold(
+      0,
+      (sum, item) => sum + item.quantite,
+    );
+  }
 }

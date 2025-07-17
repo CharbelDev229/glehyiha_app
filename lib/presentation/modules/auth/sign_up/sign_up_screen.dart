@@ -13,6 +13,7 @@ import '../../../router/routes.dart';
 import '../../../widgets/button/custom_button.dart';
 
 import '../../../widgets/custom_text_form_field/custom_text_form_field.dart';
+import '../../order_detail/user_controller.dart';
 import 'sign_up_controller.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 
@@ -20,13 +21,14 @@ class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key, required this.controller});
   final SignUpController controller;
 
+
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
   late SignUpController controller;
-
+  final userController = Get.find<UserController>();
   @override
   void initState() {
     controller = widget.controller;
@@ -229,7 +231,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(top: 20.0),
                                     child: CustomTextFormField(
-                                      controller: controller.experienceController,
+                                      controller: controller.shopNameController,
                                       validator:
                                           controller.selectedRole.value ==
                                                   UserRole.encadreur

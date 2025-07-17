@@ -106,7 +106,7 @@ class ProductListItem extends StatelessWidget {
                             ],
                           ),
                           child: Text(
-                            '${product.price} FCFA',
+                            '${product.prix_unitaire} FCFA',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,

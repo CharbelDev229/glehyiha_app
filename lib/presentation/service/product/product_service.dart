@@ -1,89 +1,124 @@
 import 'package:get/get.dart';
-
 import '../../../common/enums/product_category.dart';
 import '../../../common/enums/user_role.dart';
 import '../../../data/models/product/products.dart';
+import '../../../common/utils/failure.dart';
+import 'package:dartz/dartz.dart';
+import '../../../domain/repositories/product_repository_impl.dart';
 
 class ProductService extends GetxService {
-  // Liste observable des produits simples
   final RxList<Product> simpleProducts = <Product>[].obs;
-
-  // Rôle utilisateur observable
+  final RxList<Product> allProducts = <Product>[].obs;
+  final RxList<Product> myProducts = <Product>[].obs;
   final Rx<UserRole> userRole = UserRole.agriculteur.obs;
+  final ProductRepository productRepository;
 
-  ProductService() {
+  ProductService({required this.productRepository}) {
     init();
   }
 
-  // Initialisation (chargement des produits)
   Future<ProductService> init() async {
-    await loadProducts();
+    await loadAllProducts();
+    await _loadManualProducts(); // 👈 ajoute ceci pour injecter les produits manuels
     return this;
   }
 
-  // Chargement manuel des produits (sera remplacé par API plus tard)
-  Future<void> loadProducts() async {
-    final List<Product> loadedProducts = [
-      Product(
-        id: '1',
-        name: 'Engrais organique',
-        image: 'assets/images/image1.png',
-        category: ProductCategory.engrais,
-        price: '5000',
-        resume:
-            'Engrais naturel et biologique pour tous type de cultures.',
-        quantity: '150 kg',
-        seller: 'BIOPHYTO',
-        description:
-            'AgroBio est un engrais biologique qui apres épondage, corrige la texture et la structure du sol lui donnant une bonne capacité de rétention d\'eau et des minéraux et une fertilité maintenue durant une longue période.Il augmente le rendement  et facilite la conservation des récoltes.Il joue trois roles : c\'est un fertilisanr, nématicide(lutte contre les vers invisibles dans le sol et qui dévastent les productions)et unsimulateur de croissance.On l\'utilise par épondage en fumure d\'entretien et en fumure de fonds.',
-      ),
-      Product(
-        id: '2',
-        name: 'Insecticide Top Bio',
-        image: 'assets/images/image2.png',
-        category: ProductCategory.pesticide,
-        price: '2500',
-        resume:
-            'Top bio est un concentré émulssionnable à action insecticide, insectifuge et fongicide.',
-        quantity: '150 kg',
-        seller: 'BIOPHYTO',
-        description:
-            'AgroBio est un engrais biologique qui apres épondage, corrige la texture et la structure du sol lui donnant une bonne capacité de rétention d\'eau et des minéraux et une fertilité maintenue durant une longue période.Il augmente le rendement  et facilite la conservation des récoltes.Il joue trois roles : c\'est un fertilisanr, nématicide(lutte contre les vers invisibles dans le sol et qui dévastent les productions)et unsimulateur de croissance.On l\'utilise par épondage en fumure d\'entretien et en fumure de fonds.',
-      ),
-       Product(
-        id: '3',
-        name: 'Huile de Neem',
-        image: 'assets/images/image3.png',
-        category: ProductCategory.all,
-        price: '2500',
-        resume:
-            'Huile de neem agit comme un bio-pesticide à des niveaux et des modes différents.',
-        quantity: '150 kg',
-        seller: 'BIOPHYTO',
-        description:
-            'AgroBio est un engrais biologique qui apres épondage, corrige la texture et la structure du sol lui donnant une bonne capacité de rétention d\'eau et des minéraux et une fertilité maintenue durant une longue période.Il augmente le rendement  et facilite la conservation des récoltes.Il joue trois roles : c\'est un fertilisanr, nématicide(lutte contre les vers invisibles dans le sol et qui dévastent les productions)et unsimulateur de croissance.On l\'utilise par épondage en fumure d\'entretien et en fumure de fonds.',
-      ),
-       Product(
-        id: '4',
-        name: 'Insecticide Top Bio',
-        image: 'assets/images/image8.png',
-        category: ProductCategory.pesticide,
-        price: '2500',
-        resume:
-            'PulVérisateur',
-        quantity: '150 kg',
-        seller: 'BIOPHYTO',
-        description:
-            'AgroBio est un engrais biologique qui apres épondage, corrige la texture et la structure du sol lui donnant une bonne capacité de rétention d\'eau et des minéraux et une fertilité maintenue durant une longue période.Il augmente le rendement  et facilite la conservation des récoltes.Il joue trois roles : c\'est un fertilisanr, nématicide(lutte contre les vers invisibles dans le sol et qui dévastent les productions)et unsimulateur de croissance.On l\'utilise par épondage en fumure d\'entretien et en fumure de fonds.',
-      ),
-     
-    ];
-    simpleProducts.assignAll(loadedProducts);
+  Future<void> loadAllProducts() async {
+    final result = await productRepository.getAllProducts();
+    result.fold(
+      (failure) => Get.snackbar("Erreur", failure.message),
+      (data) {
+        final products = data.map((e) => Product.fromJson(e)).toList();
+        allProducts.assignAll(products);
+        simpleProducts.assignAll(products);
+      },
+    );
   }
 
-  // Gestion du rôle utilisateur
+  Future<void> loadProductsBySeller(String sellerId) async {
+    final result = await productRepository.getProductsBySeller(sellerId);
+    result.fold(
+      (failure) {
+        Get.snackbar("Erreur", failure.message);
+        myProducts.clear();
+        simpleProducts.clear();
+      },
+      (data) {
+        final products = data.map((e) => Product.fromJson(e)).toList();
+        myProducts.assignAll(products);
+        simpleProducts.assignAll(products);
+      },
+    );
+    // ✅ Ajoute aussi les produits manuels pour les vendeurs
+    if (userRole.value == UserRole.vendeur && myProducts.isEmpty) {
+      _loadManualProducts(forSeller: true);
+    }
+  }
+
+  Future<void> _loadManualProducts({bool forSeller = false}) async {
+    // ✅ SUPPRIMÉ la condition qui bloquait les vendeurs
+    // Maintenant tous les rôles peuvent voir les produits manuels
+    
+    final List<Product> manualProducts = [
+      Product(
+        id: 1,
+        name: 'Engrais organique',
+        image: 'assets/images/image1.png',
+        category: ProductCategory.ENGRAIS,
+        prix_unitaire: 5000,
+        resume: 'Engrais naturel et biologique pour tous types de cultures.',
+        quantite: '150 kg',
+        seller: 'BIOPHYTO',
+        description: 'AgroBio est un engrais biologique très efficace.',
+      ),
+      Product(
+        id: 2,
+        name: 'Insecticide Top Bio',
+        image: 'assets/images/image2.png',
+        category: ProductCategory.PESTICIDES,
+        prix_unitaire: 2500,
+        resume: 'Insecticide naturel à base de neem.',
+        quantite: '150 kg',
+        seller: 'BIOPHYTO',
+        description: 'Protège vos plantes contre les nuisibles.',
+      ),
+       Product(
+        id: 3,
+        name: 'Huile de Neem',
+        image: 'assets/images/image3.png',
+        category: ProductCategory.ALL,
+        prix_unitaire: 2500,
+        resume:
+            'Huile de neem agit comme un bio-pesticide à des niveaux et des modes différents.',
+        quantite: '150 kg',
+        seller: 'BIOPHYTO',
+        description:
+            'AgroBio est un engrais biologique qui apres épondage, corrige la texture et la structure du sol lui donnant une bonne capacité de rétention d\'eau et des minéraux et une fertilité maintenue durant une longue période.Il augmente le rendement  et facilite la conservation des récoltes.Il joue trois roles : c\'est un fertilisanr, nématicide(lutte contre les vers invisibles dans le sol et qui dévastent les productions)et unsimulateur de croissance.On l\'utilise par épondage en fumure d\'entretien et en fumure de fonds.',
+      ),
+       Product(
+        id: 4,
+        name: 'Insecticide Top Bio',
+        image: 'assets/images/image8.png',
+        category: ProductCategory.PESTICIDES,
+        prix_unitaire: 2500,
+        resume:
+            'PulVérisateur',
+        quantite: '150 kg',
+        seller: 'BIOPHYTO',
+        description:
+            'AgroBio est un engrais biologique qui apres épondage, corrige la texture et la structure du sol lui donnant une bonne capacité de rétention d\'eau et des minéraux et une fertilité maintenue durant une longue période.Il augmente le rendement  et facilite la conservation des récoltes.Il joue trois roles : c\'est un fertilisanr, nématicide(lutte contre les vers invisibles dans le sol et qui dévastent les productions)et unsimulateur de croissance.On l\'utilise par épondage en fumure d\'entretien et en fumure de fonds.',
+      ),
+    ];
+
+    // Ajoute les produits manuels pour tous les rôles
+    simpleProducts.addAll(manualProducts);
+  }
+
+  Future<Either<Failure, String>> deleteProduct(dynamic id) {
+    return productRepository.deleteProduct(id.toString());
+  }
+
   void setUserRole(UserRole role) {
-    print('Rôle défini : $role');
     userRole.value = role;
   }
 
@@ -91,26 +126,10 @@ class ProductService extends GetxService {
     return userRole.value;
   }
 
-  // Filtrer les produits selon catégorie et recherche
-  List<Product> getFilteredProducts(ProductCategory category, String searchTerm) {
-    return simpleProducts.where((product) {
-      final matchesCategory = category == ProductCategory.all || product.category == category;
-      final matchesSearch = product.name.toLowerCase().contains(searchTerm.toLowerCase());
-      return matchesCategory && matchesSearch;
-    }).toList();
-  }
-
-  // Chercher un produit par ID
-  Product? getProductById(String id) {
-    try {
-      return simpleProducts.firstWhere((product) => product.id == id);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  // Ajouter un produit (utile pour le vendeur)
   void addProduct(Product product) {
     simpleProducts.add(product);
+    if (userRole.value == UserRole.vendeur) {
+      myProducts.add(product);
+    }
   }
 }

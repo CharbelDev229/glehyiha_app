@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:glehiha/common/enums/user_role.dart';
 import 'package:glehiha/domain/usescases/auth/login.dart';
+import 'package:glehiha/domain/usescases/user/get_profile.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../common/utils/utils.dart';
-import '../../../../data/models/user/glehiha_user_info.dart';
+import '../../../../data/models/user_model.dart';
 import '../../../router/routes.dart';
+import '../../controller/user_seller_cpntroller.dart';
 import '../../order_detail/user_controller.dart';
-import '../../my_profile/my_profile_controller.dart';
 
 class SignInController {
   final LoginUseCase loginUseCase;
+  final GetProfileUseCase getProfileUseCase;
 
-  // Form key
+  final UserSellerController userSellerController = Get.find();
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  // Contrôleurs pour les champs du formulaire
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  // Variables réactives
   final RxString selectedCountryCode = '+229'.obs;
   final RxBool isPasswordVisible = false.obs;
   final RxBool autoValidate = false.obs;
@@ -27,10 +29,29 @@ class SignInController {
   final RxString errorMessage = ''.obs;
   final RxBool loginInLoading = false.obs;
 
-  SignInController({required this.loginUseCase});
+  SignInController({
+    required this.loginUseCase,
+    required this.getProfileUseCase,
+  });
 
   String getCompletePhoneNumber() {
     return selectedCountryCode.value + phoneNumberController.text.trim();
+  }
+
+
+  /// ✅ Fonction qui convertit le texte reçu par l’API en `UserRole`
+  UserRole mapApiRoleToUserRole(String? role) {
+    switch (role?.toLowerCase()) {
+      case 'seller':
+        return UserRole.vendeur;
+      case 'expert':
+        return UserRole.encadreur;
+      case 'farmer':
+      case 'agriculteur':
+        return UserRole.agriculteur;
+      default:
+        return UserRole.agriculteur;
+    }
   }
 
   Future<bool> login(BuildContext context) async {
@@ -45,29 +66,46 @@ class SignInController {
       ),
     );
 
-     send.fold(
+    await send.fold(
       (failure) {
         Utils.snackError(context: context, message: failure.message);
       },
       (response) async {
-        Utils.snackSuccess(context: context, message: 'Inscription réussie!');
+        Utils.snackSuccess(context: context, message: 'Connexion réussie!');
         success = true;
 
+        // 🔁 Appel de l’API /profile pour récupérer le rôle
+        final profileResult =
+            await getProfileUseCase.call(const GetProfileParams());
 
-        // Mettre à jour le UserController
-        // try {
-        //   final userController = Get.find<UserController>();
-        //   userController.setUser(
-        //     fName: userInfo.firstname ?? '',
-        //     lName: userInfo.lastname ?? '',
-        //     mail: userInfo.email ?? '',
-        //     phone: userInfo.phonenumber ?? getCompletePhoneNumber(),
-        //   );
-        // } catch (e) {
-        //   print('UserController non trouvé ou erreur: $e');
-        // }
+        profileResult.fold(
+          (fail) => print('Erreur récupération profil : ${fail.message}'),
+          (user) async {
+            final roleEnum = mapApiRoleToUserRole(user.role);
+            userSellerController.setRole(roleEnum);
+            print('🎯 Rôle défini : $roleEnum');
+          },
+        );
 
-        // Mettre à jour le ProfileController
+
+
+
+        try {
+        final userController = Get.find<UserController>();
+
+        // ✅ On extrait les données de "data"
+         final responseMap = response as Map<String, dynamic>;
+        final userMap = (responseMap['data'] as Map<String, dynamic>);
+
+        // ✅ On crée l'utilisateur avec UserModel
+        final user = UserModel.fromMap(userMap);
+
+        // ✅ On met à jour le UserController
+        userController.setUserData(user);
+
+      } catch (e) {
+        print('❌ Erreur de récupération des infos utilisateur : $e');
+      }
 
         if (context.mounted) {
           context.pushNamed(

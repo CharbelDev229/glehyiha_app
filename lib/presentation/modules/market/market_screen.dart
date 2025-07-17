@@ -9,6 +9,7 @@ import '../../../common/enums/user_role.dart';
 import '../../router/routes.dart';
 import '../../widgets/bottom_navigation_bar/bottom_navigation_bottom_bar.dart';
 import '../../../common/enums/product_category.dart';
+import '../controller/user_seller_cpntroller.dart';
 
 class MarketScreen extends StatelessWidget {
   const MarketScreen({super.key});
@@ -21,11 +22,11 @@ class MarketScreen extends StatelessWidget {
       backgroundColor: AppColors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               HeaderWidget(),
-              const SizedBox(height: 10),
+              const SizedBox(height: 15),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -35,8 +36,7 @@ class MarketScreen extends StatelessWidget {
                 color: AppColors.primaryGreen,
                 child: const Text(
                   'Marketplace',
-                  style: TextStyle(color: Colors.white, fontSize: 16, 
-                    fontWeight: FontWeight.w600, fontFamily: 'Poppins'),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -86,13 +86,15 @@ class MarketScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(width: 10),
-                  Obx(
-                    () => Visibility(
-                      visible:
-                          controller.selectedRole.value == UserRole.vendeur,
+
+                  Obx(() {
+                    final role = Get.find<UserSellerController>().getRole();
+                    print('🟢 Rôle détecté dans MarketScreen : $role');
+
+                    return Visibility(
+                      visible: role == UserRole.vendeur,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Utiliser GoRouter pour la navigation
                           context.pushNamed(AppRoutesNames.addProduct);
                         },
                         style: ElevatedButton.styleFrom(
@@ -110,63 +112,47 @@ class MarketScreen extends StatelessWidget {
                           children: [
                             Icon(Icons.add_a_photo_sharp, color: Colors.white),
                             SizedBox(width: 4),
-                            Text(
-                              'Ajouter',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            Text('Ajouter', style: TextStyle(color: Colors.white)),
                           ],
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
 
               const SizedBox(height: 20),
+
               Obx(
-                () => SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    spacing: 12,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children:
-                        ProductCategory.values.map((category) {
-                          final isSelected =
-                              controller.selectedCategory.value == category;
-                          return ElevatedButton(
-                            onPressed:
-                                () => controller.changeCategory(category),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  isSelected
-                                      ? AppColors.yellow
-                                      : AppColors.grey,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 11,
-                                vertical: 8,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                side: const BorderSide(color: AppColors.grey),
-                              ),
-                            ),
-                            child: Text(
-                              category.displayName,
-                              style: TextStyle(
-                                color:
-                                    isSelected
-                                        ? AppColors.white
-                                        : AppColors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                  ),
+                () => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: ProductCategory.values.map((category) {
+                    final isSelected = controller.selectedCategory.value == category;
+                    return ElevatedButton(
+                      onPressed: () => controller.changeCategory(category),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isSelected ? AppColors.yellow : AppColors.grey,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 11,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: const BorderSide(color: AppColors.grey),
+                        ),
+                      ),
+                      child: Text(
+                        category.displayName,
+                        style: TextStyle(
+                          color: isSelected ? AppColors.white : AppColors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
 
-              //   Expanded(child: CartSummary()),
               const SizedBox(height: 20),
 
               Expanded(
