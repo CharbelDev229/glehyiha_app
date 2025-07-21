@@ -121,8 +121,6 @@ class AddProductController extends GetxController {
         filename: pickedImage.value!.name,
         dateFabrication: fabricationDate!.toIso8601String(),
         datePeremption: expirationDate!.toIso8601String(),
-        latitude: latitude.value,
-        longitude: longitude.value,
       );
 
       final result = await createProductUseCase.call(CreateProductParams(dto: dto));

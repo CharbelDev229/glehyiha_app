@@ -124,7 +124,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                 children: List.generate(6, (index) {
                                   return SizedBox(
                                     width: boxWidth,
-                                    height: 60,
+                                    height: 50,
                                     child: TextFormField(
                                       controller: _controllers[index],
                                       focusNode: _focusNodes[index],
@@ -132,8 +132,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                       textAlign: TextAlign.center,
                                       maxLength: 1,
                                       style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                       decoration: InputDecoration(
                                         counterText: "",
@@ -180,15 +180,23 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              TextButton(
-                                onPressed: _onResendCode,
-                                child: const Text(
-                                  "Renvoyer le code",
-                                  style: TextStyle(
-                                    color: AppColors.green,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                  ),
+                              Obx(
+                                () => TextButton(
+                                  onPressed: controller.isResendingCode.value ? null : _onResendCode,
+                                  child: controller.isResendingCode.value
+                                      ? const SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                        )
+                                      : const Text(
+                                          "Renvoyer le code",
+                                          style: TextStyle(
+                                            color: AppColors.green,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                          ),
+                                        ),
                                 ),
                               ),
                             ],

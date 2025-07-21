@@ -10,6 +10,7 @@ import 'package:glehiha/domain/usescases/auth/verify_user_account.dart';
 import 'package:glehiha/domain/usescases/commands/commands_use_case.dart';
 import 'package:glehiha/domain/usescases/commands/get_all_commande_use_case.dart';
 import 'package:glehiha/domain/usescases/product/delete_product_use_case.dart';
+import 'package:glehiha/domain/usescases/user/update_location.dart';
 
 import '../../domain/usescases/auth/login.dart';
 import '../../domain/usescases/auth/sign_up.dart';
@@ -88,7 +89,10 @@ class DiUseCases {
       () => GetProfileUseCase(repository: Get.find()),
       fenix: true,
     );
-
+    Get.lazyPut(
+      () => UpdateLocationUseCase(repository: Get.find()),
+      fenix: true,
+    );
 
     // ChatRoomMessage
     /// SendMessageUseCase

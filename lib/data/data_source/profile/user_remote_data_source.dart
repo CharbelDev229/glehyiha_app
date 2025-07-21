@@ -27,6 +27,7 @@ abstract class UserRemoteDataSource {
     required String token,
     required String password,
   });
+  Future<Either<Failure, String>> updateLocation(double latitude, double longitude, String token);
 }
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
@@ -161,6 +162,35 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
       );
       if (response.success) {
         prefs.clear();
+        return Right(response.message);
+      } else {
+        return Left(ServerFailure.raise(response));
+      }
+    } catch (e) {
+      return Left(ServerFailure.onCatch(e: e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> updateLocation(
+    double latitude,
+    double longitude,
+    String token,
+  ) async {
+    Uri url = UriFormatter('user/update_user_location').format();
+    
+    try {
+      final response = await dioRequestManager.send(
+        'PUT',
+        url,
+        token: token,
+        body: {
+          'latitude': latitude,
+          'longitude': longitude,
+        },
+      );
+      
+      if (response.success) {
         return Right(response.message);
       } else {
         return Left(ServerFailure.raise(response));

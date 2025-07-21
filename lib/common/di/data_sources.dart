@@ -53,6 +53,7 @@ class DiDataSources {
     Get.lazyPut<CommandsRemoteDataSource>(
       () => CommandsRemoteDataSourceImpl(
         dioRequestManager: Get.find<DioRequestManager>(),
+        localDataSource: Get.find<CommandsLocalDataSource>(),
       ),
       fenix: true,
     );

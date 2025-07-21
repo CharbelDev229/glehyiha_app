@@ -1,8 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:glehiha/common/dtos/commands/commands_dto.dart';
 import 'package:glehiha/common/utils/failure.dart';
 import 'package:glehiha/common/utils/uri_formatter.dart';
+import 'package:glehiha/data/data_source/commands/commands_local_data_source.dart';
 
 import '../../../common/constants/instances.dart';
 import '../../../common/helpers/request_manager.dart';
@@ -19,25 +22,31 @@ abstract class CommandsRemoteDataSource {
 class CommandsRemoteDataSourceImpl implements CommandsRemoteDataSource {
   final DioRequestManager dioRequestManager;
 
-  CommandsRemoteDataSourceImpl({required this.dioRequestManager});
+  CommandsRemoteDataSourceImpl({required this.dioRequestManager, required CommandsLocalDataSource localDataSource});
 
   @override
   Future<Either<Failure, String>> commande(CommandsDto dto) async {
     Uri url = UriFormatter('commande/create').format();
 
     try {
+      // ✅ Récupérer le token directement depuis prefs comme dans auth
+      final token = prefs.getString('token');
+      
+      if (token == null || token.isEmpty) {
+        return Left(ServerFailure(
+          code: 401,
+          message: "Token non trouvé. Veuillez vous reconnecter.",
+        ));
+      }
+
       final response = await dioRequestManager.send(
         'POST',
         url,
         body: dto.toMap(),
+        token: token,
       );
 
       if (response.success) {
-        // ✅ si l'API retourne un token lors de la création de commande, on le sauvegarde
-        if (response.map['data'] != null &&
-            response.map['data']['access_token'] != null) {
-          prefs.setString('token', response.map['data']['access_token']);
-        }
         return Right(response.message);
       } else {
         return Left(ServerFailure.raise(response));
@@ -52,16 +61,42 @@ class CommandsRemoteDataSourceImpl implements CommandsRemoteDataSource {
     Uri url = UriFormatter('commande/list').format();
     final token = prefs.getString('token');
 
+    if (token == null || token.isEmpty) {
+      return Left(ServerFailure(
+        code: 401,
+        message: "Token non trouvé. Veuillez vous reconnecter.",
+      ));
+    }
+
     try {
+      print('🔑 Token utilisé: ${token.substring(0, 20)}...');
+      
       final response = await dioRequestManager.send(
         'GET',
         url,
         headers: {'Authorization': 'Bearer $token'},
       );
+      
+      print('📡 Réponse serveur: ${response.statusCode}');
+      print('📄 Corps réponse: ${response.body}');
 
       if (response.success) {
-        final List<dynamic> rawData = response.map['data'] as List<dynamic>;
-        final List<CommandsDto> commands = rawData
+        // ✅ Gérer les deux formats de réponse
+        dynamic rawData = response.map['data'];
+        
+        List<dynamic> commandsList;
+        if (rawData is List) {
+          // Format direct: data est une liste
+          commandsList = rawData;
+        } else if (rawData is Map && rawData.containsKey('items')) {
+          // Format paginé: data.items est une liste
+          commandsList = rawData['items'] as List<dynamic>;
+        } else {
+          // Fallback: essayer de traiter comme liste
+          commandsList = rawData as List<dynamic>;
+        }
+        
+        final List<CommandsDto> commands = commandsList
             .map((item) => CommandsDto.fromMap(item as Map<String, dynamic>))
             .toList();
         return Right(commands);
@@ -69,6 +104,7 @@ class CommandsRemoteDataSourceImpl implements CommandsRemoteDataSource {
         return Left(ServerFailure.raise(response));
       }
     } catch (e) {
+      print('❌ Exception dans getAllCommande: $e');
       return Left(ServerFailure.onCatch(e: e));
     }
   }

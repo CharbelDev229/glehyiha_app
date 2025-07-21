@@ -26,21 +26,35 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     final url = UriFormatter('product/create').format();
     final token = prefs.getString('token');
 
+    if (token == null || token.isEmpty) {
+      return Left(ServerFailure(
+        code: 401,
+        message: "Token non trouvé. Veuillez vous reconnecter.",
+      ));
+    }
+
     try {
       final formData = await dto.toFormData();
 
-      final response = await dioRequestManager.sendMultipart(
-        'POST',
+      // ✅ Utiliser directement FormData avec Dio
+      final response = await dioRequestManager.dio.postUri(
         url,
-        [], // files list - à adapter selon votre DTO
-        token: token ?? '',
-        fields: {}, // fields - à adapter selon votre DTO
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
       );
 
-      if (response.success) {
-        return Right(response.message);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return Right(response.data['message'] ?? 'Produit créé avec succès');
       } else {
-        return Left(ServerFailure.raise(response));
+        return Left(ServerFailure(
+          code: response.statusCode ?? 400,
+          message: response.data['message'] ?? 'Erreur lors de la création',
+        ));
       }
     } catch (e) {
       return Left(ServerFailure.onCatch(e: e));

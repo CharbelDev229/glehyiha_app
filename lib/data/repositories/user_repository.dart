@@ -165,4 +165,23 @@ Future<Either<Failure, String>> avatar(String avatarUrl) async {
       },
     );
   }
+
+  @override
+  Future<Either<Failure, String>> updateLocation(
+    double latitude,
+    double longitude,
+  ) async {
+    final accessToken = await authLocalDataSource.getToken();
+
+    return accessToken.fold(
+      (failure) => Left(failure),
+      (token) async {
+        return await userRemoteDataSource.updateLocation(
+          latitude,
+          longitude,
+          token,
+        );
+      },
+    );
+  }
 }

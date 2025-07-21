@@ -25,5 +25,7 @@ abstract class UserRepository {
   /// Delete account
   Future<Either<Failure, String>> deleteAccount({required String password});
 
- 
+  /// Update location
+  Future<Either<Failure, String>> updateLocation(double latitude, double longitude);
+
 }

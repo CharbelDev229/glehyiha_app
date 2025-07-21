@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:glehiha/presentation/modules/expert_page/expert_page_screen.dart';
+import 'package:glehiha/presentation/widgets/footer_widget/footer_widget.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:dio/dio.dart';
 
@@ -20,16 +21,9 @@ class ExpertScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Création d'un MapController pour manipuler la carte
     final mapController = MapController();
-    
-    // Créer une instance de Dio directement
     final dio = Dio();
-    
-    // D'abord, initialiser le LocationController
     final locationController = Get.put(LocationController());
-    
-    // Ensuite, initialiser l'ExpertController qui dépend du LocationController
     final controller = Get.put(
       ExpertController(
         expertRepository: ExpertRepositoryImpl(
@@ -39,12 +33,12 @@ class ExpertScreen extends StatelessWidget {
         ),
       ),
     );
-    
+
     // Demande la localisation à l'arrivée sur la page
     Future.microtask(() async {
-      if (locationController.position.value == null) {
-        await locationController.requestLocation();
-      }
+      // ✅ Toujours demander la localisation, même si elle existe déjà
+      await locationController.requestLocation(context);
+      
       final pos = locationController.position.value;
       if (pos != null) {
         await controller.getExpertsProches(
@@ -56,30 +50,25 @@ class ExpertScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        // Ajout du bouton de retour automatique
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back()
-        ),
         title: const Text('Experts Agricoles'),
         backgroundColor: AppColors.primaryGreen,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => controller.refreshAll(),
+            onPressed: () => controller.refreshAll(context),
           ),
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => controller.refreshAll(),
+        onRefresh: () => controller.refreshAll(context),
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Section 1: Carte des experts proches
+                // ... Section 1: Carte des experts proches ...
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -98,12 +87,9 @@ class ExpertScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
-
-                // Carte dynamique avec marqueurs pour les experts proches
                 Obx(() {
                   final expertsProches = controller.experts;
                   final userPosition = locationController.position.value;
-                  
                   return Container(
                     height: 300,
                     decoration: BoxDecoration(
@@ -114,7 +100,6 @@ class ExpertScreen extends StatelessWidget {
                       children: [
                         if (controller.isLoading.value)
                           const Center(child: CircularProgressIndicator()),
-                        
                         if (controller.errorMessage.value.isNotEmpty)
                           Center(
                             child: Column(
@@ -128,9 +113,11 @@ class ExpertScreen extends StatelessWidget {
                                 const SizedBox(height: 10),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    // Recharger la position et les experts
-                                    await locationController.requestLocation();
-                                    final pos = locationController.position.value;
+                                    await locationController.requestLocation(
+                                      context,
+                                    );
+                                    final pos =
+                                        locationController.position.value;
                                     if (pos != null) {
                                       await controller.getExpertsProches(
                                         latitude: pos.latitude,
@@ -143,40 +130,31 @@ class ExpertScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          
-                        if (!controller.isLoading.value && 
-                            controller.errorMessage.value.isEmpty)
+                        if (!controller.isLoading.value && controller.errorMessage.value.isEmpty)
                           FlutterMap(
                             mapController: mapController,
                             options: MapOptions(
                               initialCenter: userPosition != null
-                                  ? LatLng(
-                                      userPosition.latitude,
-                                      userPosition.longitude,
-                                    )
-                                  : (expertsProches.isNotEmpty
-                                      ? LatLng(
-                                          expertsProches.first.latitude,
-                                          expertsProches.first.longitude,
-                                        )
-                                      : const LatLng(6.6380, 1.7180)),
+                                  ? LatLng(userPosition.latitude, userPosition.longitude)
+                                  : const LatLng(6.6380, 1.7180), // Position par défaut même sans experts
                               initialZoom: 13.0,
                             ),
                             children: [
                               TileLayer(
                                 urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                                userAgentPackageName: 'com.example.app',
+                                userAgentPackageName: 'com.example.glehiha',
+                                additionalOptions: {
+                                  'attribution': '© OpenStreetMap contributors',
+                                },
+                                maxZoom: 19,
+                                tileProvider: NetworkTileProvider(),
                               ),
-                              
-                              // Marqueur position utilisateur
+                              // Toujours afficher le marqueur utilisateur s'il existe
                               if (userPosition != null)
                                 MarkerLayer(
                                   markers: [
                                     Marker(
-                                      point: LatLng(
-                                        userPosition.latitude,
-                                        userPosition.longitude,
-                                      ),
+                                      point: LatLng(userPosition.latitude, userPosition.longitude),
                                       width: 60,
                                       height: 60,
                                       child: Column(
@@ -205,68 +183,60 @@ class ExpertScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                
-                              // Marqueurs experts proches
-                              MarkerLayer(
-                                markers: expertsProches
-                                    .where((e) => e.latitude != 0.0 && e.longitude != 0.0)
-                                    .map(
-                                      (expert) => Marker(
-                                        point: LatLng(
-                                          expert.latitude,
-                                          expert.longitude,
-                                        ),
-                                        width: 120,
-                                        height: 70,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Get.to(() => ExpertPageScreen(
-                                              name: '${expert.firstName} ${expert.lastName}',
-                                              expert: expert,
-                                            ));
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(8),
-                                              boxShadow: const [
-                                                BoxShadow(
-                                                  color: Colors.black26,
-                                                  blurRadius: 2,
-                                                ),
-                                              ],
-                                            ),
+                              // Marqueurs des experts (seulement s'il y en a)
+                              if (expertsProches.isNotEmpty)
+                                MarkerLayer(
+                                  markers: expertsProches
+                                      .where((e) => e.latitude != 0.0 && e.longitude != 0.0)
+                                      .map(
+                                        (expert) => Marker(
+                                          point: LatLng(expert.latitude, expert.longitude),
+                                          width: 80,
+                                          height: 80,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Get.to(() => ExpertPageScreen(
+                                                name: '${expert.firstName} ${expert.lastName}',
+                                                expert: expert,
+                                              ));
+                                            },
                                             child: Column(
-                                              mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Text(
-                                                  '${expert.firstName} ${expert.lastName}',
-                                                  style: const TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.bold,
+                                                Container(
+                                                  padding: const EdgeInsets.all(4),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(20),
+                                                    boxShadow: const [
+                                                      BoxShadow(
+                                                        color: Colors.black26,
+                                                        blurRadius: 2,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  textAlign: TextAlign.center,
+                                                  child: Text(
+                                                    '${expert.firstName.substring(0, 1)}${expert.lastName.substring(0, 1)}',
+                                                    style: const TextStyle(
+                                                      fontSize: 10,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
                                                 ),
-                                                Text(
-                                                  controller.getFormattedDistance(expert.distanceKm),
-                                                  style: const TextStyle(
-                                                    fontSize: 8,
-                                                    color: Colors.grey,
-                                                  ),
+                                                const Icon(
+                                                  Icons.person_pin_circle,
+                                                  color: Colors.red,
+                                                  size: 36,
                                                 ),
                                               ],
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
+                                      )
+                                      .toList(),
+                                ),
                             ],
                           ),
-                          
-                        // Bouton pour recentrer la carte sur la position de l'utilisateur
                         Positioned(
                           right: 16,
                           bottom: 16,
@@ -276,19 +246,22 @@ class ExpertScreen extends StatelessWidget {
                             onPressed: () async {
                               if (userPosition != null) {
                                 mapController.move(
-                                  LatLng(userPosition.latitude, userPosition.longitude),
+                                  LatLng(
+                                    userPosition.latitude,
+                                    userPosition.longitude,
+                                  ),
                                   13.0,
                                 );
                               } else {
-                                // Si la position n'est pas disponible, demander la localisation
-                                await locationController.requestLocation();
+                                await locationController.requestLocation(
+                                  context,
+                                );
                                 final pos = locationController.position.value;
                                 if (pos != null) {
                                   mapController.move(
                                     LatLng(pos.latitude, pos.longitude),
                                     13.0,
                                   );
-                                  // Recharger les experts proches avec la nouvelle position
                                   await controller.getExpertsProches(
                                     latitude: pos.latitude,
                                     longitude: pos.longitude,
@@ -306,9 +279,7 @@ class ExpertScreen extends StatelessWidget {
                     ),
                   );
                 }),
-
                 const SizedBox(height: 20),
-
                 // Section 2: Liste des experts proches
                 Container(
                   width: double.infinity,
@@ -328,13 +299,10 @@ class ExpertScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
-
-                // Liste des experts proches (à moins de 2km)
                 Obx(() {
                   if (controller.isLoading.value) {
                     return const Center(child: CircularProgressIndicator());
                   }
-
                   if (controller.errorMessage.value.isNotEmpty) {
                     return Center(
                       child: Column(
@@ -347,7 +315,7 @@ class ExpertScreen extends StatelessWidget {
                           const SizedBox(height: 10),
                           ElevatedButton(
                             onPressed: () async {
-                              await locationController.requestLocation();
+                              await locationController.requestLocation(context);
                               final pos = locationController.position.value;
                               if (pos != null) {
                                 await controller.getExpertsProches(
@@ -362,7 +330,6 @@ class ExpertScreen extends StatelessWidget {
                       ),
                     );
                   }
-
                   if (controller.experts.isEmpty) {
                     return Center(
                       child: Column(
@@ -374,7 +341,7 @@ class ExpertScreen extends StatelessWidget {
                           const SizedBox(height: 10),
                           ElevatedButton(
                             onPressed: () async {
-                              await locationController.requestLocation();
+                              await locationController.requestLocation(context);
                               final pos = locationController.position.value;
                               if (pos != null) {
                                 await controller.getExpertsProches(
@@ -389,26 +356,25 @@ class ExpertScreen extends StatelessWidget {
                       ),
                     );
                   }
-
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.experts.length, // Ces experts sont à moins de 2km
+                    itemCount: controller.experts.length,
                     itemBuilder: (context, index) {
                       final expert = controller.experts[index];
                       return ExpertCardWidget(
-                        name:'${expert.firstName} ${expert.lastName}',
+                        name: '${expert.firstName} ${expert.lastName}',
                         specialty: expert.specialization,
-                        distance: controller.getFormattedDistance(expert.distanceKm),
+                        distance: controller.getFormattedDistance(
+                          expert.distanceKm,
+                        ),
                         rating: 4.0,
                         expert: expert,
                       );
                     },
                   );
                 }),
-
                 const SizedBox(height: 30),
-
                 // Section 3: Tous les encadreurs
                 Container(
                   width: double.infinity,
@@ -416,7 +382,7 @@ class ExpertScreen extends StatelessWidget {
                     horizontal: 16,
                     vertical: 8,
                   ),
-                  color: const Color.fromARGB(255, 76, 175, 80),
+                  color: AppColors.primaryGreen,
                   child: const Text(
                     'Tous les encadreurs',
                     style: TextStyle(
@@ -428,14 +394,13 @@ class ExpertScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
-
-                // Liste de tous les encadreurs avec pagination
                 Obx(() {
-                  if (controller.isLoadingAllTrainers.value && controller.allTrainers.isEmpty) {
+                  if (controller.isLoadingAllTrainers.value &&
+                      controller.allTrainers.isEmpty) {
                     return const Center(child: CircularProgressIndicator());
                   }
-
-                  if (controller.errorMessage.value.isNotEmpty && controller.allTrainers.isEmpty) {
+                  if (controller.errorMessage.value.isNotEmpty &&
+                      controller.allTrainers.isEmpty) {
                     return Center(
                       child: Text(
                         controller.errorMessage.value,
@@ -444,7 +409,6 @@ class ExpertScreen extends StatelessWidget {
                       ),
                     );
                   }
-
                   return Column(
                     children: [
                       ListView.builder(
@@ -454,16 +418,16 @@ class ExpertScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final expert = controller.allTrainers[index];
                           return ExpertCardWidget(
-                            name:'${expert.firstName} ${expert.lastName}',
+                            name: '${expert.firstName} ${expert.lastName}',
                             specialty: expert.specialization,
-                            distance: controller.getFormattedDistance(expert.distanceKm),
+                            distance: controller.getFormattedDistance(
+                              expert.distanceKm,
+                            ),
                             rating: 4.0,
                             expert: expert,
                           );
                         },
                       ),
-                      
-                      // Pagination
                       if (controller.allTrainers.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -471,19 +435,23 @@ class ExpertScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton(
-                                onPressed: controller.hasPrevPage.value
-                                    ? () => controller.loadPrevPage()
-                                    : null,
+                                onPressed:
+                                    controller.hasPrevPage.value
+                                        ? () => controller.loadPrevPage()
+                                        : null,
                                 child: const Text('Précédent'),
                               ),
                               Text(
                                 'Page ${controller.currentPage.value} sur ${controller.totalPages.value}',
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               ElevatedButton(
-                                onPressed: controller.hasNextPage.value
-                                    ? () => controller.loadNextPage()
-                                    : null,
+                                onPressed:
+                                    controller.hasNextPage.value
+                                        ? () => controller.loadNextPage()
+                                        : null,
                                 child: const Text('Suivant'),
                               ),
                             ],
@@ -497,6 +465,7 @@ class ExpertScreen extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar: CustomBottomBar(), // Ajoute le footer ici
     );
   }
 }

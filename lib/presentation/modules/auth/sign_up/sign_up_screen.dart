@@ -231,7 +231,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(top: 20.0),
                                     child: CustomTextFormField(
-                                      controller: controller.shopNameController,
+                                      controller: controller.experienceController,
                                       validator:
                                           controller.selectedRole.value ==
                                                   UserRole.encadreur

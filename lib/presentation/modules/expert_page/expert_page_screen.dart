@@ -78,6 +78,7 @@ class ExpertPageScreen extends StatelessWidget {
                               "${expert.firstName} ${expert.lastName}" ?? 'Nom non disponible',
                               style: TextStyle(
                                 fontSize: 20,
+                                fontFamily: "Montserrat",
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black,
                               ),
@@ -100,10 +101,10 @@ class ExpertPageScreen extends StatelessWidget {
 
                   Row(
                     children: [
-                      Image.asset(Assets.location, width: 30, height: 30),
+                      Icon(Icons.email, size: 30, color: Colors.grey[600]),
                       const SizedBox(width: 8),
                       Text(
-                        expert.adresse ?? 'Localisation non disponible',
+                        expert.email ?? 'Localisation non disponible',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w400,
@@ -112,16 +113,22 @@ class ExpertPageScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
 
-                  Text(
-                    "Expérience: ${expert.experience} ans" ?? 'Description non disponible',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                    ),
+                  Row(
+                    children: [ 
+                      Icon(Icons.work, size: 30, color: Colors.grey[600]),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Expérience: ${expert.experience} ans" ?? 'Description non disponible',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
+
                   const SizedBox(height: 20),
 
                   Row(

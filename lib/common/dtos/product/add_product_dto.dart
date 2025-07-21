@@ -9,8 +9,7 @@ import '../../enums/product_category.dart';
 class AddProductDto {
   final String name;
   final String description;
-  // 🔴 AJOUT: resume manquant
-  final String resume;
+  final String resume; // ✅ Ajout du champ resume
   final String marque;
   final double price;
   final int stock;
@@ -20,14 +19,11 @@ class AddProductDto {
   final String filename;
   final String dateFabrication;
   final String datePeremption;
-  // 🔴 AJOUT: latitude et longitude manquants
-  final String latitude;
-  final String longitude;
 
   AddProductDto({
     required this.name,
     required this.description,
-    required this.resume,
+    required this.resume, // ✅ Ajout dans le constructeur
     required this.marque,
     required this.price,
     required this.stock,
@@ -37,24 +33,20 @@ class AddProductDto {
     required this.filename,
     required this.dateFabrication,
     required this.datePeremption,
-    required this.latitude,
-    required this.longitude,
   });
 
   Future<FormData> toFormData() async {
     return FormData.fromMap({
       'name': name,
       'description': description,
-      'resume': resume,
+      'resume': resume, // ✅ Ajout dans FormData
       'marque': marque,
       'price': price,
       'stock': stock,
-      'category': category.value, // 🔴 CORRECTION: .name -> .value
+      'category': _getCategoryApiValue(category),
       'unite': unit,
       'date_fabrication': dateFabrication,
       'date_expiration': datePeremption,
-      'latitude': latitude,
-      'longitude': longitude,
       'file': await MultipartFile.fromBytes(
         imageBytes,
         filename: filename,
@@ -66,6 +58,19 @@ class AddProductDto {
   String _getImageExtension(String filename) {
     final ext = filename.split('.').last.toLowerCase();
     return (ext == 'jpg') ? 'jpeg' : ext;
+  }
+
+  String _getCategoryApiValue(ProductCategory category) {
+    switch (category) {
+      case ProductCategory.ENGRAIS:
+        return 'fertilizers';
+      case ProductCategory.PESTICIDES:
+        return 'pesticides';
+      case ProductCategory.SEMENCES:
+        return 'seeds';
+      default:
+        return 'fertilizers';
+    }
   }
 }
 

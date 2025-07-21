@@ -110,7 +110,7 @@ class MarketScreen extends StatelessWidget {
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.add_a_photo_sharp, color: Colors.white),
+                            Icon(Icons.add, color: Colors.white),
                             SizedBox(width: 4),
                             Text('Ajouter', style: TextStyle(color: Colors.white)),
                           ],
@@ -124,32 +124,37 @@ class MarketScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               Obx(
-                () => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: ProductCategory.values.map((category) {
-                    final isSelected = controller.selectedCategory.value == category;
-                    return ElevatedButton(
-                      onPressed: () => controller.changeCategory(category),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isSelected ? AppColors.yellow : AppColors.grey,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 11,
-                          vertical: 8,
+                () => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: ProductCategory.values.map((category) {
+                      final isSelected = controller.selectedCategory.value == category;
+                      return Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        child: ElevatedButton(
+                          onPressed: () => controller.changeCategory(category),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isSelected ? AppColors.yellow : AppColors.grey,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 11,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: const BorderSide(color: AppColors.grey),
+                            ),
+                          ),
+                          child: Text(
+                            category.displayName,
+                            style: TextStyle(
+                              color: isSelected ? AppColors.white : AppColors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: const BorderSide(color: AppColors.grey),
-                        ),
-                      ),
-                      child: Text(
-                        category.displayName,
-                        style: TextStyle(
-                          color: isSelected ? AppColors.white : AppColors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
 

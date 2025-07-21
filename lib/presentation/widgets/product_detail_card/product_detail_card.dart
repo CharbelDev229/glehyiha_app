@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:glehiha/presentation/widgets/custom_image_asset.dart';
+import 'package:glehiha/presentation/widgets/image_network/custom_image_network.dart';
 import '../../../common/constants/colors.dart';
 import '../../../data/models/product/products.dart';
 
@@ -94,6 +96,42 @@ class ProductDetailCard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class ProductImageWidget extends StatelessWidget {
+  final String imageUrl;
+  final double? width;
+  final double? height;
+  final BoxFit? fit;
+
+  const ProductImageWidget({
+    Key? key,
+    required this.imageUrl,
+    this.width,
+    this.height,
+    this.fit = BoxFit.cover,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Si c'est une URL complète
+    if (imageUrl.startsWith('http')) {
+      return CustomImageNetwork(
+        imageUrl: imageUrl,
+        width: width,
+        height: height,
+        fit: fit,
+      );
+    }
+    
+    // Si c'est un asset local
+    return CustomImageAsset(
+      assetName: imageUrl,
+      width: width,
+      height: height,
+      fit: fit,
     );
   }
 }

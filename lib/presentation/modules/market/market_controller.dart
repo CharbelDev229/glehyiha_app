@@ -99,13 +99,16 @@ class MarketController extends GetxController {
     return Product(
       id: DateTime.now().millisecondsSinceEpoch,
       name: dto.name,
-      image: dto.filename,
+      image: 'assets/images/placeholder.png', // Temporaire, sera remplacé par l'API
       category: dto.category,
       prix_unitaire: dto.price,
-      resume: dto.resume,
+      resume: dto.description,
       quantite: '${dto.stock} ${dto.unit}',
       seller: _getCurrentSellerId() ?? "vendeur inconnu",
       description: dto.description,
+      marque: dto.marque,
+      stock: dto.stock,
+      unite: dto.unit,
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:glehiha/common/enums/user_role.dart';
 import 'package:glehiha/common/constants/instances.dart';
 import 'package:glehiha/common/services/location_service.dart';
+import 'package:glehiha/domain/usescases/user/update_location.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -64,7 +65,10 @@ class SignUpController {
   RxBool locationPermissionGranted = false.obs;
   RxBool isRequestingLocation = false.obs;
 
-  SignUpController({required this.signUpUseCase});
+  SignUpController({required this.signUpUseCase}) {
+    // ✅ Demander la localisation dès l'initialisation du controller
+    _requestInitialLocation();
+  }
 
   String getCompletePhoneNumber() {
     return selectedCountryCode.value + phoneNumberController.text.trim();
@@ -72,6 +76,7 @@ class SignUpController {
 
   // Méthode pour demander la permission de localisation
   Future<bool> requestLocationPermission() async {
+    print('🔍 requestLocationPermission() appelée');
     isRequestingLocation.value = true;
     
     try {
@@ -119,10 +124,16 @@ class SignUpController {
       longitude.value = position.longitude;
       locationPermissionGranted.value = true;
       
+      print('✅ Position obtenue: ${position.latitude}, ${position.longitude}');
+      
+      // ✅ Mettre à jour la localisation via le nouvel endpoint
+      await _updateUserLocation(position.latitude, position.longitude);
+      
       isRequestingLocation.value = false;
       return true;
       
     } catch (e) {
+      print('❌ Erreur localisation: $e');
       logger.e('Erreur lors de la récupération de la localisation: $e');
       isRequestingLocation.value = false;
       return false;
@@ -131,13 +142,16 @@ class SignUpController {
 
   // Dialog pour demander l'activation de la localisation
   Future<bool> _showLocationServiceDialog() async {
+    String message = selectedRole.value == UserRole.encadreur
+        ? 'Pour les encadreurs, nous avons besoin de votre localisation pour vous connecter avec les agriculteurs proches.'
+        : selectedRole.value == UserRole.agriculteur
+            ? 'Pour les agriculteurs, nous avons besoin de votre localisation pour vous connecter avec les encadreurs proches.'
+            : 'Nous avons besoin de votre localisation pour vous proposer les meilleurs services à proximité.';
+    
     return await Get.dialog<bool>(
       AlertDialog(
         title: const Text('Localisation requise'),
-        content: const Text(
-          'Pour les encadreurs, nous avons besoin de votre localisation pour vous connecter avec les agriculteurs proches. '
-          'Voulez-vous activer la localisation ?',
-        ),
+        content: Text('$message Voulez-vous activer la localisation ?'),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
@@ -179,17 +193,19 @@ class SignUpController {
     bool success = false;
     signUpInLoading.value = true;
 
-    // Si c'est un encadreur, demander la localisation
-    if (selectedRole.value == UserRole.encadreur) {
-      bool locationGranted = await requestLocationPermission();
-      if (!locationGranted) {
-        Utils.snackError(
-          context: context, 
-          message: 'La localisation est requise pour les encadreurs. Veuillez l\'activer et réessayer.'
-        );
-        signUpInLoading.value = false;
-        return false;
-      }
+    // ✅ Demander la localisation pour TOUS les rôles
+    bool locationGranted = await requestLocationPermission();
+    if (!locationGranted) {
+      String roleMessage = selectedRole.value == UserRole.encadreur 
+          ? 'La localisation est requise pour les encadreurs.'
+          : 'La localisation nous aide à vous connecter avec les services proches.';
+      
+      Utils.snackError(
+        context: context, 
+        message: '$roleMessage Veuillez l\'activer et réessayer.'
+      );
+      signUpInLoading.value = false;
+      return false;
     }
 
     final send = await signUpUseCase.call(
@@ -204,8 +220,9 @@ class SignUpController {
           specialization: specialisationController.text,
           experience: experienceController.text,
           nom_boutique: shopNameController.text,
-          latitude: selectedRole.value == UserRole.encadreur ? latitude.value : null,
-          longitude: selectedRole.value == UserRole.encadreur ? longitude.value : null,
+          // ✅ Envoyer la localisation pour TOUS les rôles
+          latitude: latitude.value,
+          longitude: longitude.value,
         ),
       ),
     );
@@ -241,5 +258,30 @@ class SignUpController {
 
     signUpInLoading.value = false;
     return success;
+  }
+
+  // ✅ Nouvelle méthode pour demander la localisation au début
+  Future<void> _requestInitialLocation() async {
+    print('🚀 Demande de localisation au démarrage...');
+    await Future.delayed(Duration(milliseconds: 500)); // Petit délai pour l'UI
+    bool result = await requestLocationPermission();
+    print('📍 Résultat localisation: $result - Lat: ${latitude.value}, Lng: ${longitude.value}');
+  }
+
+  // ✅ Nouvelle méthode pour mettre à jour la localisation
+  Future<void> _updateUserLocation(double lat, double lng) async {
+    try {
+      final updateLocationUseCase = Get.find<UpdateLocationUseCase>();
+      final result = await updateLocationUseCase.call(
+        UpdateLocationParams(latitude: lat, longitude: lng),
+      );
+      
+      result.fold(
+        (failure) => print('❌ Erreur mise à jour localisation: ${failure.message}'),
+        (success) => print('✅ Localisation mise à jour: $success'),
+      );
+    } catch (e) {
+      print('❌ UpdateLocationUseCase non trouvé: $e');
+    }
   }
 }
